@@ -2,26 +2,15 @@ name: Node.js CI
 
 on:
   push:
-    branch: master
+    branches: [ master ]
+
   pull_request:
-    branch: master
+    branches: [ master ]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x, 16.x, 18.x]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm run lint
-    - run: npm test -- --coverage --maxWorkers 2
-    - run: npx codecov
+  Job:
+    name: Node.js
+    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
+    with:
+      os: 'ubuntu-latest'
+      version: '16.13.0, 16, 18, 20'

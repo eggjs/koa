@@ -3,15 +3,9 @@ const assert = require('assert');
 let importESM = () => {};
 
 describe.skip('Load with esm', () => {
-  beforeAll(function(){
-    // ESM support is flagged on v12.x.
-    const majorVersion = +process.version.split('.')[0].slice(1);
-    if (majorVersion < 12) {
-      this.skip();
-    } else {
-      // eslint-disable-next-line no-eval
-      importESM = eval('(specifier) => import(specifier)');
-    }
+  beforeAll(() => {
+    // eslint-disable-next-line no-eval
+    importESM = eval('(specifier) => import(specifier)');
   });
 
   it('should default export koa', async() => {

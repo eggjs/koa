@@ -1,32 +1,36 @@
+# @eggjs/koa
+
+@eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and drop Node.js < 16.13.0 support.
+
 <img src="/docs/logo.png" alt="Koa middleware framework for nodejs"/>
 
-  [![gitter][gitter-image]][gitter-url]
-  [![NPM version][npm-image]][npm-url]
-  [![build status][travis-image]][travis-url]
-  [![Test coverage][coveralls-image]][coveralls-url]
-  [![OpenCollective Backers][backers-image]](#backers)
-  [![OpenCollective Sponsors][sponsors-image]](#sponsors)
-  [![PR's Welcome][pr-welcoming-image]][pr-welcoming-url]
+[![NPM version](https://img.shields.io/npm/v/@eggjs/koa.svg?style=flat-square)](https://npmjs.org/package/@eggjs/koa)
+[![NPM quality](http://npm.packagequality.com/shield/@eggjs/koa.svg?style=flat-square)](http://packagequality.com/#?package=@eggjs/koa)
+[![NPM download](https://img.shields.io/npm/dm/@eggjs/koa.svg?style=flat-square)](https://npmjs.org/package/@eggjs/koa)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Feggjs%2Fkoa.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Feggjs%2Fkoa?ref=badge_shield)
+[![Continuous Integration](https://github.com/eggjs/koa/workflows/Continuous%20integration/badge.svg)](https://github.com/eggjs/koa/actions?query=branch%3Amaster)
+[![Test coverage](https://img.shields.io/codecov/c/github/eggjs/koa.svg?style=flat-square)](https://codecov.io/gh/eggjs/koa)
+[![Known Vulnerabilities](https://snyk.io/test/npm/@eggjs/koa/badge.svg?style=flat-square)](https://snyk.io/test/npm/@eggjs/koa)
 
-  Expressive HTTP middleware framework for node.js to make web applications and APIs more enjoyable to write. Koa's middleware stack flows in a stack-like manner, allowing you to perform actions downstream then filter and manipulate the response upstream.
+Expressive HTTP middleware framework for node.js to make web applications and APIs more enjoyable to write. Koa's middleware stack flows in a stack-like manner, allowing you to perform actions downstream then filter and manipulate the response upstream.
 
-  Only methods that are common to nearly all HTTP servers are integrated directly into Koa's small ~570 SLOC codebase. This
-  includes things like content negotiation, normalization of node inconsistencies, redirection, and a few others.
+Only methods that are common to nearly all HTTP servers are integrated directly into Koa's small ~570 SLOC codebase. This
+includes things like content negotiation, normalization of node inconsistencies, redirection, and a few others.
 
-  Koa is not bundled with any middleware.
+Koa is not bundled with any middleware.
 
 ## Installation
 
-Koa requires __node v7.6.0__ or higher for ES2015 and async function support.
+@eggjs/koa requires __node v16.3.0__ or higher for Node.js LTS support.
 
-```
-$ npm install koa
+```bash
+npm install @eggjs/koa
 ```
 
 ## Hello Koa
 
 ```js
-const Koa = require('koa');
+const Koa = require('@eggjs/koa');
 const app = new Koa();
 
 // response
@@ -39,17 +43,16 @@ app.listen(3000);
 
 ## Getting started
 
- - [Kick-Off-Koa](https://github.com/koajs/kick-off-koa) - An intro to Koa via a set of self-guided workshops.
- - [Workshop](https://github.com/koajs/workshop) - A workshop to learn the basics of Koa, Express' spiritual successor.
- - [Introduction Screencast](https://knowthen.com/episode-3-koajs-quickstart-guide/) - An introduction to installing and getting started with Koa
-
+- [Kick-Off-Koa](https://github.com/koajs/kick-off-koa) - An intro to Koa via a set of self-guided workshops.
+- [Workshop](https://github.com/koajs/workshop) - A workshop to learn the basics of Koa, Express' spiritual successor.
+- [Introduction Screencast](https://knowthen.com/episode-3-koajs-quickstart-guide/) - An introduction to installing and getting started with Koa
 
 ## Middleware
 
 Koa is a middleware framework that can take two different kinds of functions as middleware:
 
-  * async function
-  * common function
+- async function
+- common function
 
 Here is an example of logger middleware with each of the different functions:
 
@@ -83,7 +86,7 @@ app.use((ctx, next) => {
 
 The middleware signature changed between v1.x and v2.x.  The older signature is deprecated.
 
-**Old signature middleware support will be removed in v3**
+__Old signature middleware support will be removed in v3__
 
 Please see the [Migration Guide](docs/migration.md) for more information on upgrading from v1.x and
 using v1.x middleware with v2.x.
@@ -95,7 +98,9 @@ http message and the corresponding response to that message.  `ctx` is often use
 as the parameter name for the context object.
 
 ```js
-app.use(async (ctx, next) => { await next(); });
+app.use(async (ctx, next) => {
+  await next();
+});
 ```
 
 Koa provides a `Request` object as the `request` property of the `Context`.  
@@ -154,11 +159,11 @@ Learn more about the application object in the [Application API Reference](docs/
 
 ## Documentation
 
- - [Usage Guide](docs/guide.md)
- - [Error Handling](docs/error-handling.md)
- - [Koa for Express Users](docs/koa-vs-express.md)
- - [FAQ](docs/faq.md)
- - [API documentation](docs/api/index.md)
+- [Usage Guide](docs/guide.md)
+- [Error Handling](docs/error-handling.md)
+- [Koa for Express Users](docs/koa-vs-express.md)
+- [FAQ](docs/faq.md)
+- [API documentation](docs/api/index.md)
 
 ## Troubleshooting
 
@@ -167,13 +172,13 @@ the general Koa guide.
 
 ## Running tests
 
-```
-$ npm test
+```bash
+npm test
 ```
 
 ## Reporting vulnerabilities
 
-To report a security vulnerability, please do not open an issue, as this notifies attackers of the vulnerability. Instead, please email [dead_horse](mailto:heyiyu.deadhorse@gmail.com), [jonathanong](mailto:me@jongleberry.com), and [niftylettuce](mailto:niftylettuce@gmail.com) to disclose.
+To report a security vulnerability, please do not open an issue, as this notifies attackers of the vulnerability. Instead, please email [fengmk2](mailto:fengmk2+eggjs@gmail.com) to disclose.
 
 ## Authors
 
@@ -181,15 +186,15 @@ See [AUTHORS](AUTHORS).
 
 ## Community
 
- - [Badgeboard](https://koajs.github.io/badgeboard) and list of official modules
- - [Examples](https://github.com/koajs/examples)
- - [Middleware](https://github.com/koajs/koa/wiki) list
- - [Wiki](https://github.com/koajs/koa/wiki)
- - [Reddit Community](https://www.reddit.com/r/koajs)
- - [Mailing list](https://groups.google.com/forum/#!forum/koajs)
- - [中文文档 v1.x](https://github.com/guo-yu/koa-guide)
- - [中文文档 v2.x](https://github.com/demopark/koa-docs-Zh-CN)
- - __[#koajs]__ on freenode
+- [Badgeboard](https://koajs.github.io/badgeboard) and list of official modules
+- [Examples](https://github.com/koajs/examples)
+- [Middleware](https://github.com/koajs/koa/wiki) list
+- [Wiki](https://github.com/koajs/koa/wiki)
+- [Reddit Community](https://www.reddit.com/r/koajs)
+- [Mailing list](https://groups.google.com/forum/#!forum/koajs)
+- [中文文档 v1.x](https://github.com/guo-yu/koa-guide)
+- [中文文档 v2.x](https://github.com/demopark/koa-docs-Zh-CN)
+- __[#koajs]__ on freenode
 
 ## Job Board
 
@@ -234,7 +239,6 @@ Support us with a monthly donation and help us continue our activities.
 <a href="https://opencollective.com/koajs/backer/28/website" target="_blank"><img src="https://opencollective.com/koajs/backer/28/avatar.svg"></a>
 <a href="https://opencollective.com/koajs/backer/29/website" target="_blank"><img src="https://opencollective.com/koajs/backer/29/avatar.svg"></a>
 
-
 ## Sponsors
 
 Become a sponsor and get your logo on our README on Github with a link to your site.
@@ -272,18 +276,4 @@ Become a sponsor and get your logo on our README on Github with a link to your s
 
 # License
 
-  [MIT](https://github.com/koajs/koa/blob/master/LICENSE)
-
-[npm-image]: https://img.shields.io/npm/v/koa.svg?style=flat-square
-[npm-url]: https://www.npmjs.com/package/koa
-[travis-image]: https://img.shields.io/travis/koajs/koa/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/koajs/koa
-[coveralls-image]: https://img.shields.io/codecov/c/github/koajs/koa.svg?style=flat-square
-[coveralls-url]: https://codecov.io/github/koajs/koa?branch=master
-[backers-image]: https://opencollective.com/koajs/backers/badge.svg?style=flat-square
-[sponsors-image]: https://opencollective.com/koajs/sponsors/badge.svg?style=flat-square
-[gitter-image]: https://img.shields.io/gitter/room/koajs/koa.svg?style=flat-square
-[gitter-url]: https://gitter.im/koajs/koa?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-[#koajs]: https://webchat.freenode.net/?channels=#koajs
-[pr-welcoming-image]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
-[pr-welcoming-url]: https://github.com/koajs/koa/pull/new
+[MIT](https://github.com/eggjs/koa/blob/master/LICENSE)
