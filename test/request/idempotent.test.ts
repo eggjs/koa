@@ -1,14 +1,11 @@
-
-'use strict';
-
-const assert = require('assert');
-const request = require('../../test-helpers/context').request;
+import assert from 'node:assert';
+import { request } from '../../test-helpers/context';
 
 describe('ctx.idempotent', () => {
   describe('when the request method is idempotent', () => {
     it('should return true', () => {
       [ 'GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE' ].forEach(check);
-      function check(method){
+      function check(method: string) {
         const req = request();
         req.method = method;
         assert.strictEqual(req.idempotent, true);

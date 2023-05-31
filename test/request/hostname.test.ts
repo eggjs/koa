@@ -1,8 +1,5 @@
-
-'use strict';
-
-const request = require('../../test-helpers/context').request;
-const assert = require('assert');
+import assert from 'node:assert';
+import { request } from '../../test-helpers/context';
 
 describe('req.hostname', () => {
   it('should return hostname void of port', () => {

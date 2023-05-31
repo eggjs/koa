@@ -1,9 +1,6 @@
-
-'use strict';
-
-const request = require('../../test-helpers/context').request;
-const assert = require('assert');
-const util = require('util');
+import assert from 'node:assert';
+import util from 'node:util';
+import { request } from '../../test-helpers/context';
 
 describe('req.inspect()', () => {
   describe('with no request.req present', () => {

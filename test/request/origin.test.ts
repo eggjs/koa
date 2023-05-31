@@ -1,9 +1,6 @@
-
-'use strict';
-
-const assert = require('assert');
-const Stream = require('stream');
-const context = require('../../test-helpers/context');
+import Stream from 'node:stream';
+import assert from 'node:assert';
+import context from '../../test-helpers/context';
 
 describe('ctx.origin', () => {
   it('should return the origin of url', () => {

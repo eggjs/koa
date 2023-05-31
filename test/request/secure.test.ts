@@ -1,8 +1,5 @@
-
-'use strict';
-
-const assert = require('assert');
-const request = require('../../test-helpers/context').request;
+import assert from 'node:assert';
+import { request } from '../../test-helpers/context';
 
 describe('req.secure', () => {
   it('should return true when encrypted', () => {

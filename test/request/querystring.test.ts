@@ -1,9 +1,6 @@
-
-'use strict';
-
-const assert = require('assert');
-const context = require('../../test-helpers/context');
-const parseurl = require('parseurl');
+import assert from 'node:assert';
+import parseurl from 'parseurl';
+import context from '../../test-helpers/context';
 
 describe('ctx.querystring', () => {
   it('should return the querystring', () => {

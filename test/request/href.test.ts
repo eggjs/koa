@@ -1,11 +1,8 @@
-
-'use strict';
-
-const assert = require('assert');
-const Stream = require('stream');
-const http = require('http');
-const Koa = require('../../');
-const context = require('../../test-helpers/context');
+import assert from 'node:assert';
+import Stream from 'node:stream';
+import http from 'node:http';
+import Koa from '../../';
+import context from '../../test-helpers/context';
 
 describe('ctx.href', () => {
   it('should return the full request url', () => {
@@ -30,8 +27,8 @@ describe('ctx.href', () => {
     app.use(ctx => {
       ctx.body = ctx.href;
     });
-    app.listen(function(){
-      const address = this.address();
+    const server = app.listen(() => {
+      const address = server.address();
       http.get({
         host: 'localhost',
         path: 'http://example.com/foo',
@@ -40,7 +37,9 @@ describe('ctx.href', () => {
         assert.strictEqual(res.statusCode, 200);
         let buf = '';
         res.setEncoding('utf8');
-        res.on('data', s => buf += s);
+        res.on('data', s => {
+          buf += s;
+        });
         res.on('end', () => {
           assert.strictEqual(buf, 'http://example.com/foo');
           done();

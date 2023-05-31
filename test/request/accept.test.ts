@@ -1,6 +1,6 @@
-const assert = require('node:assert');
-const Accept = require('accepts');
-const context = require('../../test-helpers/context');
+import assert from 'node:assert';
+import Accept from 'accepts';
+import context from '../../test-helpers/context';
 
 describe('ctx.accept', () => {
   it('should return an Accept instance', () => {

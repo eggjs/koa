@@ -1,8 +1,5 @@
-
-'use strict';
-
-const context = require('../../test-helpers/context');
-const assert = require('assert');
+import assert from 'node:assert';
+import context from '../../test-helpers/context';
 
 describe('ctx.is(type)', () => {
   it('should ignore params', () => {

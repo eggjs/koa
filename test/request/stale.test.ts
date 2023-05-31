@@ -1,8 +1,5 @@
-
-'use strict';
-
-const assert = require('assert');
-const context = require('../../test-helpers/context');
+import assert from 'node:assert';
+import context from '../../test-helpers/context';
 
 describe('req.stale', () => {
   it('should be the inverse of req.fresh', () => {

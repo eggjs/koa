@@ -1,5 +1,5 @@
-const assert = require('node:assert');
-const request = require('../../test-helpers/context').request;
+import assert from 'node:assert';
+import { request } from '../../test-helpers/context';
 
 describe('req.charset', () => {
   describe('with no content-type present', () => {

@@ -1,5 +1,5 @@
-const assert = require('node:assert');
-const context = require('../../test-helpers/context');
+import assert from 'node:assert';
+import context from '../../test-helpers/context';
 
 describe('ctx.accepts(types)', () => {
   describe('with no arguments', () => {
