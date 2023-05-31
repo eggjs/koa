@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import Stream from 'node:stream';
 import http from 'node:http';
 import Koa from '../../';
-import context from '../../test-helpers/context';
+import context from '../test-helpers/context';
 
 describe('ctx.href', () => {
   it('should return the full request url', () => {

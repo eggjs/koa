@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { request } from '../../test-helpers/context';
+import { request } from '../test-helpers/context';
 
 describe('req.ips', () => {
   describe('when X-Forwarded-For is present', () => {

@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import context from '../../test-helpers/context';
+import context from '../test-helpers/context';
 
 describe('ctx.acceptsEncodings()', () => {
   describe('with no arguments', () => {

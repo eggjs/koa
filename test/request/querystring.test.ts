@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import parseurl from 'parseurl';
-import context from '../../test-helpers/context';
+import context from '../test-helpers/context';
 
 describe('ctx.querystring', () => {
   it('should return the querystring', () => {

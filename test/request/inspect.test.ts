@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import util from 'node:util';
-import { request } from '../../test-helpers/context';
+import { request } from '../test-helpers/context';
 
 describe('req.inspect()', () => {
   describe('with no request.req present', () => {

@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import Stream from 'node:stream';
 import Koa from '../..';
-import { request as Request } from '../../test-helpers/context';
+import { request as Request } from '../test-helpers/context';
 
 describe('req.ip', () => {
   describe('with req.ips present', () => {
