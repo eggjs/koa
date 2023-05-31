@@ -1,0 +1,60 @@
+
+const assert = require('node:assert');
+const ExternError = require('node:vm').runInNewContext('Error');
+const mm = require('mm');
+const Koa = require('../..');
+
+describe('app.onerror(err)', () => {
+  afterEach(mm.restore);
+
+  it('should throw an error if a non-error is given', () => {
+    const app = new Koa();
+
+    assert.throws(() => {
+      app.onerror('foo');
+    }, TypeError, 'non-error thrown: foo');
+  });
+
+  it('should accept errors coming from other scopes', () => {
+    const app = new Koa();
+    const error = Object.assign(new ExternError('boom'), {
+      status: 418,
+      expose: true,
+    });
+
+    assert.doesNotThrow(() => app.onerror(error));
+  });
+
+  it('should do nothing if status is 404', () => {
+    const app = new Koa();
+    const err = new Error();
+
+    err.status = 404;
+
+    mm.spy(console, 'error');
+    app.onerror(err);
+    assert.strictEqual(console.error.called, undefined);
+  });
+
+  it('should do nothing if .silent', () => {
+    const app = new Koa();
+    app.silent = true;
+    const err = new Error();
+
+    mm.spy(console, 'error');
+    app.onerror(err);
+    assert.strictEqual(console.error.called, undefined);
+  });
+
+  it('should log the error to stderr', () => {
+    const app = new Koa();
+    app.env = 'dev';
+
+    const err = new Error();
+    err.stack = 'Foo';
+
+    mm.spy(console, 'error');
+    app.onerror(err);
+    assert.strictEqual(console.error.called, 1);
+  });
+});
