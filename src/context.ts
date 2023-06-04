@@ -6,16 +6,9 @@ import delegate from 'delegates';
 import statuses from 'statuses';
 import Cookies from 'cookies';
 import type Application from './application';
-import Request from './request';
-import Response from './response';
-
-export type CustomError = Error & {
-  headers?: object;
-  status?: number;
-  statusCode?: number;
-  code?: string;
-  expose?: boolean;
-};
+import type Request from './request';
+import type Response from './response';
+import type { CustomError } from './types';
 
 export default class Context {
   app: Application;
@@ -32,8 +25,8 @@ export default class Context {
     this.req = req;
     this.res = res;
     this.state = {};
-    this.request = new Request(app, this, req, res);
-    this.response = new Response(app, this as any, req, res);
+    this.request = new app.RequestClass(app, this, req, res);
+    this.response = new app.ResponseClass(app, this as any, req, res);
     this.request.response = this.response;
     this.response.request = this.request;
     this.originalUrl = req.url!;
@@ -256,5 +249,5 @@ export type ContextDelegation = Context & Pick<Request, 'acceptsLanguages' | 'ac
 & Pick<Response, 'attachment' | 'redirect' | 'remove' | 'vary' | 'has' | 'set' | 'append' | 'flushHeaders'
 | 'status' | 'message' | 'body' | 'length' | 'type' | 'lastModified' | 'etag' | 'headerSent' | 'writable'>
 & {
-  // [key: string]: any;
+  [key: string]: any;
 };

@@ -13,17 +13,19 @@ import only from 'only';
 import convert from 'koa-convert';
 import depd from 'depd';
 import Context from './context';
-import type { ContextDelegation, CustomError } from './context';
 import Request from './request';
 import Response from './response';
+import type { ContextDelegation } from './context';
+import type { CustomError, ProtoImplClass, AnyProto } from './types';
 
 const debug = debuglog('koa:application');
 const deprecate = depd('koa');
 
 export type Next = () => Promise<void>;
-export type MiddlewareFunc = (ctx: ContextDelegation, next?: Next) => Promise<void>;
+export type MiddlewareFunc = (ctx: ContextDelegation, next?: Next) => Promise<void> | void;
 
-export type { ContextDelegation, CustomError } from './context';
+export type { ContextDelegation } from './context';
+export type { CustomError, ProtoImplClass } from './types';
 
 /**
  * Make HttpError available to consumers of the library so that consumers don't
@@ -43,11 +45,14 @@ export default class Application extends Emitter {
   env: string;
   keys?: string[];
   middleware: MiddlewareFunc[];
-  context = Context.prototype;
-  request = Request.prototype;
-  response = Response.prototype;
   ctxStorage: AsyncLocalStorage<ContextDelegation>;
   silent: boolean;
+  ContextClass: ProtoImplClass<Context>;
+  context: AnyProto;
+  RequestClass: ProtoImplClass<Request>;
+  request: AnyProto;
+  ResponseClass: ProtoImplClass<Response>;
+  response: AnyProto;
 
   /**
    * Initialize a new `Application`.
@@ -80,6 +85,12 @@ export default class Application extends Emitter {
     this.middleware = [];
     this.ctxStorage = new AsyncLocalStorage();
     this.silent = false;
+    this.ContextClass = class ApplicationContext extends Context {};
+    this.context = this.ContextClass.prototype;
+    this.RequestClass = class ApplicationRequest extends Request {};
+    this.request = this.RequestClass.prototype;
+    this.ResponseClass = class ApplicationResponse extends Response {};
+    this.response = this.ResponseClass.prototype;
   }
 
   /**
@@ -182,7 +193,7 @@ export default class Application extends Emitter {
    * @private
    */
   createContext(req: IncomingMessage, res: ServerResponse) {
-    const context = new Context(this, req, res);
+    const context = new this.ContextClass(this, req, res);
     return context as ContextDelegation;
   }
 
