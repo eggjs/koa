@@ -29,7 +29,7 @@ npm install @eggjs/koa
 
 ## Hello Koa
 
-```js
+```ts
 const Koa = require('@eggjs/koa');
 const app = new Koa();
 
@@ -56,9 +56,9 @@ Koa is a middleware framework that can take two different kinds of functions as 
 
 Here is an example of logger middleware with each of the different functions:
 
-### ___async___ functions (node v7.6+)
+### ___async___ functions
 
-```js
+```ts
 app.use(async (ctx, next) => {
   const start = Date.now();
   await next();
@@ -69,7 +69,7 @@ app.use(async (ctx, next) => {
 
 ### Common function
 
-```js
+```ts
 // Middleware normally takes two parameters (ctx, next), ctx is the context for one request,
 // next is a function that is invoked to execute the downstream middleware. It returns a Promise with a then function for running code after completion.
 
@@ -81,15 +81,6 @@ app.use((ctx, next) => {
   });
 });
 ```
-
-### Koa v1.x Middleware Signature
-
-The middleware signature changed between v1.x and v2.x.  The older signature is deprecated.
-
-__Old signature middleware support will be removed in v3__
-
-Please see the [Migration Guide](docs/migration.md) for more information on upgrading from v1.x and
-using v1.x middleware with v2.x.
 
 ## Context, Request and Response
 
@@ -110,7 +101,7 @@ from the node `http` module.
 
 Here is an example of checking that a requesting client supports xml.
 
-```js
+```ts
 app.use(async (ctx, next) => {
   ctx.assert(ctx.request.accepts('xml'), 406);
   // equivalent to:
@@ -132,7 +123,7 @@ accessed as the `res` property on the `Context`.
 
 Here is an example using Koa's `Response` object to stream a file as the response body.
 
-```js
+```ts
 app.use(async (ctx, next) => {
   await next();
   ctx.response.type = 'xml';
