@@ -1,4 +1,5 @@
 import net from 'node:net';
+import type { Socket } from 'node:net';
 import { format as stringify } from 'node:url';
 import qs from 'node:querystring';
 import util from 'node:util';
@@ -288,7 +289,7 @@ export default class Request {
    * Return the request socket.
    */
   get socket() {
-    return this.req.socket;
+    return this.req.socket as (Socket & { encrypted: boolean; });
   }
 
   /**
