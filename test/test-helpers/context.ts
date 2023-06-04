@@ -11,6 +11,9 @@ export default function context(req?: any, res?: any, app?: Koa) {
   res.getHeader = (k: string) => {
     return res._headers[k.toLowerCase()];
   };
+  res.hasHeader = (k: string) => {
+    return k.toLowerCase() in res._headers;
+  };
   res.setHeader = (k: string, v: string | string[]) => {
     res._headers[k.toLowerCase()] = v;
   };

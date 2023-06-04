@@ -42,7 +42,7 @@ export default class Response {
    * Return response header.
    */
   get header() {
-    return this.res.getHeaders();
+    return this.res.getHeaders() || {};
   }
 
   /**

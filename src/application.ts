@@ -10,8 +10,6 @@ import onFinished from 'on-finished';
 import statuses from 'statuses';
 import compose from 'koa-compose';
 import only from 'only';
-import convert from 'koa-convert';
-import depd from 'depd';
 import { HttpError } from 'http-errors';
 import Context from './context';
 import Request from './request';
@@ -20,7 +18,6 @@ import type { ContextDelegation } from './context';
 import type { CustomError, ProtoImplClass, AnyProto } from './types';
 
 const debug = debuglog('koa:application');
-const deprecate = depd('koa');
 
 export type Next = () => Promise<void>;
 export type MiddlewareFunc = (ctx: ContextDelegation, next: Next) => Promise<void> | void;
@@ -136,12 +133,11 @@ export default class Application extends Emitter {
   use(fn: MiddlewareFunc) {
     if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
     if (isGeneratorFunction(fn)) {
-      deprecate('Support for generators will be removed in v3. ' +
-                'See the documentation for examples of how to convert old middleware ' +
-                'https://github.com/koajs/koa/blob/master/docs/migration.md');
-      fn = convert(fn);
+      throw new TypeError('Support for generators was removed. ' +
+        'See the documentation for examples of how to convert old middleware ' +
+        'https://github.com/koajs/koa/blob/master/docs/migration.md');
     }
-    debug('use %s', (fn as any)._name || fn.name || '-');
+    debug('use %s #%d', (fn as any)._name || fn.name || '-', this.middleware.length);
     this.middleware.push(fn);
     return this;
   }

@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import request from 'supertest';
-import Koa from '../..';
+import Koa from '../../index';
 
 describe('app.use(fn)', () => {
   it('should compose middleware', async () => {
@@ -38,7 +38,6 @@ describe('app.use(fn)', () => {
   });
 
   it('should compose mixed middleware', async () => {
-    process.once('deprecation', () => {}); // silence deprecation message
     const app = new Koa();
     const calls: number[] = [];
 
@@ -82,21 +81,21 @@ describe('app.use(fn)', () => {
       .expect(404);
   });
 
-  it('should accept both generator and function middleware', () => {
-    // process.once('deprecation', () => {
-    //   // ignore
-    // }); // silence deprecation message
+  it('should throw error on generator middleware', () => {
     const app = new Koa();
 
     app.use((_ctx, next) => next());
-    app.use((function* (ctx) {
-      ctx.body = 'generator';
-    }) as any);
-
-    return request(app.callback())
-      .get('/')
-      .expect(200)
-      .expect('generator');
+    assert.throws(() => {
+      app.use((function* generatorMiddileware(next) {
+        console.log('pre generator');
+        yield next;
+        // this.body = 'generator';
+        console.log('post generator');
+      }) as any);
+    }, (err: TypeError) => {
+      assert.match(err.message, /Support for generators was removed/);
+      return true;
+    });
   });
 
   it('should throw error for non-function', () => {
@@ -107,15 +106,12 @@ describe('app.use(fn)', () => {
     });
   });
 
-  it('should output deprecation message for generator functions', done => {
-    process.once('deprecation', err => {
-      assert.match(err.message, /Support for generators will be removed/);
-      done();
-    });
-
+  it('should remove generator functions support', () => {
     const app = new Koa();
-    app.use((function* () {
-      // empty
-    }) as any);
+    assert.throws(() => {
+      app.use((function* () {
+        // empty
+      }) as any);
+    }, /Support for generators was removed/);
   });
 });
