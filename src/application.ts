@@ -22,7 +22,7 @@ const debug = debuglog('koa:application');
 export type Next = () => Promise<void>;
 export type MiddlewareFunc = (ctx: ContextDelegation, next: Next) => Promise<void> | void;
 
-export type { ContextDelegation } from './context';
+export type { ContextDelegation as Context } from './context';
 export type { CustomError, ProtoImplClass } from './types';
 
 /**
