@@ -1,148 +1,127 @@
-const URL = require('url').URL;
-const net = require('net');
-const accepts = require('accepts');
-const contentType = require('content-type');
-const stringify = require('url').format;
-const parse = require('parseurl');
-const qs = require('querystring');
-const typeis = require('type-is');
-const fresh = require('fresh');
-const only = require('only');
-const util = require('util');
+import net from 'node:net';
+import { format as stringify } from 'node:url';
+import qs from 'node:querystring';
+import util from 'node:util';
+import type { ParsedUrlQuery } from 'node:querystring';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+import accepts from 'accepts';
+import contentType from 'content-type';
+import parse from 'parseurl';
+import typeis from 'type-is';
+import fresh from 'fresh';
+import only from 'only';
+import type Application from './application';
+import type Context from './context';
+import type Response from './response';
 
-const IP = Symbol('context#ip');
+export default class Request {
+  app: Application;
+  req: IncomingMessage;
+  res: ServerResponse;
+  ctx: Context;
+  response: Response;
+  originalUrl: string;
 
-/**
- * Prototype.
- */
-
-module.exports = {
+  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
+    this.app = app;
+    this.req = req;
+    this.res = res;
+    this.ctx = ctx;
+    this.originalUrl = req.url!;
+  }
 
   /**
    * Return request header.
-   *
-   * @return {Object}
-   * @api public
    */
 
   get header() {
     return this.req.headers;
-  },
+  }
 
   /**
    * Set request header.
-   *
-   * @api public
    */
 
   set header(val) {
     this.req.headers = val;
-  },
+  }
 
   /**
    * Return request header, alias as request.header
-   *
-   * @return {Object}
-   * @api public
    */
 
   get headers() {
     return this.req.headers;
-  },
+  }
 
   /**
    * Set request header, alias as request.header
-   *
-   * @api public
    */
 
   set headers(val) {
     this.req.headers = val;
-  },
+  }
 
   /**
    * Get request URL.
-   *
-   * @return {String}
-   * @api public
    */
 
   get url() {
-    return this.req.url;
-  },
+    return this.req.url!;
+  }
 
   /**
    * Set request URL.
-   *
-   * @api public
    */
 
   set url(val) {
     this.req.url = val;
-  },
+  }
 
   /**
    * Get origin of URL.
-   *
-   * @return {String}
-   * @api public
    */
 
   get origin() {
     return `${this.protocol}://${this.host}`;
-  },
+  }
 
   /**
    * Get full request URL.
-   *
-   * @return {String}
-   * @api public
    */
 
   get href() {
     // support: `GET http://example.com/foo`
     if (/^https?:\/\//i.test(this.originalUrl)) return this.originalUrl;
     return this.origin + this.originalUrl;
-  },
+  }
 
   /**
    * Get request method.
-   *
-   * @return {String}
-   * @api public
    */
 
   get method() {
-    return this.req.method;
-  },
+    return this.req.method!;
+  }
 
   /**
    * Set request method.
-   *
-   * @param {String} val
-   * @api public
    */
 
   set method(val) {
     this.req.method = val;
-  },
+  }
 
   /**
    * Get request pathname.
-   *
-   * @return {String}
-   * @api public
    */
 
   get path() {
-    return parse(this.req).pathname;
-  },
+    return parse(this.req).pathname as string;
+  }
 
   /**
    * Set pathname, retaining the query string when present.
-   *
-   * @param {String} path
-   * @api public
    */
 
   set path(path) {
@@ -153,49 +132,44 @@ module.exports = {
     url.path = null;
 
     this.url = stringify(url);
-  },
+  }
+
+  #parsedUrlQueryCache: Record<string, ParsedUrlQuery>;
 
   /**
    * Get parsed query string.
-   *
-   * @return {Object}
-   * @api public
    */
-
   get query() {
     const str = this.querystring;
-    const c = this._querycache = this._querycache || {};
-    return c[str] || (c[str] = qs.parse(str));
-  },
+    if (!this.#parsedUrlQueryCache) {
+      this.#parsedUrlQueryCache = {};
+    }
+    let parsedUrlQuery = this.#parsedUrlQueryCache[str];
+    if (!parsedUrlQuery) {
+      parsedUrlQuery = this.#parsedUrlQueryCache[str] = qs.parse(str);
+    }
+    return parsedUrlQuery;
+  }
 
   /**
    * Set query string as an object.
-   *
-   * @param {Object} obj
-   * @api public
    */
 
   set query(obj) {
     this.querystring = qs.stringify(obj);
-  },
+  }
 
   /**
    * Get query string.
-   *
-   * @return {String}
-   * @api public
    */
 
   get querystring() {
     if (!this.req) return '';
     return parse(this.req).query || '';
-  },
+  }
 
   /**
    * Set query string.
-   *
-   * @param {String} str
-   * @api public
    */
 
   set querystring(str) {
@@ -204,180 +178,139 @@ module.exports = {
 
     url.search = str;
     url.path = null;
-
     this.url = stringify(url);
-  },
+  }
 
   /**
    * Get the search string. Same as the query string
    * except it includes the leading ?.
-   *
-   * @return {String}
-   * @api public
    */
 
   get search() {
     if (!this.querystring) return '';
     return `?${this.querystring}`;
-  },
+  }
 
   /**
    * Set the search string. Same as
    * request.querystring= but included for ubiquity.
-   *
-   * @param {String} str
-   * @api public
    */
 
   set search(str) {
     this.querystring = str;
-  },
+  }
 
   /**
    * Parse the "Host" header field host
    * and support X-Forwarded-Host when a
    * proxy is enabled.
-   *
-   * @return {String} hostname:port
-   * @api public
+   * return `hostname:port` format
    */
-
   get host() {
     const proxy = this.app.proxy;
-    let host = proxy && this.get('X-Forwarded-Host');
+    let host = proxy ? this.get<string>('X-Forwarded-Host') : '';
     if (!host) {
       if (this.req.httpVersionMajor >= 2) host = this.get(':authority');
       if (!host) host = this.get('Host');
     }
     if (!host) return '';
     return host.split(/\s*,\s*/, 1)[0];
-  },
+  }
 
   /**
    * Parse the "Host" header field hostname
    * and support X-Forwarded-Host when a
    * proxy is enabled.
-   *
-   * @return {String} hostname
-   * @api public
    */
-
   get hostname() {
     const host = this.host;
     if (!host) return '';
     if (host[0] === '[') return this.URL.hostname || ''; // IPv6
     return host.split(':', 1)[0];
-  },
+  }
+
+  #memoizedURL: URL;  
 
   /**
    * Get WHATWG parsed URL.
    * Lazily memoized.
-   *
-   * @return {URL|Object}
-   * @api public
    */
-
   get URL() {
-    /* istanbul ignore else */
-    if (!this.memoizedURL) {
+    if (!this.#memoizedURL) {
       const originalUrl = this.originalUrl || ''; // avoid undefined in template string
       try {
-        this.memoizedURL = new URL(`${this.origin}${originalUrl}`);
-      } catch (err) {
-        this.memoizedURL = Object.create(null);
+        this.#memoizedURL = new URL(`${this.origin}${originalUrl}`);
+      } catch {
+        this.#memoizedURL = Object.create(null);
       }
     }
-    return this.memoizedURL;
-  },
+    return this.#memoizedURL;
+  }
 
   /**
    * Check if the request is fresh, aka
    * Last-Modified and/or the ETag
    * still match.
-   *
-   * @return {Boolean}
-   * @api public
    */
-
   get fresh() {
     const method = this.method;
-    const s = this.ctx.status;
+    const status = this.response.status;
 
     // GET or HEAD for weak freshness validation only
     if (method !== 'GET' && method !== 'HEAD') return false;
 
     // 2xx or 304 as per rfc2616 14.26
-    if ((s >= 200 && s < 300) || s === 304) {
+    if ((status >= 200 && status < 300) || status === 304) {
       return fresh(this.header, this.response.header);
     }
 
     return false;
-  },
+  }
 
   /**
    * Check if the request is stale, aka
    * "Last-Modified" and / or the "ETag" for the
    * resource has changed.
-   *
-   * @return {Boolean}
-   * @api public
    */
-
   get stale() {
     return !this.fresh;
-  },
+  }
 
   /**
    * Check if the request is idempotent.
-   *
-   * @return {Boolean}
-   * @api public
    */
-
   get idempotent() {
     const methods = [ 'GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE' ];
-    return !!~methods.indexOf(this.method);
-  },
+    return methods.includes(this.method);
+  }
 
   /**
    * Return the request socket.
-   *
-   * @return {Connection}
-   * @api public
    */
-
   get socket() {
     return this.req.socket;
-  },
+  }
 
   /**
    * Get the charset when present or undefined.
-   *
-   * @return {String}
-   * @api public
    */
-
   get charset() {
     try {
       const { parameters } = contentType.parse(this.req);
       return parameters.charset || '';
-    } catch (e) {
+    } catch {
       return '';
     }
-  },
+  }
 
   /**
    * Return parsed Content-Length when present.
-   *
-   * @return {Number}
-   * @api public
    */
-
   get length() {
-    const len = this.get('Content-Length');
+    const len = this.get<string>('Content-Length');
     if (len === '') return;
     return ~~len;
-  },
+  }
 
   /**
    * Return the protocol string "http" or "https"
@@ -386,30 +319,22 @@ module.exports = {
    * field will be trusted. If you're running behind
    * a reverse proxy that supplies https for you this
    * may be enabled.
-   *
-   * @return {String}
-   * @api public
    */
-
   get protocol() {
-    if (this.socket.encrypted) return 'https';
+    if (this.socket['encrypted']) return 'https';
     if (!this.app.proxy) return 'http';
-    const proto = this.get('X-Forwarded-Proto');
+    const proto = this.get<string>('X-Forwarded-Proto');
     return proto ? proto.split(/\s*,\s*/, 1)[0] : 'http';
-  },
+  }
 
   /**
    * Shorthand for:
    *
    *    this.protocol == 'https'
-   *
-   * @return {Boolean}
-   * @api public
    */
-
   get secure() {
     return this.protocol === 'https';
-  },
+  }
 
   /**
    * When `app.proxy` is `true`, parse
@@ -418,14 +343,10 @@ module.exports = {
    * For example if the value was "client, proxy1, proxy2"
    * you would receive the array `["client", "proxy1", "proxy2"]`
    * where "proxy2" is the furthest down-stream.
-   *
-   * @return {Array}
-   * @api public
    */
-
   get ips() {
     const proxy = this.app.proxy;
-    const val = this.get(this.app.proxyIpHeader);
+    const val = this.get<string>(this.app.proxyIpHeader);
     let ips = proxy && val
       ? val.split(/\s*,\s*/)
       : [];
@@ -433,27 +354,24 @@ module.exports = {
       ips = ips.slice(-this.app.maxIpsCount);
     }
     return ips;
-  },
+  }
 
+  #ip: string;
   /**
    * Return request's remote address
    * When `app.proxy` is `true`, parse
    * the "X-Forwarded-For" ip address list and return the first one
-   *
-   * @return {String}
-   * @api public
    */
-
   get ip() {
-    if (!this[IP]) {
-      this[IP] = this.ips[0] || this.socket.remoteAddress || '';
+    if (!this.#ip) {
+      this.#ip = this.ips[0] || this.socket.remoteAddress || '';
     }
-    return this[IP];
-  },
+    return this.#ip;
+  }
 
-  set ip(_ip) {
-    this[IP] = _ip;
-  },
+  set ip(ip: string) {
+    this.#ip = ip;
+  }
 
   /**
    * Return subdomains as an array.
@@ -466,11 +384,7 @@ module.exports = {
    * If `app.subdomainOffset` is not set, this.subdomains is
    * `["ferrets", "tobi"]`.
    * If `app.subdomainOffset` is 3, this.subdomains is `["tobi"]`.
-   *
-   * @return {Array}
-   * @api public
    */
-
   get subdomains() {
     const offset = this.app.subdomainOffset;
     const hostname = this.hostname;
@@ -479,30 +393,23 @@ module.exports = {
       .split('.')
       .reverse()
       .slice(offset);
-  },
+  }
 
+  #accept: any;
   /**
    * Get accept object.
    * Lazily memoized.
-   *
-   * @return {Object}
-   * @api private
    */
-
   get accept() {
-    return this._accept || (this._accept = accepts(this.req));
-  },
+    return this.#accept || (this.#accept = accepts(this.req));
+  }
 
   /**
    * Set accept object.
-   *
-   * @param {Object}
-   * @api private
    */
-
   set accept(obj) {
-    this._accept = obj;
-  },
+    this.#accept = obj;
+  }
 
   /**
    * Check if the given `type(s)` is acceptable, returning
@@ -539,15 +446,10 @@ module.exports = {
    *     this.accepts(['html', 'json']);
    *     this.accepts('html', 'json');
    *     // => "json"
-   *
-   * @param {String|Array} type(s)...
-   * @return {String|Array|false}
-   * @api public
    */
-
-  accepts(...args) {
+  accepts(...args: string[]): string | string[] | false {
     return this.accept.types(...args);
-  },
+  }
 
   /**
    * Return accepted encodings or best fit based on `encodings`.
@@ -556,15 +458,10 @@ module.exports = {
    * an array sorted by quality is returned:
    *
    *     ['gzip', 'deflate']
-   *
-   * @param {String|Array} encoding(s)...
-   * @return {String|Array}
-   * @api public
    */
-
-  acceptsEncodings(...args) {
+  acceptsEncodings(...args: string[]): string | string[] {
     return this.accept.encodings(...args);
-  },
+  }
 
   /**
    * Return accepted charsets or best fit based on `charsets`.
@@ -573,15 +470,10 @@ module.exports = {
    * an array sorted by quality is returned:
    *
    *     ['utf-8', 'utf-7', 'iso-8859-1']
-   *
-   * @param {String|Array} charset(s)...
-   * @return {String|Array}
-   * @api public
    */
-
-  acceptsCharsets(...args) {
+  acceptsCharsets(...args: string[]): string | string[] {
     return this.accept.charsets(...args);
-  },
+  }
 
   /**
    * Return accepted languages or best fit based on `langs`.
@@ -590,15 +482,10 @@ module.exports = {
    * an array sorted by quality is returned:
    *
    *     ['es', 'pt', 'en']
-   *
-   * @param {String|Array} lang(s)...
-   * @return {Array|String}
-   * @api public
    */
-
-  acceptsLanguages(...args) {
+  acceptsLanguages(...args: string[]): string | string[] {
     return this.accept.languages(...args);
-  },
+  }
 
   /**
    * Check if the incoming request contains the "Content-Type"
@@ -620,30 +507,20 @@ module.exports = {
    *     this.is('html', 'application/*'); // => 'application/json'
    *
    *     this.is('html'); // => false
-   *
-   * @param {String|String[]} [type]
-   * @param {String[]} [types]
-   * @return {String|false|null}
-   * @api public
    */
-
-  is(type, ...types) {
+  is(type: string | string[], ...types: string[]): string | false | null {
     return typeis(this.req, type, ...types);
-  },
+  }
 
   /**
    * Return the request mime type void of
    * parameters such as "charset".
-   *
-   * @return {String}
-   * @api public
    */
-
   get type() {
-    const type = this.get('Content-Type');
+    const type = this.get<string>('Content-Type');
     if (!type) return '';
     return type.split(';')[0];
-  },
+  }
 
   /**
    * Return request header.
@@ -661,59 +538,41 @@ module.exports = {
    *
    *     this.get('Something');
    *     // => ''
-   *
-   * @param {String} field
-   * @return {String}
-   * @api public
    */
-
-  get(field) {
+  get<T = string | string []>(field: string): T {
     const req = this.req;
     switch (field = field.toLowerCase()) {
       case 'referer':
       case 'referrer':
-        return req.headers.referrer || req.headers.referer || '';
+        return (req.headers.referrer || req.headers.referer || '') as T;
       default:
-        return req.headers[field] || '';
+        return (req.headers[field] || '') as T;
     }
-  },
+  }
 
   /**
    * Inspect implementation.
-   *
-   * @return {Object}
-   * @api public
    */
-
   inspect() {
     if (!this.req) return;
     return this.toJSON();
-  },
+  }
+
+  /**
+   * Custom inspection implementation for newer Node.js versions.
+   */
+  [util.inspect.custom]() {
+    return this.inspect();
+  }
 
   /**
    * Return JSON representation.
-   *
-   * @return {Object}
-   * @api public
    */
-
   toJSON() {
     return only(this, [
       'method',
       'url',
       'header',
     ]);
-  },
-};
-
-/**
- * Custom inspection implementation for newer Node.js versions.
- *
- * @return {Object}
- * @api public
- */
-
-/* istanbul ignore else */
-if (util.inspect.custom) {
-  module.exports[util.inspect.custom] = module.exports.inspect;
+  }
 }

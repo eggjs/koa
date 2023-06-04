@@ -1,130 +1,107 @@
-const contentDisposition = require('content-disposition');
-const getType = require('cache-content-type');
-const onFinish = require('on-finished');
-const escape = require('escape-html');
-const typeis = require('type-is').is;
-const statuses = require('statuses');
-const destroy = require('destroy');
-const assert = require('assert');
-const extname = require('path').extname;
-const vary = require('vary');
-const only = require('only');
-const util = require('util');
-const encodeUrl = require('encodeurl');
-const Stream = require('stream');
+import assert from 'node:assert';
+import { extname } from 'node:path';
+import util from 'node:util';
+import Stream from 'node:stream';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+import contentDisposition from 'content-disposition';
+import getType from 'cache-content-type';
+import onFinish from 'on-finished';
+import escape from 'escape-html';
+import { is as typeis } from 'type-is';
+import statuses from 'statuses';
+import destroy from 'destroy';
+import vary from 'vary';
+import only from 'only';
+import encodeUrl from 'encodeurl';
+import type Application from './application';
+import type { ContextDelegation } from './context';
+import type Request from './request';
 
-/**
- * Prototype.
- */
+export default class Response {
+  app: Application;
+  req: IncomingMessage;
+  res: ServerResponse;
+  ctx: ContextDelegation;
+  request: Request;
 
-module.exports = {
+  constructor(app: Application, ctx: ContextDelegation, req: IncomingMessage, res: ServerResponse) {
+    this.app = app;
+    this.req = req;
+    this.res = res;
+    this.ctx = ctx;
+  }
 
   /**
    * Return the request socket.
-   *
-   * @return {Connection}
-   * @api public
    */
-
   get socket() {
     return this.res.socket;
-  },
+  }
 
   /**
    * Return response header.
-   *
-   * @return {Object}
-   * @api public
    */
-
   get header() {
-    const { res } = this;
-    return typeof res.getHeaders === 'function'
-      ? res.getHeaders()
-      : res._headers || {}; // Node < 7.7
-  },
+    return this.res.getHeaders();
+  }
 
   /**
    * Return response header, alias as response.header
-   *
-   * @return {Object}
-   * @api public
    */
-
   get headers() {
     return this.header;
-  },
+  }
+
+  _explicitStatus: boolean;
 
   /**
    * Get response status code.
-   *
-   * @return {Number}
-   * @api public
    */
-
   get status() {
     return this.res.statusCode;
-  },
+  }
 
   /**
    * Set response status code.
-   *
-   * @param {Number} code
-   * @api public
    */
-
-  set status(code) {
+  set status(code: number) {
     if (this.headerSent) return;
-
     assert(Number.isInteger(code), 'status code must be a number');
     assert(code >= 100 && code <= 999, `invalid status code: ${code}`);
     this._explicitStatus = true;
     this.res.statusCode = code;
     if (this.req.httpVersionMajor < 2) this.res.statusMessage = statuses[code];
     if (this.body && statuses.empty[code]) this.body = null;
-  },
+  }
 
   /**
    * Get response status message
-   *
-   * @return {String}
-   * @api public
    */
-
-  get message() {
+  get message(): string {
     return this.res.statusMessage || statuses[this.status];
-  },
+  }
 
   /**
    * Set response status message
-   *
-   * @param {String} msg
-   * @api public
    */
-
-  set message(msg) {
+  set message(msg: string) {
     this.res.statusMessage = msg;
-  },
+  }
+
+  _body: any;
+  _explicitNullBody: boolean;
 
   /**
    * Get response body.
-   *
-   * @return {Mixed}
-   * @api public
    */
-
   get body() {
     return this._body;
-  },
+  }
 
   /**
    * Set response body.
-   *
-   * @param {String|Buffer|Object|Stream} val
-   * @api public
    */
-
-  set body(val) {
+  set body(val: string | Buffer | object | Stream | null | undefined) {
     const original = this._body;
     this._body = val;
 
@@ -174,28 +151,21 @@ module.exports = {
     // json
     this.remove('Content-Length');
     this.type = 'json';
-  },
+  }
 
   /**
    * Set Content-Length field to `n`.
-   *
-   * @param {Number} n
-   * @api public
    */
-
-  set length(n) {
+  set length(n: number | string | undefined) {
+    if (n === undefined) return;
     if (!this.has('Transfer-Encoding')) {
       this.set('Content-Length', n);
     }
-  },
+  }
 
   /**
    * Return parsed response Content-Length when present.
-   *
-   * @return {Number}
-   * @api public
    */
-
   get length() {
     if (this.has('Content-Length')) {
       return parseInt(this.get('Content-Length'), 10) || 0;
@@ -206,31 +176,22 @@ module.exports = {
     if (typeof body === 'string') return Buffer.byteLength(body);
     if (Buffer.isBuffer(body)) return body.length;
     return Buffer.byteLength(JSON.stringify(body));
-  },
+  }
 
   /**
    * Check if a header has been written to the socket.
-   *
-   * @return {Boolean}
-   * @api public
    */
-
   get headerSent() {
     return this.res.headersSent;
-  },
+  }
 
   /**
    * Vary on `field`.
-   *
-   * @param {String} field
-   * @api public
    */
-
-  vary(field) {
+  vary(field: string) {
     if (this.headerSent) return;
-
     vary(this.res, field);
-  },
+  }
 
   /**
    * Perform a 302 redirect to `url`.
@@ -245,15 +206,10 @@ module.exports = {
    *    this.redirect('back', '/index.html');
    *    this.redirect('/login');
    *    this.redirect('http://google.com');
-   *
-   * @param {String} url
-   * @param {String} [alt]
-   * @api public
    */
-
-  redirect(url, alt) {
+  redirect(url: string, alt?: string) {
     // location
-    if (url === 'back') url = this.ctx.get('Referrer') || alt || '/';
+    if (url === 'back') url = this.ctx.get<string>('Referrer') || alt || '/';
     this.set('Location', encodeUrl(url));
 
     // status
@@ -270,19 +226,15 @@ module.exports = {
     // text
     this.type = 'text/plain; charset=utf-8';
     this.body = `Redirecting to ${url}.`;
-  },
+  }
 
   /**
    * Set Content-Disposition header to "attachment" with optional `filename`.
-   *
-   * @param {String} filename
-   * @api public
    */
-
-  attachment(filename, options) {
+  attachment(filename: string, options?: any) {
     if (filename) this.type = extname(filename);
     this.set('Content-Disposition', contentDisposition(filename, options));
-  },
+  }
 
   /**
    * Set Content-Type response header with `type` through `mime.lookup()`
@@ -295,46 +247,54 @@ module.exports = {
    *     this.type = 'json';
    *     this.type = 'application/json';
    *     this.type = 'png';
-   *
-   * @param {String} type
-   * @api public
    */
-
-  set type(type) {
+  set type(type: string) {
     type = getType(type);
     if (type) {
       this.set('Content-Type', type);
     } else {
       this.remove('Content-Type');
     }
-  },
+  }
+
+  /**
+   * Return the response mime type void of
+   * parameters such as "charset".
+   */
+  get type() {
+    const type = this.get<string>('Content-Type');
+    if (!type) return '';
+    return type.split(';', 1)[0];
+  }
+
+  /**
+   * Check whether the response is one of the listed types.
+   * Pretty much the same as `this.request.is()`.
+   */
+  is(type: string | string[], ...types: string[]): string | false {
+    return typeis(this.type, type, ...types);
+  }
 
   /**
    * Set the Last-Modified date using a string or a Date.
    *
    *     this.response.lastModified = new Date();
    *     this.response.lastModified = '2013-09-13';
-   *
-   * @param {String|Date} type
-   * @api public
    */
-
-  set lastModified(val) {
+  set lastModified(val: string | Date | undefined) {
     if (typeof val === 'string') val = new Date(val);
-    this.set('Last-Modified', val.toUTCString());
-  },
+    if (val) {
+      this.set('Last-Modified', val.toUTCString());
+    }
+  }
 
   /**
    * Get the Last-Modified date in Date form, if it exists.
-   *
-   * @return {Date}
-   * @api public
    */
-
-  get lastModified() {
-    const date = this.get('last-modified');
+  get lastModified(): Date | undefined {
+    const date = this.get<string>('last-modified');
     if (date) return new Date(date);
-  },
+  }
 
   /**
    * Set the ETag of a response.
@@ -343,54 +303,18 @@ module.exports = {
    *     this.response.etag = 'md5hashsum';
    *     this.response.etag = '"md5hashsum"';
    *     this.response.etag = 'W/"123456789"';
-   *
-   * @param {String} etag
-   * @api public
    */
-
-  set etag(val) {
+  set etag(val: string) {
     if (!/^(W\/)?"/.test(val)) val = `"${val}"`;
     this.set('ETag', val);
-  },
+  }
 
   /**
    * Get the ETag of a response.
-   *
-   * @return {String}
-   * @api public
    */
-
   get etag() {
     return this.get('ETag');
-  },
-
-  /**
-   * Return the response mime type void of
-   * parameters such as "charset".
-   *
-   * @return {String}
-   * @api public
-   */
-
-  get type() {
-    const type = this.get('Content-Type');
-    if (!type) return '';
-    return type.split(';', 1)[0];
-  },
-
-  /**
-   * Check whether the response is one of the listed types.
-   * Pretty much the same as `this.request.is()`.
-   *
-   * @param {String|String[]} [type]
-   * @param {String[]} [types]
-   * @return {String|false}
-   * @api public
-   */
-
-  is(type, ...types) {
-    return typeis(this.type, type, ...types);
-  },
+  }
 
   /**
    * Return response header.
@@ -402,15 +326,10 @@ module.exports = {
    *
    *     this.get('content-type');
    *     // => "text/plain"
-   *
-   * @param {String} field
-   * @return {String}
-   * @api public
    */
-
-  get(field) {
-    return this.header[field.toLowerCase()] || '';
-  },
+  get<T = string | string[] | number>(field: string): T {
+    return (this.header[field.toLowerCase()] || '') as T;
+  }
 
   /**
    * Returns true if the header identified by name is currently set in the outgoing headers.
@@ -423,18 +342,10 @@ module.exports = {
    *
    *     this.get('content-type');
    *     // => true
-   *
-   * @param {String} field
-   * @return {boolean}
-   * @api public
    */
-
-  has(field) {
-    return typeof this.res.hasHeader === 'function'
-      ? this.res.hasHeader(field)
-      // Node < 7.7
-      : field.toLowerCase() in this.headers;
-  },
+  has(field: string) {
+    return this.res.hasHeader(field);
+  }
 
   /**
    * Set header `field` to `val` or pass
@@ -445,25 +356,24 @@ module.exports = {
    *    this.set('Foo', ['bar', 'baz']);
    *    this.set('Accept', 'application/json');
    *    this.set({ Accept: 'text/plain', 'X-API-Key': 'tobi' });
-   *
-   * @param {String|Object|Array} field
-   * @param {String} val
-   * @api public
    */
-
-  set(field, val) {
+  set(field: string | object, val?: string | number | any[]) {
     if (this.headerSent) return;
-
-    if (arguments.length === 2) {
-      if (Array.isArray(val)) val = val.map(v => (typeof v === 'string' ? v : String(v)));
-      else if (typeof val !== 'string') val = String(val);
+    if (typeof field === 'string') {
+      if (Array.isArray(val)) {
+        val = val.map(v => {
+          return typeof v === 'string' ? v : String(v);
+        });
+      } else if (typeof val !== 'string') {
+        val = String(val);
+      }
       this.res.setHeader(field, val);
     } else {
       for (const key in field) {
         this.set(key, field[key]);
       }
     }
-  },
+  }
 
   /**
    * Append additional header `field` with value `val`.
@@ -474,47 +384,33 @@ module.exports = {
    * this.append('Link', ['<http://localhost/>', '<http://localhost:3000/>']);
    * this.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
    * this.append('Warning', '199 Miscellaneous warning');
-   * ```
-   *
-   * @param {String} field
-   * @param {String|Array} val
-   * @api public
    */
-
-  append(field, val) {
+  append(field: string, val: string | string[]) {
     const prev = this.get(field);
 
+    let value: any | any[] = val;
     if (prev) {
-      val = Array.isArray(prev)
-        ? prev.concat(val)
+      value = Array.isArray(prev)
+        ? prev.concat(value)
         : [ prev ].concat(val);
     }
 
-    return this.set(field, val);
-  },
+    return this.set(field, value);
+  }
 
   /**
    * Remove header `field`.
-   *
-   * @param {String} name
-   * @api public
    */
-
-  remove(field) {
+  remove(field: string) {
     if (this.headerSent) return;
-
     this.res.removeHeader(field);
-  },
+  }
 
   /**
    * Checks if the request is writable.
    * Tests for the existence of the socket
    * as node sometimes does not set it.
-   *
-   * @return {Boolean}
-   * @api private
    */
-
   get writable() {
     // can't write any more after response finished
     // response.writableEnded is available since Node > 12.9
@@ -528,54 +424,37 @@ module.exports = {
     // https://github.com/nodejs/node/blob/v4.4.7/lib/_http_server.js#L486
     if (!socket) return true;
     return socket.writable;
-  },
+  }
 
   /**
    * Inspect implementation.
-   *
-   * @return {Object}
-   * @api public
    */
-
   inspect() {
     if (!this.res) return;
     const o = this.toJSON();
     o.body = this.body;
     return o;
-  },
+  }
+
+  [util.inspect.custom]() {
+    return this.inspect();
+  }
 
   /**
    * Return JSON representation.
-   *
-   * @return {Object}
-   * @api public
    */
-
   toJSON() {
     return only(this, [
       'status',
       'message',
       'header',
     ]);
-  },
+  }
 
   /**
    * Flush any set headers and begin the body
    */
-
   flushHeaders() {
     this.res.flushHeaders();
-  },
-};
-
-/**
- * Custom inspection implementation for node 6+.
- *
- * @return {Object}
- * @api public
- */
-
-/* istanbul ignore else */
-if (util.inspect.custom) {
-  module.exports[util.inspect.custom] = module.exports.inspect;
+  }
 }

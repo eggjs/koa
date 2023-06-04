@@ -1,5 +1,5 @@
 import stream from 'node:stream';
-import Koa from '../../lib/application';
+import Koa from '../../src/application';
 
 export default function context(req?: any, res?: any, app?: Koa) {
   const socket = new stream.Duplex();
