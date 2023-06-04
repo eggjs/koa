@@ -4,8 +4,8 @@ import request from 'supertest';
 import Koa from '../..';
 
 describe('app.currentContext', () => {
-  it('should get currentContext return context when asyncLocalStorage enable', async () => {
-    const app = new Koa({ asyncLocalStorage: true });
+  it('should get currentContext', async () => {
+    const app = new Koa({});
 
     app.use(async ctx => {
       assert(ctx === app.currentContext);
@@ -53,7 +53,7 @@ describe('app.currentContext', () => {
   });
 
   it('should get currentContext return context in error handler when asyncLocalStorage enable', async () => {
-    const app = new Koa({ asyncLocalStorage: true });
+    const app = new Koa({});
 
     app.use(async () => {
       throw new Error('error message');

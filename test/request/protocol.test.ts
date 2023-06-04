@@ -5,7 +5,7 @@ describe('req.protocol', () => {
   describe('when encrypted', () => {
     it('should return "https"', () => {
       const req = request();
-      req.req.socket = { encrypted: true };
+      (req.req as any).socket = { encrypted: true };
       assert.strictEqual(req.protocol, 'https');
     });
   });
@@ -13,7 +13,7 @@ describe('req.protocol', () => {
   describe('when unencrypted', () => {
     it('should return "http"', () => {
       const req = request();
-      req.req.socket = {};
+      (req.req as any).socket = {};
       assert.strictEqual(req.protocol, 'http');
     });
   });
@@ -23,7 +23,7 @@ describe('req.protocol', () => {
       it('should be used', () => {
         const req = request();
         req.app.proxy = true;
-        req.req.socket = {};
+        (req.req as any).socket = {};
         req.header['x-forwarded-proto'] = 'https, http';
         assert.strictEqual(req.protocol, 'https');
       });
@@ -32,7 +32,7 @@ describe('req.protocol', () => {
         it('should return "http"', () => {
           const req = request();
           req.app.proxy = true;
-          req.req.socket = {};
+          (req.req as any).socket = {};
           req.header['x-forwarded-proto'] = '';
           assert.strictEqual(req.protocol, 'http');
         });
@@ -42,7 +42,7 @@ describe('req.protocol', () => {
     describe('and proxy is not trusted', () => {
       it('should not be used', () => {
         const req = request();
-        req.req.socket = {};
+        (req.req as any).socket = {};
         req.header['x-forwarded-proto'] = 'https, http';
         assert.strictEqual(req.protocol, 'http');
       });

@@ -257,7 +257,7 @@ describe('ctx.onerror(err)', () => {
       let removed = 0;
       const ctx = context();
 
-      ctx.app.emit = () => {
+      (ctx.app as any).emit = () => {
         // ignore
       };
       ctx.res = {
@@ -269,7 +269,7 @@ describe('ctx.onerror(err)', () => {
         emit: () => {
           // ignore
         },
-      };
+      } as any;
 
       ctx.onerror(new Error('error'));
 

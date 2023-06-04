@@ -10,7 +10,7 @@ describe('app.onerror(err)', () => {
     const app = new Koa();
 
     assert.throws(() => {
-      app.onerror('foo' as any);
+      (app as any).onerror('foo' as any);
     }, TypeError, 'non-error thrown: foo');
   });
 
@@ -22,7 +22,7 @@ describe('app.onerror(err)', () => {
       expose: true,
     });
 
-    assert.doesNotThrow(() => app.onerror(error));
+    assert.doesNotThrow(() => (app as any).onerror(error));
   });
 
   it('should do nothing if status is 404', () => {
@@ -32,7 +32,7 @@ describe('app.onerror(err)', () => {
     (err as any).status = 404;
 
     mm.spy(console, 'error');
-    app.onerror(err);
+    (app as any).onerror(err);
     assert.strictEqual((console.error as any).called, undefined);
   });
 
@@ -42,7 +42,7 @@ describe('app.onerror(err)', () => {
     const err = new Error();
 
     mm.spy(console, 'error');
-    app.onerror(err);
+    (app as any).onerror(err);
     assert.strictEqual((console.error as any).called, undefined);
   });
 
@@ -54,7 +54,7 @@ describe('app.onerror(err)', () => {
     err.stack = 'Foo';
 
     mm.spy(console, 'error');
-    app.onerror(err);
+    (app as any).onerror(err);
     assert.strictEqual((console.error as any).called, 1);
   });
 });

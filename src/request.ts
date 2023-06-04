@@ -447,7 +447,7 @@ export default class Request {
    *     this.accepts('html', 'json');
    *     // => "json"
    */
-  accepts(...args: string[]): string | string[] | false {
+  accepts(...args: any[]): string | string[] | false {
     return this.accept.types(...args);
   }
 
@@ -459,7 +459,7 @@ export default class Request {
    *
    *     ['gzip', 'deflate']
    */
-  acceptsEncodings(...args: string[]): string | string[] {
+  acceptsEncodings(...args: any[]): string | string[] {
     return this.accept.encodings(...args);
   }
 
@@ -471,7 +471,7 @@ export default class Request {
    *
    *     ['utf-8', 'utf-7', 'iso-8859-1']
    */
-  acceptsCharsets(...args: string[]): string | string[] {
+  acceptsCharsets(...args: any[]): string | string[] {
     return this.accept.charsets(...args);
   }
 
@@ -483,7 +483,7 @@ export default class Request {
    *
    *     ['es', 'pt', 'en']
    */
-  acceptsLanguages(...args: string[]): string | string[] {
+  acceptsLanguages(...args: any[]): string | string[] {
     return this.accept.languages(...args);
   }
 
@@ -508,7 +508,7 @@ export default class Request {
    *
    *     this.is('html'); // => false
    */
-  is(type: string | string[], ...types: string[]): string | false | null {
+  is(type?: string | string[], ...types: string[]): string | false | null {
     return typeis(this.req, type, ...types);
   }
 

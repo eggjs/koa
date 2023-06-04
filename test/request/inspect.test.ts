@@ -1,23 +1,23 @@
 import assert from 'node:assert';
 import util from 'node:util';
-import { request } from '../test-helpers/context';
+import context from '../test-helpers/context';
 
 describe('req.inspect()', () => {
   describe('with no request.req present', () => {
     it('should return null', () => {
-      const req = request();
-      req.method = 'GET';
-      delete req.req;
-      assert(undefined === req.inspect());
-      assert(util.inspect(req) === 'undefined');
+      const request = context().request;
+      request.method = 'GET';
+      delete (request as any).req;
+      assert(undefined === request.inspect());
+      assert(util.inspect(request) === 'undefined');
     });
   });
 
   it('should return a json representation', () => {
-    const req = request();
-    req.method = 'GET';
-    req.url = 'example.com';
-    req.header.host = 'example.com';
+    const request = context().request;
+    request.method = 'GET';
+    request.url = 'example.com';
+    request.header.host = 'example.com';
 
     const expected = {
       method: 'GET',
@@ -27,7 +27,7 @@ describe('req.inspect()', () => {
       },
     };
 
-    assert.deepStrictEqual(req.inspect(), expected);
-    assert.deepStrictEqual(util.inspect(req), util.inspect(expected));
+    assert.deepStrictEqual(request.inspect(), expected);
+    assert.deepStrictEqual(util.inspect(request), util.inspect(expected));
   });
 });

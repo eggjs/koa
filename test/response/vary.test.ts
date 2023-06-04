@@ -14,6 +14,7 @@ describe('ctx.vary(field)', () => {
     it('should append', () => {
       const ctx = context();
       ctx.vary('Accept');
+      assert.strictEqual(ctx.response.header.vary, 'Accept');
       ctx.vary('Accept-Encoding');
       assert.strictEqual(ctx.response.header.vary, 'Accept, Accept-Encoding');
     });

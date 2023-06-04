@@ -1,5 +1,6 @@
 import stream from 'node:stream';
 import Koa from '../../src/application';
+import type { ContextDelegation } from '../../src/context';
 
 export default function context(req?: any, res?: any, app?: Koa) {
   const socket = new stream.Duplex();
@@ -8,7 +9,7 @@ export default function context(req?: any, res?: any, app?: Koa) {
   req.socket.remoteAddress = req.socket.remoteAddress || '127.0.0.1';
   app = app || new Koa();
   res.getHeader = (k: string) => {
-    res._headers[k.toLowerCase()];
+    return res._headers[k.toLowerCase()];
   };
   res.setHeader = (k: string, v: string | string[]) => {
     res._headers[k.toLowerCase()] = v;
@@ -16,7 +17,10 @@ export default function context(req?: any, res?: any, app?: Koa) {
   res.removeHeader = (k: string) => {
     delete res._headers[k.toLowerCase()];
   };
-  return app.createContext(req, res);
+  res.getHeaders = () => {
+    return res._headers;
+  };
+  return (app as any).createContext(req, res) as ContextDelegation;
 }
 
 export function request(...args: any[]) {

@@ -11,7 +11,7 @@ describe('ctx.querystring', () => {
   describe('when ctx.req not present', () => {
     it('should return an empty string', () => {
       const ctx = context();
-      ctx.request.req = null;
+      (ctx.request as any).req = null;
       assert.strictEqual(ctx.querystring, '');
     });
   });

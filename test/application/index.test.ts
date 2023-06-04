@@ -20,7 +20,9 @@ describe('app', () => {
 
     request(app.callback())
       .get('/')
-      .end(() => {});
+      .end(() => {
+        // empty
+      });
   });
 
   it('should not .writeHead when !socket.writable', done => {
@@ -28,7 +30,7 @@ describe('app', () => {
 
     app.use(ctx => {
       // set .writable to false
-      ctx.socket.writable = false;
+      (ctx.socket as any).writable = false;
       ctx.status = 204;
       // throw if .writeHead or .end is called
       ctx.res.writeHead =

@@ -89,9 +89,9 @@ describe('app.use(fn)', () => {
     const app = new Koa();
 
     app.use((_ctx, next) => next());
-    app.use(function* (ctx) {
+    app.use((function* (ctx) {
       ctx.body = 'generator';
-    });
+    }) as any);
 
     return request(app.callback())
       .get('/')
@@ -103,19 +103,19 @@ describe('app.use(fn)', () => {
     const app = new Koa();
 
     [ null, undefined, 0, false, 'not a function' ].forEach(v => {
-      assert.throws(() => app.use(v), /middleware must be a function!/);
+      assert.throws(() => app.use(v as any), /middleware must be a function!/);
     });
   });
 
   it('should output deprecation message for generator functions', done => {
-    process.once('deprecation', message => {
-      assert(/Support for generators will be removed/.test(message));
+    process.once('deprecation', err => {
+      assert.match(err.message, /Support for generators will be removed/);
       done();
     });
 
     const app = new Koa();
-    app.use(function* () {
+    app.use((function* () {
       // empty
-    });
+    }) as any);
   });
 });

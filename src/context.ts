@@ -8,14 +8,14 @@ import Cookies from 'cookies';
 import type Application from './application';
 import type Request from './request';
 import type Response from './response';
-import type { CustomError } from './types';
+import type { CustomError, AnyProto } from './types';
 
 export default class Context {
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
-  request: Request;
-  response: Response;
+  request: Request & AnyProto;
+  response: Response & AnyProto;
   state: Record<string, any>;
   originalUrl: string;
   respond?: boolean;
@@ -248,6 +248,4 @@ export type ContextDelegation = Context & Pick<Request, 'acceptsLanguages' | 'ac
 | 'URL' | 'header' | 'headers' | 'secure' | 'stale' | 'fresh' | 'ips' | 'ip'>
 & Pick<Response, 'attachment' | 'redirect' | 'remove' | 'vary' | 'has' | 'set' | 'append' | 'flushHeaders'
 | 'status' | 'message' | 'body' | 'length' | 'type' | 'lastModified' | 'etag' | 'headerSent' | 'writable'>
-& {
-  [key: string]: any;
-};
+& AnyProto;

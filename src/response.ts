@@ -101,7 +101,7 @@ export default class Response {
   /**
    * Set response body.
    */
-  set body(val: string | Buffer | object | Stream | null | undefined) {
+  set body(val: string | Buffer | object | Stream | null | undefined | boolean) {
     const original = this._body;
     this._body = val;
 
@@ -231,7 +231,7 @@ export default class Response {
   /**
    * Set Content-Disposition header to "attachment" with optional `filename`.
    */
-  attachment(filename: string, options?: any) {
+  attachment(filename?: string, options?: any) {
     if (filename) this.type = extname(filename);
     this.set('Content-Disposition', contentDisposition(filename, options));
   }
@@ -248,7 +248,7 @@ export default class Response {
    *     this.type = 'application/json';
    *     this.type = 'png';
    */
-  set type(type: string) {
+  set type(type: string | null | undefined) {
     type = getType(type);
     if (type) {
       this.set('Content-Type', type);
@@ -271,7 +271,7 @@ export default class Response {
    * Check whether the response is one of the listed types.
    * Pretty much the same as `this.request.is()`.
    */
-  is(type: string | string[], ...types: string[]): string | false {
+  is(type?: string | string[], ...types: string[]): string | false {
     return typeis(this.type, type, ...types);
   }
 

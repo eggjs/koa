@@ -7,7 +7,7 @@ describe('res.inspect()', () => {
     it('should return null', () => {
       const res = response();
       res.body = 'hello';
-      delete res.res;
+      delete (res as any).res;
       assert.strictEqual(res.inspect(), undefined);
       assert.strictEqual(util.inspect(res), 'undefined');
     });

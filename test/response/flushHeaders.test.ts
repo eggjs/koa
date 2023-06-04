@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import http from 'node:http';
 import { PassThrough } from 'node:stream';
+import type { AddressInfo } from 'node:net';
 import request from 'supertest';
 import Koa from '../..';
 
@@ -100,7 +101,7 @@ describe('ctx.flushHeaders()', () => {
     const server = app.listen(function(err) {
       if (err) return done(err);
 
-      const port = server.address().port;
+      const port = (server.address() as AddressInfo).port;
 
       http.request({
         port,

@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import Stream from 'node:stream';
 import http from 'node:http';
+import type { AddressInfo } from 'node:net';
 import Koa from '../../';
 import context from '../test-helpers/context';
 
@@ -28,7 +29,7 @@ describe('ctx.href', () => {
       ctx.body = ctx.href;
     });
     const server = app.listen(() => {
-      const address = server.address();
+      const address = server.address() as AddressInfo;
       http.get({
         host: 'localhost',
         path: 'http://example.com/foo',

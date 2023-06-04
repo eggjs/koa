@@ -24,7 +24,7 @@ describe('ctx.query', () => {
 describe('ctx.query=', () => {
   it('should stringify and replace the query string and search', () => {
     const ctx = context({ url: '/store/shoes' });
-    ctx.query = { page: 2, color: 'blue' };
+    ctx.query = { page: '2', color: 'blue' };
     assert.strictEqual(ctx.url, '/store/shoes?page=2&color=blue');
     assert.strictEqual(ctx.querystring, 'page=2&color=blue');
     assert.strictEqual(ctx.search, '?page=2&color=blue');
@@ -32,7 +32,8 @@ describe('ctx.query=', () => {
 
   it('should change .url but not .originalUrl', () => {
     const ctx = context({ url: '/store/shoes' });
-    ctx.query = { page: 2 };
+    // ctx.query = { page: 2 };
+    ctx.query = { page: '2' };
     assert.strictEqual(ctx.url, '/store/shoes?page=2');
     assert.strictEqual(ctx.originalUrl, '/store/shoes');
     assert.strictEqual(ctx.request.originalUrl, '/store/shoes');

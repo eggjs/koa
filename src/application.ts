@@ -12,6 +12,7 @@ import compose from 'koa-compose';
 import only from 'only';
 import convert from 'koa-convert';
 import depd from 'depd';
+import { HttpError } from 'http-errors';
 import Context from './context';
 import Request from './request';
 import Response from './response';
@@ -22,22 +23,22 @@ const debug = debuglog('koa:application');
 const deprecate = depd('koa');
 
 export type Next = () => Promise<void>;
-export type MiddlewareFunc = (ctx: ContextDelegation, next?: Next) => Promise<void> | void;
+export type MiddlewareFunc = (ctx: ContextDelegation, next: Next) => Promise<void> | void;
 
 export type { ContextDelegation } from './context';
 export type { CustomError, ProtoImplClass } from './types';
-
-/**
- * Make HttpError available to consumers of the library so that consumers don't
- * have a direct dependency upon `http-errors`
- */
-export { HttpError } from 'http-errors';
 
 /**
  * Expose `Application` class.
  * Inherits from `Emitter.prototype`.
  */
 export default class Application extends Emitter {
+  /**
+   * Make HttpError available to consumers of the library so that consumers don't
+   * have a direct dependency upon `http-errors`
+   */
+  static HttpError = HttpError;
+
   proxy: boolean;
   subdomainOffset: number;
   proxyIpHeader: string;
@@ -152,12 +153,14 @@ export default class Application extends Emitter {
   callback() {
     const fn = compose(this.middleware);
 
-    if (!this.listenerCount('error')) this.on('error', this.onerror);
+    if (!this.listenerCount('error')) {
+      this.on('error', this.onerror.bind(this));
+    }
 
     const handleRequest = (req: IncomingMessage, res: ServerResponse) => {
       const ctx = this.createContext(req, res);
       return this.ctxStorage.run(ctx, async () => {
-        return await this.handleRequest(ctx, fn);
+        return await this.#handleRequest(ctx, fn);
       });
     };
 
@@ -175,7 +178,7 @@ export default class Application extends Emitter {
    * Handle request in callback.
    * @private
    */
-  async handleRequest(ctx: ContextDelegation, fnMiddleware: MiddlewareFunc) {
+  async #handleRequest(ctx: ContextDelegation, fnMiddleware: (ctx: ContextDelegation) => Promise<void>) {
     const res = ctx.res;
     res.statusCode = 404;
     const onerror = (err: Error) => ctx.onerror(err);
@@ -192,7 +195,7 @@ export default class Application extends Emitter {
    * Initialize a new context.
    * @private
    */
-  createContext(req: IncomingMessage, res: ServerResponse) {
+  protected createContext(req: IncomingMessage, res: ServerResponse) {
     const context = new this.ContextClass(this, req, res);
     return context as ContextDelegation;
   }
@@ -201,7 +204,7 @@ export default class Application extends Emitter {
    * Default error handler.
    * @private
    */
-  onerror(err: CustomError) {
+  protected onerror(err: CustomError) {
     // When dealing with cross-globals a normal `instanceof` check doesn't work properly.
     // See https://github.com/koajs/koa/issues/1466
     // We can probably remove it once jest fixes https://github.com/facebook/jest/issues/2549.
@@ -214,15 +217,6 @@ export default class Application extends Emitter {
 
     const msg = err.stack || err.toString();
     console.error(`\n${msg.replace(/^/gm, '  ')}\n`);
-  }
-
-  /**
-   * Help TS users comply to CommonJS, ESM, bundler mismatch.
-   * @see https://github.com/koajs/koa/issues/1513
-   */
-
-  static get default() {
-    return Application;
   }
 
   createAsyncCtxStorageMiddleware() {

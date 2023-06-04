@@ -54,11 +54,13 @@ describe('res.status=', () => {
 
   describe('when a status string', () => {
     it('should throw', () => {
-      assert.throws(() => response().status = 'forbidden', /status code must be a number/);
+      assert.throws(() => {
+        (response() as any).status = 'forbidden';
+      }, /status code must be a number/);
     });
   });
 
-  function strip(status){
+  function strip(status) {
     it('should strip content related header fields', async () => {
       const app = new Koa();
 
