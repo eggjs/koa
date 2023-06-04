@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.1](https://github.com/eggjs/koa/compare/v2.15.0...v2.15.1) (2023-06-04)
+
+
+### Bug Fixes
+
+* change types.d.ts to types.ts ([#2](https://github.com/eggjs/koa/issues/2)) ([7101f87](https://github.com/eggjs/koa/commit/7101f872b574768905265b1a31496b7313b2c703))
+
 ## [2.15.0](https://github.com/eggjs/koa/compare/v2.14.2...v2.15.0) (2023-06-04)
 
 
