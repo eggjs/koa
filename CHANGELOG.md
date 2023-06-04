@@ -1,3 +1,11 @@
+# Changelog
+
+## [2.15.0](https://github.com/eggjs/koa/compare/v2.14.2...v2.15.0) (2023-06-04)
+
+
+### Features
+
+* refactor with typescript ([#1](https://github.com/eggjs/koa/issues/1)) ([6ba0589](https://github.com/eggjs/koa/commit/6ba05896feb7af80c64a5f890d4c0b95ba01f9bc))
 
 2.14.2 / 2023-04-12
 ==================
