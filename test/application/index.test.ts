@@ -44,7 +44,9 @@ describe('app', () => {
 
     request(app.callback())
       .get('/')
-      .end(() => {});
+      .end(() => {
+        // empty
+      });
   });
 
   it('should set development env when NODE_ENV missing', () => {

@@ -9,8 +9,8 @@
   ],
   "scripts": {
     "test": "egg-bin test",
-    "ci": "egg-bin cov",
-    "lint": "eslint lib test",
+    "ci": "egg-bin cov && npm run tsc",
+    "lint": "eslint src test",
     "authors": "git log --format='%aN <%aE>' | sort -u > AUTHORS",
     "tsc": "tsc",
     "prepublishOnly": "npm run tsc"

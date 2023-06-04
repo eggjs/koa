@@ -27,7 +27,9 @@ describe('res.status=', () => {
     });
 
     describe('and custom status', () => {
-      beforeEach(() => statuses['700'] = 'custom status');
+      beforeEach(() => {
+        statuses['700'] = 'custom status';
+      });
 
       it('should set the status', () => {
         const res = response();

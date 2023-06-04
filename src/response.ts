@@ -138,6 +138,7 @@ export default class Response {
     // stream
     if (val instanceof Stream) {
       onFinish(this.res, destroy.bind(null, val));
+      // eslint-disable-next-line eqeqeq
       if (original != val) {
         val.once('error', err => this.ctx.onerror(err));
         // overwriting

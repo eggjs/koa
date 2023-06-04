@@ -29,7 +29,9 @@ describe('req.ip', () => {
         const socket = new Stream.Duplex();
         Object.defineProperty(socket, 'remoteAddress', {
           get: () => undefined, // So that the helper doesn't override it with a reasonable value
-          set: () => {},
+          set: () => {
+            // empty
+          },
         });
         assert.strictEqual(Request({ socket }).ip, '');
       });

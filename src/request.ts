@@ -229,7 +229,7 @@ export default class Request {
     return host.split(':', 1)[0];
   }
 
-  #memoizedURL: URL;  
+  #memoizedURL: URL;
 
   /**
    * Get WHATWG parsed URL.
@@ -309,7 +309,7 @@ export default class Request {
   get length() {
     const len = this.get<string>('Content-Length');
     if (len === '') return;
-    return ~~len;
+    return parseInt(len);
   }
 
   /**
@@ -321,7 +321,7 @@ export default class Request {
    * may be enabled.
    */
   get protocol() {
-    if (this.socket['encrypted']) return 'https';
+    if (this.socket.encrypted) return 'https';
     if (!this.app.proxy) return 'http';
     const proto = this.get<string>('X-Forwarded-Proto');
     return proto ? proto.split(/\s*,\s*/, 1)[0] : 'http';

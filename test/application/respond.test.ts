@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import assert from 'node:assert';
 import fs from 'node:fs';
 import request from 'supertest';
@@ -194,7 +195,7 @@ describe('app.respond', () => {
       const app = new Koa();
 
       app.use(() => {
-
+        // empty
       });
 
       const server = app.listen();

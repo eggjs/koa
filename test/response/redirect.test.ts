@@ -125,7 +125,7 @@ describe('ctx.redirect(url)', () => {
   });
 });
 
-function escape(html){
+function escape(html) {
   return String(html)
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
