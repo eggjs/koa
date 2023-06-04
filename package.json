@@ -5,7 +5,8 @@
   "main": "lib/application.js",
   "types": "lib/application.d.ts",
   "files": [
-    "lib"
+    "lib/*.d.ts",
+    "lib/*.js"
   ],
   "scripts": {
     "test": "egg-bin test",
