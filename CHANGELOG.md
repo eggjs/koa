@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.0](https://github.com/eggjs/koa/compare/v2.15.1...v2.16.0) (2023-12-19)
+
+
+### Features
+
+* use gals ([#3](https://github.com/eggjs/koa/issues/3)) ([33e493a](https://github.com/eggjs/koa/commit/33e493ad499f7e6779a0d1715ef2ac873b62921b))
+
 ## [2.15.1](https://github.com/eggjs/koa/compare/v2.15.0...v2.15.1) (2023-06-04)
 
 

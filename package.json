@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/koa",
-  "version": "2.15.1",
+  "version": "2.16.0",
   "description": "Koa web app framework",
   "main": "lib/application.js",
   "types": "lib/application.d.ts",
