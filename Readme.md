@@ -5,9 +5,7 @@
 <img height="240px" src="/docs/logo.png" alt="Koa middleware framework for nodejs"/>
 
 [![NPM version](https://img.shields.io/npm/v/@eggjs/koa.svg?style=flat-square)](https://npmjs.org/package/@eggjs/koa)
-[![NPM quality](http://npm.packagequality.com/shield/@eggjs/koa.svg?style=flat-square)](http://packagequality.com/#?package=@eggjs/koa)
 [![NPM download](https://img.shields.io/npm/dm/@eggjs/koa.svg?style=flat-square)](https://npmjs.org/package/@eggjs/koa)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Feggjs%2Fkoa.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Feggjs%2Fkoa?ref=badge_shield)
 [![Node.js CI](https://github.com/eggjs/koa/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/eggjs/koa/actions/workflows/node.js.yml)
 [![Test coverage](https://img.shields.io/codecov/c/github/eggjs/koa.svg?style=flat-square)](https://codecov.io/gh/eggjs/koa)
 [![Known Vulnerabilities](https://snyk.io/test/npm/@eggjs/koa/badge.svg?style=flat-square)](https://snyk.io/test/npm/@eggjs/koa)
