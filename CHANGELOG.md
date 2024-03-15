@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.17.0](https://github.com/eggjs/koa/compare/v2.16.0...v2.17.0) (2024-03-15)
+
+
+### Features
+
+* formatting redirect url on http(s) protocol url ([#4](https://github.com/eggjs/koa/issues/4)) ([7e7fcd1](https://github.com/eggjs/koa/commit/7e7fcd1a32af505ae2b43eef3781b1122253d276))
+
 ## [2.16.0](https://github.com/eggjs/koa/compare/v2.15.1...v2.16.0) (2023-12-19)
 
 
