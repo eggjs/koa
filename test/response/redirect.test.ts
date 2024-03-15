@@ -7,7 +7,14 @@ describe('ctx.redirect(url)', () => {
   it('should redirect to the given url', () => {
     const ctx = context();
     ctx.redirect('http://google.com');
-    assert.strictEqual(ctx.response.header.location, 'http://google.com');
+    assert.strictEqual(ctx.response.header.location, 'http://google.com/');
+    assert.strictEqual(ctx.status, 302);
+  });
+
+  it('should url formatting is required before redirect', () => {
+    const ctx = context();
+    ctx.redirect('http://google.com\\@baidu.com');
+    assert.strictEqual(ctx.response.header.location, 'http://google.com/@baidu.com');
     assert.strictEqual(ctx.status, 302);
   });
 
@@ -15,7 +22,7 @@ describe('ctx.redirect(url)', () => {
     const app = new Koa();
 
     app.use(ctx => {
-      ctx.redirect('http://google.com/😓');
+      ctx.redirect('https://google.com/😓?hello=你好(*´▽｀)ノノ&p=123&q=%F0%9F%98%93%3Fhello%3D%E4%BD%A0%E5%A5%BD%28');
     });
 
     request(app.callback())
@@ -23,7 +30,7 @@ describe('ctx.redirect(url)', () => {
       .end((err, res) => {
         if (err) return done(err);
         assert.strictEqual(res.status, 302);
-        assert.strictEqual(res.headers.location, 'http://google.com/%F0%9F%98%93');
+        assert.strictEqual(res.headers.location, 'https://google.com/%F0%9F%98%93?hello=%E4%BD%A0%E5%A5%BD(*%C2%B4%E2%96%BD%EF%BD%80)%E3%83%8E%E3%83%8E&p=123&q=%F0%9F%98%93%3Fhello%3D%E4%BD%A0%E5%A5%BD%28');
         done();
       });
   });
@@ -63,7 +70,7 @@ describe('ctx.redirect(url)', () => {
       ctx.header.accept = 'text/html';
       ctx.redirect(url);
       assert.strictEqual(ctx.response.header['content-type'], 'text/html; charset=utf-8');
-      assert.strictEqual(ctx.body, `Redirecting to <a href="${url}">${url}</a>.`);
+      assert.strictEqual(ctx.body, `Redirecting to <a href="${url}/">${url}/</a>.`);
     });
 
     it('should escape the url', () => {
@@ -83,7 +90,7 @@ describe('ctx.redirect(url)', () => {
       const url = 'http://google.com';
       ctx.header.accept = 'text/plain';
       ctx.redirect(url);
-      assert.strictEqual(ctx.body, `Redirecting to ${url}.`);
+      assert.strictEqual(ctx.body, `Redirecting to ${url}/.`);
     });
   });
 
@@ -95,7 +102,7 @@ describe('ctx.redirect(url)', () => {
       ctx.header.accept = 'text/plain';
       ctx.redirect('http://google.com');
       assert.strictEqual(ctx.status, 301);
-      assert.strictEqual(ctx.body, `Redirecting to ${url}.`);
+      assert.strictEqual(ctx.body, `Redirecting to ${url}/.`);
     });
   });
 
@@ -107,7 +114,7 @@ describe('ctx.redirect(url)', () => {
       ctx.header.accept = 'text/plain';
       ctx.redirect('http://google.com');
       assert.strictEqual(ctx.status, 302);
-      assert.strictEqual(ctx.body, `Redirecting to ${url}.`);
+      assert.strictEqual(ctx.body, `Redirecting to ${url}/.`);
     });
   });
 
@@ -115,9 +122,9 @@ describe('ctx.redirect(url)', () => {
     it('should overwrite content-type', () => {
       const ctx = context();
       ctx.body = {};
-      const url = 'http://google.com';
+      const url = 'http://google.com/?foo=bar';
       ctx.header.accept = 'text/plain';
-      ctx.redirect('http://google.com');
+      ctx.redirect(url);
       assert.strictEqual(ctx.status, 302);
       assert.strictEqual(ctx.body, `Redirecting to ${url}.`);
       assert.strictEqual(ctx.type, 'text/plain');

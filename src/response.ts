@@ -206,11 +206,15 @@ export default class Response {
    *    this.redirect('back');
    *    this.redirect('back', '/index.html');
    *    this.redirect('/login');
-   *    this.redirect('http://google.com');
+   *    this.redirect('http://google.com'); // will format to 'http://google.com/'
    */
   redirect(url: string, alt?: string) {
     // location
     if (url === 'back') url = this.ctx.get<string>('Referrer') || alt || '/';
+    if (url.startsWith('https://') || url.startsWith('http://')) {
+      // formatting url again avoid security escapes
+      url = new URL(url).toString();
+    }
     this.set('Location', encodeUrl(url));
 
     // status
