@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import request from 'supertest';
 import CreateError from 'http-errors';
-import Koa from '../..';
+import Koa from '../../src/index.js';
 
 describe('app', () => {
   // ignore test on Node.js v18
@@ -84,7 +84,9 @@ describe('app', () => {
   it('should have a static property exporting `HttpError` from http-errors library', () => {
     assert.notEqual(Koa.HttpError, undefined);
     assert.deepStrictEqual(Koa.HttpError, CreateError.HttpError);
-    assert.throws(() => { throw new CreateError(500, 'test error'); }, Koa.HttpError);
+    assert.throws(() => {
+      throw CreateError(500, 'test error');
+    }, Koa.HttpError);
   });
 
   it('should export createAsyncCtxStorageMiddleware function', () => {

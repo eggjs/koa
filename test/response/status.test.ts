@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 import request from 'supertest';
 import statuses from 'statuses';
-import { response } from '../test-helpers/context';
-import Koa from '../..';
+import { response } from '../test-helpers/context.js';
+import Koa from '../../src/index.js';
 
 describe('res.status=', () => {
   describe('when a status code', () => {
@@ -28,7 +28,7 @@ describe('res.status=', () => {
 
     describe('and custom status', () => {
       beforeEach(() => {
-        statuses['700'] = 'custom status';
+        statuses.message['700'] = 'custom status';
       });
 
       it('should set the status', () => {
@@ -62,7 +62,7 @@ describe('res.status=', () => {
     });
   });
 
-  function strip(status) {
+  function strip(status: number) {
     it('should strip content related header fields', async () => {
       const app = new Koa();
 

@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import Koa from '../..';
+import Koa from '../../src/index.js';
 
 describe('app.toJSON()', () => {
   it('should work', () => {

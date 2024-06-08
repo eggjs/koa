@@ -5,10 +5,10 @@ import httpAssert from 'http-assert';
 import delegate from 'delegates';
 import statuses from 'statuses';
 import Cookies from 'cookies';
-import type Application from './application';
-import type Request from './request';
-import type Response from './response';
-import type { CustomError, AnyProto } from './types';
+import type Application from './application.js';
+import type Request from './request.js';
+import type Response from './response.js';
+import type { CustomError, AnyProto } from './types.js';
 
 export default class Context {
   app: Application;
@@ -74,15 +74,17 @@ export default class Context {
    *    this.assert(this.user, 401, 'Please login!');
    *
    * See: https://github.com/jshttp/http-assert
-   *
-   * @param {Mixed} test
+   * @param {Mixed} value
    * @param {Number} status
-   * @param {String} message
-   * @public
+   * @param {String} opts
    */
-
-  assert(...args: any[]) {
-    return httpAssert(...args);
+  assert(value: any, status?: number, opts?: Record<string, any>): void;
+  assert(value: any, status?: number, msg?: string, opts?: Record<string, any>): void;
+  assert(value: any, status?: number, msgOrOptions?: string | Record<string, any>, opts?: Record<string, any>) {
+    if (typeof msgOrOptions === 'string') {
+      return httpAssert(value, status, msgOrOptions, opts);
+    }
+    return httpAssert(value, status, msgOrOptions);
   }
 
   /**
@@ -95,17 +97,48 @@ export default class Context {
    *    this.throw('something exploded')
    *    this.throw(new Error('invalid'))
    *    this.throw(400, new Error('invalid'))
+   *    this.throw(400, new Error('invalid'), { foo: 'bar' })
+   *    this.throw(new Error('invalid'), { foo: 'bar' })
    *
    * See: https://github.com/jshttp/http-errors
    *
    * Note: `status` should only be passed as the first parameter.
    *
-   * @param {String|Number|Error} err, msg or status
-   * @param {String|Number|Error} [err, msg or status]
-   * @param {Object} [props]
+   * @param {String|Number|Error} status error, msg or status
+   * @param {String|Number|Error|Object} [error] error, msg, status or errorProps
+   * @param {Object} [errorProps] error object properties
    */
 
-  throw(...args: any[]) {
+  throw(status: number): void;
+  throw(status: number, errorProps: object): void;
+  throw(status: number, errorMessage: string): void;
+  throw(status: number, errorMessage: string, errorProps: object): void;
+  throw(status: number, error: Error): void;
+  throw(status: number, error: Error, errorProps: object): void;
+  throw(errorMessage: string): void;
+  throw(errorMessage: string, errorProps: object): void;
+  throw(errorMessage: string, status: number): void;
+  throw(errorMessage: string, status: number, errorProps: object): void;
+  throw(error: Error): void;
+  throw(error: Error, errorProps: object): void;
+  throw(error: Error, status: number): void;
+  throw(error: Error, status: number, errorProps: object): void;
+  throw(arg1: number | string | Error, arg2?: number | string | Error | object, errorProps?: object) {
+    const args: any[] = [];
+    if (typeof arg2 === 'number') {
+      // throw(error, status)
+      args.push(arg2);
+      args.push(arg1);
+    } else {
+      // throw(status, error?)
+      args.push(arg1);
+      if (arg2) {
+        args.push(arg2);
+      }
+    }
+    if (errorProps) {
+      args.push(errorProps);
+    }
     throw createError(...args);
   }
 
@@ -158,11 +191,11 @@ export default class Context {
     if (err.code === 'ENOENT') statusCode = 404;
 
     // default to 500
-    if (typeof statusCode !== 'number' || !statuses[statusCode]) statusCode = 500;
+    if (typeof statusCode !== 'number' || !statuses.message[statusCode]) statusCode = 500;
 
     // respond
-    const code = statuses[statusCode];
-    const msg = err.expose ? err.message : code;
+    const statusMessage = statuses.message[statusCode] as string;
+    const msg = err.expose ? err.message : statusMessage;
     this.response.status = err.status = statusCode;
     this.response.length = Buffer.byteLength(msg);
     res.end(msg);

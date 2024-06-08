@@ -1,6 +1,6 @@
 # @eggjs/koa
 
-@eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and drop Node.js < 16.13.0 support.
+@eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and drop Node.js < 18.7.0 support.
 
 <img height="240px" src="/docs/logo.png" alt="Koa middleware framework for nodejs"/>
 
@@ -19,7 +19,7 @@ Koa is not bundled with any middleware.
 
 ## Installation
 
-@eggjs/koa requires __node v16.3.0__ or higher for Node.js LTS support.
+@eggjs/koa requires __node v18.7.0__ or higher for Node.js LTS support.
 
 ```bash
 npm install @eggjs/koa
@@ -28,11 +28,12 @@ npm install @eggjs/koa
 ## Hello Koa
 
 ```ts
-const Koa = require('@eggjs/koa');
-const app = new Koa();
+import { Application } from '@eggjs/koa';
+
+const app = new Application();
 
 // response
-app.use(ctx => {
+app.use((ctx) => {
   ctx.body = 'Hello Koa';
 });
 
@@ -86,7 +87,7 @@ Each middleware receives a Koa `Context` object that encapsulates an incoming
 http message and the corresponding response to that message.  `ctx` is often used
 as the parameter name for the context object.
 
-```js
+```ts
 app.use(async (ctx, next) => {
   await next();
 });
@@ -180,6 +181,6 @@ See [AUTHORS](AUTHORS).
 - [Wiki](https://github.com/koajs/koa/wiki)
 - [中文文档 v2.x](https://github.com/demopark/koa-docs-Zh-CN)
 
-# License
+## License
 
-[MIT](https://github.com/eggjs/koa/blob/master/LICENSE)
+[MIT](LICENSE)

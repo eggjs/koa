@@ -11,11 +11,10 @@ import { is as typeis } from 'type-is';
 import statuses from 'statuses';
 import destroy from 'destroy';
 import vary from 'vary';
-import only from 'only';
 import encodeUrl from 'encodeurl';
-import type Application from './application';
-import type { ContextDelegation } from './context';
-import type Request from './request';
+import type Application from './application.js';
+import type { ContextDelegation } from './context.js';
+import type Request from './request.js';
 
 export default class Response {
   app: Application;
@@ -70,7 +69,9 @@ export default class Response {
     assert(code >= 100 && code <= 999, `invalid status code: ${code}`);
     this._explicitStatus = true;
     this.res.statusCode = code;
-    if (this.req.httpVersionMajor < 2) this.res.statusMessage = statuses[code];
+    if (this.req.httpVersionMajor < 2) {
+      this.res.statusMessage = statuses.message[code]!;
+    }
     if (this.body && statuses.empty[code]) this.body = null;
   }
 
@@ -78,7 +79,7 @@ export default class Response {
    * Get response status message
    */
   get message(): string {
-    return this.res.statusMessage || statuses[this.status];
+    return this.res.statusMessage || statuses.message[this.status]!;
   }
 
   /**
@@ -254,11 +255,13 @@ export default class Response {
    *     this.type = 'png';
    */
   set type(type: string | null | undefined) {
-    type = getType(type);
-    if (type) {
-      this.set('Content-Type', type);
-    } else {
+    if (!type) {
       this.remove('Content-Type');
+      return;
+    }
+    const mimeType = getType(type);
+    if (mimeType) {
+      this.set('Content-Type', mimeType);
     }
   }
 
@@ -275,9 +278,14 @@ export default class Response {
   /**
    * Check whether the response is one of the listed types.
    * Pretty much the same as `this.request.is()`.
+   *
+   *     this.response.is('html')
+   *     this.response.is('html', 'json')
    */
   is(type?: string | string[], ...types: string[]): string | false {
-    return typeis(this.type, type, ...types);
+    const testTypes: string[] = Array.isArray(type) ? type :
+      (type ? [ type ] : []);
+    return typeis(this.type as string, [ ...testTypes, ...types ]);
   }
 
   /**
@@ -305,8 +313,8 @@ export default class Response {
    * Set the ETag of a response.
    * This will normalize the quotes if necessary.
    *
-   *     this.response.etag = 'md5hashsum';
-   *     this.response.etag = '"md5hashsum"';
+   *     this.response.etag = 'md5-hash-sum';
+   *     this.response.etag = '"md5-hash-sum"';
    *     this.response.etag = 'W/"123456789"';
    */
   set etag(val: string) {
@@ -362,7 +370,7 @@ export default class Response {
    *    this.set('Accept', 'application/json');
    *    this.set({ Accept: 'text/plain', 'X-API-Key': 'tobi' });
    */
-  set(field: string | object, val?: string | number | any[]) {
+  set(field: string | Record<string, string>, val?: string | number | any[]) {
     if (this.headerSent) return;
     if (typeof field === 'string') {
       if (Array.isArray(val)) {
@@ -437,7 +445,7 @@ export default class Response {
   inspect() {
     if (!this.res) return;
     const o = this.toJSON();
-    o.body = this.body;
+    Reflect.set(o, 'body', this.body);
     return o;
   }
 
@@ -449,11 +457,11 @@ export default class Response {
    * Return JSON representation.
    */
   toJSON() {
-    return only(this, [
-      'status',
-      'message',
-      'header',
-    ]);
+    return {
+      status: this.status,
+      message: this.message,
+      header: this.header,
+    };
   }
 
   /**

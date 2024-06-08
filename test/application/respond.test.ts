@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import assert from 'node:assert';
 import fs from 'node:fs';
 import request from 'supertest';
 import statuses from 'statuses';
-import Koa from '../..';
+import Koa from '../../src/index.js';
+
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
 
 describe('app.respond', () => {
   describe('when ctx.respond === false', () => {
@@ -372,7 +373,7 @@ describe('app.respond', () => {
     describe('with custom status=700', () => {
       it('should respond with the associated status message', async () => {
         const app = new Koa();
-        statuses['700'] = 'custom status';
+        statuses.message['700'] = 'custom status';
 
         app.use(ctx => {
           ctx.status = 700;
@@ -385,7 +386,9 @@ describe('app.respond', () => {
           .expect(700)
           .expect('custom status');
 
-        assert.strictEqual(res.res.statusMessage, 'custom status');
+        assert.equal(res.statusCode, 700);
+        assert((res as any).res);
+        assert.strictEqual((res as any).res.statusMessage, 'custom status');
       });
     });
 
@@ -405,7 +408,9 @@ describe('app.respond', () => {
           .expect(200)
           .expect('ok');
 
-        assert.strictEqual(res.res.statusMessage, 'ok');
+        assert.equal(res.statusCode, 200);
+        assert((res as any).res);
+        assert.strictEqual((res as any).res.statusMessage, 'ok');
       });
     });
 
@@ -548,7 +553,6 @@ describe('app.respond', () => {
         .get('/')
         .expect('Content-Type', 'application/json; charset=utf-8');
 
-      const pkg = require('../../package');
       assert.strictEqual(res.headers.hasOwnProperty('content-length'), false);
       assert.deepStrictEqual(res.body, pkg);
     });
@@ -568,7 +572,6 @@ describe('app.respond', () => {
         .get('/')
         .expect('Content-Type', 'application/json; charset=utf-8');
 
-      const pkg = require('../../package');
       assert.strictEqual(res.headers.hasOwnProperty('content-length'), false);
       assert.deepStrictEqual(res.body, pkg);
     });
@@ -588,7 +591,6 @@ describe('app.respond', () => {
         .get('/')
         .expect('Content-Type', 'application/json; charset=utf-8');
 
-      const pkg = require('../../package');
       assert.strictEqual(res.headers.hasOwnProperty('content-length'), true);
       assert.deepStrictEqual(res.body, pkg);
     });
@@ -611,8 +613,8 @@ describe('app.respond', () => {
           .get('/')
           .expect('Content-Type', 'application/json; charset=utf-8');
 
-        const pkg = require('../../package');
         assert.strictEqual(res.headers.hasOwnProperty('content-length'), true);
+        assert.strictEqual(res.headers['content-length'], `${fs.readFileSync('package.json').length}`);
         assert.deepStrictEqual(res.body, pkg);
       });
 

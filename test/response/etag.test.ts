@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { response } from '../test-helpers/context';
+import { response } from '../test-helpers/context.js';
 
 describe('res.etag=', () => {
   it('should not modify an etag with quotes', () => {

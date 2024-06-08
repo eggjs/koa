@@ -1,22 +1,19 @@
 {
   "name": "@eggjs/koa",
   "version": "2.17.0",
-  "description": "Koa web app framework",
-  "main": "lib/application.js",
-  "types": "lib/application.d.ts",
-  "files": [
-    "lib/*.d.ts",
-    "lib/*.js"
-  ],
+  "engines": {
+    "node": ">= 18.7.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Koa web app framework for https://eggjs.org",
   "scripts": {
-    "test": "egg-bin test",
-    "ci": "egg-bin cov && npm run tsd",
+    "test": "npm run lint -- --fix && egg-bin test",
+    "ci": "npm run lint && egg-bin cov && npm run prepublishOnly",
     "lint": "eslint src test",
-    "tsd": "npm run tsc && tsd",
     "authors": "git log --format='%aN <%aE>' | sort -u > AUTHORS",
-    "clean": "tsc -b --clean",
-    "tsc": "tsc",
-    "prepublishOnly": "npm run tsc"
+    "prepublishOnly": "tshy && tshy-after"
   },
   "repository": {
     "type": "git",
@@ -34,9 +31,9 @@
   "license": "MIT",
   "dependencies": {
     "accepts": "^1.3.5",
-    "cache-content-type": "^1.0.0",
-    "content-disposition": "~0.5.2",
-    "content-type": "^1.0.4",
+    "cache-content-type": "^2.0.0",
+    "content-disposition": "~0.5.4",
+    "content-type": "^1.0.5",
     "cookies": "~0.8.0",
     "delegates": "^1.0.0",
     "destroy": "^1.0.4",
@@ -45,32 +42,69 @@
     "fresh": "~0.5.2",
     "gals": "^1.0.1",
     "http-assert": "^1.3.0",
-    "http-errors": "^1.6.3",
-    "is-generator-function": "^1.0.7",
+    "http-errors": "^2.0.0",
+    "is-type-of": "^2.1.0",
     "koa-compose": "^4.1.0",
-    "on-finished": "^2.3.0",
-    "only": "~0.0.2",
-    "parseurl": "^1.3.2",
-    "statuses": "^1.5.0",
-    "type-is": "^1.6.16",
+    "on-finished": "^2.4.1",
+    "parseurl": "^1.3.3",
+    "statuses": "^2.0.1",
+    "type-is": "^1.6.18",
     "vary": "^1.1.2"
   },
   "devDependencies": {
     "@eggjs/tsconfig": "^1.3.3",
+    "@types/content-type": "^1.1.8",
+    "@types/delegates": "^1.0.3",
+    "@types/destroy": "^1.0.3",
+    "@types/encodeurl": "^1.0.2",
+    "@types/escape-html": "^1.0.4",
+    "@types/fresh": "^0.5.2",
+    "@types/http-errors": "^2.0.4",
+    "@types/koa-compose": "^3.2.8",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.5",
+    "@types/on-finished": "^2.3.4",
+    "@types/parseurl": "^1.3.3",
+    "@types/statuses": "^2.0.5",
+    "@types/supertest": "^6.0.2",
+    "@types/type-is": "^1.6.6",
+    "@types/vary": "^1.1.3",
     "egg-bin": "^6.4.0",
     "eslint": "^8.41.0",
     "eslint-config-egg": "^13.1.0",
     "mm": "^3.3.0",
     "supertest": "^3.1.0",
-    "tsd": "^0.28.1",
-    "typescript": "^5.0.4"
+    "tsd": "^0.31.0",
+    "tshy": "^1.15.1",
+    "tshy-after": "^1.0.0",
+    "typescript": "^5.4.5"
   },
-  "engines": {
-    "node": ">= 16.13.0"
+  "type": "module",
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.ts"
+    }
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "source": "./src/index.ts",
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "source": "./src/index.ts",
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/commonjs/index.d.ts"
 }

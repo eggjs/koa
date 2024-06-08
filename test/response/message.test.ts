@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { response } from '../test-helpers/context';
+import { response } from '../test-helpers/context.js';
 
 describe('res.message', () => {
   it('should return the response status message', () => {
@@ -23,6 +23,6 @@ describe('res.message=', () => {
     res.status = 200;
     res.message = 'ok';
     assert.strictEqual(res.res.statusMessage, 'ok');
-    assert.strictEqual(res.inspect().message, 'ok');
+    assert.strictEqual(res.inspect()!.message, 'ok');
   });
 });

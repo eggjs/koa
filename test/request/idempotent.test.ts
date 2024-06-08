@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { request } from '../test-helpers/context';
+import { request } from '../test-helpers/context.js';
 
 describe('ctx.idempotent', () => {
   describe('when the request method is idempotent', () => {

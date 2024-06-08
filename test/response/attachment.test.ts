@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import request from 'supertest';
-import context from '../test-helpers/context';
-import Koa from '../..';
+import context from '../test-helpers/context.js';
+import Koa from '../../src/index.js';
 
 describe('ctx.attachment([filename])', () => {
   describe('when given a filename', () => {

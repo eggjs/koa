@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 import request from 'supertest';
 import { runInNewContext } from 'node:vm';
-import Koa from '../..';
-import context from '../test-helpers/context';
+import Koa from '../../src/index.js';
+import context from '../test-helpers/context.js';
 
 describe('ctx.onerror(err)', () => {
   it('should respond', () => {

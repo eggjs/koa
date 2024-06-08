@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import request from 'supertest';
-import { response } from '../test-helpers/context';
-import Koa from '../..';
+import { response } from '../test-helpers/context.js';
+import Koa from '../../src/index.js';
 
 describe('res.header', () => {
   it('should return the response header object', () => {

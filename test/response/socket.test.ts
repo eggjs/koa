@@ -1,6 +1,6 @@
 import Stream from 'node:stream';
 import assert from 'node:assert';
-import { response } from '../test-helpers/context';
+import { response } from '../test-helpers/context.js';
 
 describe('res.socket', () => {
   it('should return the request socket object', () => {

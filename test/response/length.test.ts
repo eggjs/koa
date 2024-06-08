@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import assert from 'node:assert';
-import { response } from '../test-helpers/context';
+import { response } from '../test-helpers/context.js';
 
 describe('res.length', () => {
   describe('when Content-Length is defined', () => {
