@@ -1,6 +1,6 @@
 import util from 'node:util';
 import assert from 'node:assert';
-import { response } from '../test-helpers/context';
+import { response } from '../test-helpers/context.js';
 
 describe('res.inspect()', () => {
   describe('with no response.res present', () => {

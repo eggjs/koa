@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import parseurl from 'parseurl';
-import context from '../test-helpers/context';
+import context from '../test-helpers/context.js';
 
 describe('ctx.querystring', () => {
   it('should return the querystring', () => {
@@ -46,6 +46,6 @@ describe('ctx.querystring=', () => {
     const ctx = context({ url: '/login?foo=bar' });
     ctx.querystring = 'foo=bar';
     const url = parseurl(ctx.req);
-    assert.strictEqual(url.path, '/login?foo=bar');
+    assert.strictEqual(url?.path, '/login?foo=bar');
   });
 });

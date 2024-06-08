@@ -10,10 +10,9 @@ import contentType from 'content-type';
 import parse from 'parseurl';
 import typeis from 'type-is';
 import fresh from 'fresh';
-import only from 'only';
-import type Application from './application';
-import type Context from './context';
-import type Response from './response';
+import type Application from './application.js';
+import type Context from './context.js';
+import type Response from './response.js';
 
 export default class Request {
   app: Application;
@@ -118,7 +117,7 @@ export default class Request {
    */
 
   get path() {
-    return parse(this.req).pathname as string;
+    return parse(this.req)!.pathname as string;
   }
 
   /**
@@ -126,7 +125,7 @@ export default class Request {
    */
 
   set path(path) {
-    const url = parse(this.req);
+    const url = parse(this.req)!;
     if (url.pathname === path) return;
 
     url.pathname = path;
@@ -166,7 +165,7 @@ export default class Request {
 
   get querystring() {
     if (!this.req) return '';
-    return parse(this.req).query || '';
+    return parse(this.req)!.query as string || '';
   }
 
   /**
@@ -174,7 +173,7 @@ export default class Request {
    */
 
   set querystring(str) {
-    const url = parse(this.req);
+    const url = parse(this.req)!;
     if (url.search === `?${str}`) return;
 
     url.search = str;
@@ -510,7 +509,9 @@ export default class Request {
    *     this.is('html'); // => false
    */
   is(type?: string | string[], ...types: string[]): string | false | null {
-    return typeis(this.req, type, ...types);
+    const testTypes: string[] = Array.isArray(type) ? type :
+      (type ? [ type ] : []);
+    return typeis(this.req, [ ...testTypes, ...types ]);
   }
 
   /**
@@ -570,10 +571,10 @@ export default class Request {
    * Return JSON representation.
    */
   toJSON() {
-    return only(this, [
-      'method',
-      'url',
-      'header',
-    ]);
+    return {
+      method: this.method,
+      url: this.url,
+      header: this.header,
+    };
   }
 }

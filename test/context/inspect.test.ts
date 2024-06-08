@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import util from 'node:util';
-import context from '../test-helpers/context';
+import context from '../test-helpers/context.js';
 
 describe('ctx.inspect()', () => {
   it('should return a json representation', () => {

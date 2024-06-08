@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import assert from 'node:assert';
-import { response } from '../test-helpers/context';
+import { response } from '../test-helpers/context.js';
 
 describe('res.length', () => {
   describe('when Content-Length is defined', () => {
@@ -66,6 +66,8 @@ describe('res.length=', () => {
   it('should set when Transfer-Encoding not present', () => {
     const res = response();
     res.length = 100;
+    assert.strictEqual(res.length, 100);
+    res.length = undefined;
     assert.strictEqual(res.length, 100);
   });
 

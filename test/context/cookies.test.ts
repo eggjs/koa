@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import request from 'supertest';
-import Koa from '../..';
+import Koa from '../../src/index.js';
 
 describe('ctx.cookies', () => {
   describe('ctx.cookies.set()', () => {
@@ -18,7 +18,11 @@ describe('ctx.cookies', () => {
         .get('/')
         .expect(204);
 
-      const cookie = res.headers['set-cookie'].some(cookie => /^name=/.test(cookie));
+      let cookies = res.headers['set-cookie'];
+      if (Array.isArray(cookies)) {
+        cookies = cookies.join(',');
+      }
+      const cookie = /^name=/.test(cookies);
       assert.strictEqual(cookie, true);
     });
 
@@ -57,10 +61,12 @@ describe('ctx.cookies', () => {
           .get('/')
           .expect(204);
 
-        const cookies = res.headers['set-cookie'];
-
-        assert.strictEqual(cookies.some(cookie => /^name=/.test(cookie)), true);
-        assert.strictEqual(cookies.some(cookie => /(,|^)name\.sig=/.test(cookie)), true);
+        let cookies = res.headers['set-cookie'];
+        if (Array.isArray(cookies)) {
+          cookies = cookies.join(',');
+        }
+        assert.strictEqual(/^name=/.test(cookies), true);
+        assert.strictEqual(/(,|^)name\.sig=/.test(cookies), true);
       });
     });
 
@@ -83,10 +89,13 @@ describe('ctx.cookies', () => {
           .set('x-forwarded-proto', 'https') // mock secure
           .expect(204);
 
-        const cookies = res.headers['set-cookie'];
-        assert.strictEqual(cookies.some(cookie => /^name=/.test(cookie)), true);
-        assert.strictEqual(cookies.some(cookie => /(,|^)name\.sig=/.test(cookie)), true);
-        assert.strictEqual(cookies.every(cookie => /secure/.test(cookie)), true);
+        let cookies = res.headers['set-cookie'];
+        if (Array.isArray(cookies)) {
+          cookies = cookies.join(',');
+        }
+        assert.strictEqual(/^name=/.test(cookies), true);
+        assert.strictEqual(/(,|^)name\.sig=/.test(cookies), true);
+        assert.strictEqual(/secure/.test(cookies), true);
       });
     });
   });
@@ -97,7 +106,7 @@ describe('ctx.cookies', () => {
 
       app.use((ctx: any) => {
         ctx.cookies = {
-          set(key, value) {
+          set(key: string, value: string) {
             ctx.set(key, value);
           },
         };

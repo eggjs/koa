@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import request from 'supertest';
-import Koa from '../..';
+import Koa from '../../src/index.js';
 
 describe('app.context', () => {
   const app1 = new Koa();

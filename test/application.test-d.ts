@@ -1,6 +1,6 @@
 import { expectType } from 'tsd';
-import { Context } from './application';
-import Application from './application';
+import { Context } from '../src/index.js';
+import Application from '../src/application.js';
 
 const ctx = {} as Context;
 expectType<string>(ctx.ip);

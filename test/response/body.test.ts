@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import Stream from 'node:stream';
 import assert from 'node:assert';
-import { response } from '../test-helpers/context';
+import { response } from '../test-helpers/context.js';
 
 describe('res.body=', () => {
   describe('when Content-Type is set', () => {

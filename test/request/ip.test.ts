@@ -1,13 +1,13 @@
 import assert from 'node:assert';
 import Stream from 'node:stream';
-import Koa from '../..';
-import { request as Request } from '../test-helpers/context';
+import Koa from '../../src/index.js';
+import { request as Request } from '../test-helpers/context.js';
 
 describe('req.ip', () => {
   describe('with req.ips present', () => {
     it('should return req.ips[0]', () => {
       const app = new Koa();
-      const req = { headers: {}, socket: new Stream.Duplex() };
+      const req = { headers: {} as Record<string, string>, socket: new Stream.Duplex() };
       app.proxy = true;
       req.headers['x-forwarded-for'] = '127.0.0.1';
       (req.socket as any).remoteAddress = '127.0.0.2';

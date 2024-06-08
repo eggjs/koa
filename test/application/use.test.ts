@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import request from 'supertest';
-import Koa from '../../index';
+import Koa from '../../src/index.js';
 
 describe('app.use(fn)', () => {
   it('should compose middleware', async () => {
@@ -86,7 +86,7 @@ describe('app.use(fn)', () => {
 
     app.use((_ctx, next) => next());
     assert.throws(() => {
-      app.use((function* generatorMiddileware(next) {
+      app.use((function* generatorMiddileware(_ctx: any, next: any) {
         console.log('pre generator');
         yield next;
         // this.body = 'generator';

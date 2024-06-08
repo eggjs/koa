@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { request } from '../test-helpers/context';
+import { request } from '../test-helpers/context.js';
 
 describe('req.headers', () => {
   it('should return the request header object', () => {

@@ -3,7 +3,7 @@ import http from 'node:http';
 import { PassThrough } from 'node:stream';
 import type { AddressInfo } from 'node:net';
 import request from 'supertest';
-import Koa from '../..';
+import Koa from '../../src/index.js';
 
 describe('ctx.flushHeaders()', () => {
   it('should set headersSent', () => {
@@ -98,7 +98,7 @@ describe('ctx.flushHeaders()', () => {
       }, 10000);
     });
 
-    const server = app.listen(function(err) {
+    const server = app.listen(function(err: Error) {
       if (err) return done(err);
 
       const port = (server.address() as AddressInfo).port;

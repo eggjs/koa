@@ -1,10 +1,11 @@
 
 import assert from 'node:assert';
 import util from 'node:util';
-import Koa from '../..';
-const app = new Koa();
+import Koa from '../../src/index.js';
 
 describe('app.inspect()', () => {
+  const app = new Koa();
+
   it('should work', () => {
     const str = util.inspect(app);
     assert.strictEqual("{ subdomainOffset: 2, proxy: false, env: 'test' }", str);

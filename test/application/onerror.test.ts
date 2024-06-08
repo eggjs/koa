@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { runInNewContext } from 'node:vm';
 import mm from 'mm';
-import Koa from '../..';
+import Koa from '../../src/index.js';
 
 describe('app.onerror(err)', () => {
   afterEach(mm.restore);

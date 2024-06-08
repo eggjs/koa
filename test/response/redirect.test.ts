@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import request from 'supertest';
-import context from '../test-helpers/context';
-import Koa from '../..';
+import context from '../test-helpers/context.js';
+import Koa from '../../src/index.js';
 
 describe('ctx.redirect(url)', () => {
   it('should redirect to the given url', () => {
@@ -132,7 +132,7 @@ describe('ctx.redirect(url)', () => {
   });
 });
 
-function escape(html) {
+function escape(html: string) {
   return String(html)
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')

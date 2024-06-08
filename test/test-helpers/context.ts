@@ -1,6 +1,6 @@
 import stream from 'node:stream';
-import Koa from '../../src/application';
-import type { ContextDelegation } from '../../src/context';
+import Koa from '../../src/application.js';
+import type { ContextDelegation } from '../../src/context.js';
 
 export default function context(req?: any, res?: any, app?: Koa) {
   const socket = new stream.Duplex();

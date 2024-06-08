@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { request } from '../test-helpers/context';
+import { request } from '../test-helpers/context.js';
 
 describe('req.subdomains', () => {
   it('should return subdomain array', () => {

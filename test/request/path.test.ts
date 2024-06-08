@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import parseurl from 'parseurl';
-import context from '../test-helpers/context';
+import context from '../test-helpers/context.js';
 
 describe('ctx.path', () => {
   it('should return the pathname', () => {
@@ -32,6 +32,6 @@ describe('ctx.path=', () => {
     const ctx = context({ url: '/login?foo=bar' });
     ctx.path = '/login';
     const url = parseurl(ctx.req);
-    assert.strictEqual(url.path, '/login?foo=bar');
+    assert.strictEqual(url?.path, '/login?foo=bar');
   });
 });

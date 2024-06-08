@@ -1,10 +1,11 @@
 import net from 'node:net';
 import assert from 'node:assert';
-import Koa from '../../';
+import { setTimeout as sleep } from 'node:timers/promises';
+import Koa from '../../src/index.js';
 
 describe('res.writable', () => {
   describe('when continuous requests in one persistent connection', () => {
-    function requestTwice(server, done) {
+    function requestTwice(server: any, done: any) {
       const port = server.address().port;
       const buf = Buffer.from('GET / HTTP/1.1\r\nHost: localhost:' + port + '\r\nConnection: keep-alive\r\n\r\n');
       const client = net.connect(port);
@@ -27,7 +28,7 @@ describe('res.writable', () => {
       });
 
       const server = app.listen();
-      requestTwice(server, (_, datas) => {
+      requestTwice(server, (_: any, datas: Buffer[]) => {
         const responses = Buffer.concat(datas).toString();
         assert.strictEqual(/request 1, writable: true/.test(responses), true);
         assert.strictEqual(/request 2, writable: true/.test(responses), true);
@@ -37,7 +38,7 @@ describe('res.writable', () => {
   });
 
   describe('when socket closed before response sent', () => {
-    function requestClosed(server) {
+    function requestClosed(server: any) {
       const port = server.address().port;
       const buf = Buffer.from('GET / HTTP/1.1\r\nHost: localhost:' + port + '\r\nConnection: keep-alive\r\n\r\n');
       const client = net.connect(port);
@@ -62,7 +63,7 @@ describe('res.writable', () => {
   });
 
   describe('when response finished', () => {
-    function request(server) {
+    function request(server: any) {
       const port = server.address().port;
       const buf = Buffer.from('GET / HTTP/1.1\r\nHost: localhost:' + port + '\r\nConnection: keep-alive\r\n\r\n');
       const client = net.connect(port);
@@ -86,7 +87,3 @@ describe('res.writable', () => {
     });
   });
 });
-
-function sleep(time) {
-  return new Promise(resolve => setTimeout(resolve, time));
-}

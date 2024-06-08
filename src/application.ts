@@ -6,25 +6,23 @@ import http from 'node:http';
 import type { AsyncLocalStorage } from 'node:async_hooks';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { getAsyncLocalStorage } from 'gals';
-import isGeneratorFunction from 'is-generator-function';
+import { isGeneratorFunction } from 'is-type-of';
 import onFinished from 'on-finished';
 import statuses from 'statuses';
 import compose from 'koa-compose';
-import only from 'only';
 import { HttpError } from 'http-errors';
-import Context from './context';
-import Request from './request';
-import Response from './response';
-import type { ContextDelegation } from './context';
-import type { CustomError, ProtoImplClass, AnyProto } from './types';
+import Context from './context.js';
+import Request from './request.js';
+import Response from './response.js';
+import type { ContextDelegation } from './context.js';
+import type { CustomError, AnyProto } from './types.js';
 
 const debug = debuglog('koa:application');
 
+export type ProtoImplClass<T = object> = new(...args: any[]) => T;
 export type Next = () => Promise<void>;
 export type MiddlewareFunc = (ctx: ContextDelegation, next: Next) => Promise<void> | void;
-
-export type { ContextDelegation as Context } from './context';
-export type { CustomError, ProtoImplClass } from './types';
+export type { ContextDelegation as Context } from './context.js';
 
 /**
  * Expose `Application` class.
@@ -108,11 +106,11 @@ export default class Application extends Emitter {
    * We only bother showing settings.
    */
   toJSON() {
-    return only(this, [
-      'subdomainOffset',
-      'proxy',
-      'env',
-    ]);
+    return {
+      subdomainOffset: this.subdomainOffset,
+      proxy: this.proxy,
+      env: this.env,
+    };
   }
 
   /**
@@ -165,10 +163,10 @@ export default class Application extends Emitter {
   }
 
   /**
-   * return currnect contenxt from async local storage
+   * return current context from async local storage
    */
   get currentContext() {
-    if (this.ctxStorage) return this.ctxStorage.getStore();
+    return this.ctxStorage.getStore();
   }
 
   /**
@@ -178,7 +176,7 @@ export default class Application extends Emitter {
   async #handleRequest(ctx: ContextDelegation, fnMiddleware: (ctx: ContextDelegation) => Promise<void>) {
     const res = ctx.res;
     res.statusCode = 404;
-    const onerror = (err: Error) => ctx.onerror(err);
+    const onerror = (err: any) => ctx.onerror(err);
     onFinished(res, onerror);
     try {
       await fnMiddleware(ctx);
@@ -214,14 +212,6 @@ export default class Application extends Emitter {
 
     const msg = err.stack || err.toString();
     console.error(`\n${msg.replace(/^/gm, '  ')}\n`);
-  }
-
-  createAsyncCtxStorageMiddleware() {
-    return async (ctx: ContextDelegation, next: Next) => {
-      await this.ctxStorage.run(ctx, async () => {
-        return await next();
-      });
-    };
   }
 
   /**
