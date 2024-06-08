@@ -88,9 +88,4 @@ describe('app', () => {
       throw CreateError(500, 'test error');
     }, Koa.HttpError);
   });
-
-  it('should export createAsyncCtxStorageMiddleware function', () => {
-    const app = new Koa();
-    assert.strictEqual(typeof app.createAsyncCtxStorageMiddleware, 'function');
-  });
 });

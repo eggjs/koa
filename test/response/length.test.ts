@@ -67,6 +67,8 @@ describe('res.length=', () => {
     const res = response();
     res.length = 100;
     assert.strictEqual(res.length, 100);
+    res.length = undefined;
+    assert.strictEqual(res.length, 100);
   });
 
   it('should not set when Transfer-Encoding present', () => {

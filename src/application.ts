@@ -166,7 +166,7 @@ export default class Application extends Emitter {
    * return current context from async local storage
    */
   get currentContext() {
-    if (this.ctxStorage) return this.ctxStorage.getStore();
+    return this.ctxStorage.getStore();
   }
 
   /**
@@ -212,14 +212,6 @@ export default class Application extends Emitter {
 
     const msg = err.stack || err.toString();
     console.error(`\n${msg.replace(/^/gm, '  ')}\n`);
-  }
-
-  createAsyncCtxStorageMiddleware() {
-    return async (ctx: ContextDelegation, next: Next) => {
-      await this.ctxStorage.run(ctx, async () => {
-        return await next();
-      });
-    };
   }
 
   /**
