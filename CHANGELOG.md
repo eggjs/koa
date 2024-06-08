@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.0](https://github.com/eggjs/koa/compare/v2.17.0...v2.18.0) (2024-06-08)
+
+
+### Features
+
+* support cjs and esm both ([#5](https://github.com/eggjs/koa/issues/5)) ([b555b32](https://github.com/eggjs/koa/commit/b555b32bcc6c10c85b21a6186d1a1619b6c7b9ac))
+
 ## [2.17.0](https://github.com/eggjs/koa/compare/v2.16.0...v2.17.0) (2024-03-15)
 
 
