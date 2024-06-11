@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.1](https://github.com/eggjs/koa/compare/v2.18.0...v2.18.1) (2024-06-11)
+
+
+### Bug Fixes
+
+* should export Application ([#6](https://github.com/eggjs/koa/issues/6)) ([b39a51a](https://github.com/eggjs/koa/commit/b39a51a962d13ac67805ea3beedb995f5748a4d4))
+
 ## [2.18.0](https://github.com/eggjs/koa/compare/v2.17.0...v2.18.0) (2024-06-08)
 
 
