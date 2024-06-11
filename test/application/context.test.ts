@@ -1,11 +1,11 @@
 import assert from 'node:assert';
 import request from 'supertest';
-import Koa from '../../src/index.js';
+import { Application } from '../../src/index.js';
 
 describe('app.context', () => {
-  const app1 = new Koa();
+  const app1 = new Application();
   app1.context.msg = 'hello app1';
-  const app2 = new Koa();
+  const app2 = new Application();
   app2.request.foo = 'bar';
 
   it('should the context between apps is isolated', () => {

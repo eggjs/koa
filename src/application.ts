@@ -28,7 +28,7 @@ export type { ContextDelegation as Context } from './context.js';
  * Expose `Application` class.
  * Inherits from `Emitter.prototype`.
  */
-export default class Application extends Emitter {
+export class Application extends Emitter {
   /**
    * Make HttpError available to consumers of the library so that consumers don't
    * have a direct dependency upon `http-errors`
@@ -274,3 +274,5 @@ export default class Application extends Emitter {
     res.end(body);
   }
 }
+
+export default Application;
