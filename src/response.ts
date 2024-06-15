@@ -12,11 +12,11 @@ import statuses from 'statuses';
 import destroy from 'destroy';
 import vary from 'vary';
 import encodeUrl from 'encodeurl';
-import type Application from './application.js';
+import type { Application } from './application.js';
 import type { ContextDelegation } from './context.js';
-import type Request from './request.js';
+import type { Request } from './request.js';
 
-export default class Response {
+export class Response {
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
