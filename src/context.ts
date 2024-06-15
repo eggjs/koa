@@ -5,12 +5,12 @@ import httpAssert from 'http-assert';
 import delegate from 'delegates';
 import statuses from 'statuses';
 import Cookies from 'cookies';
-import type Application from './application.js';
-import type Request from './request.js';
-import type Response from './response.js';
+import type { Application } from './application.js';
+import type { Request } from './request.js';
+import type { Response } from './response.js';
 import type { CustomError, AnyProto } from './types.js';
 
-export default class Context {
+export class Context {
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;

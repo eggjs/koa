@@ -11,9 +11,9 @@ import onFinished from 'on-finished';
 import statuses from 'statuses';
 import compose from 'koa-compose';
 import { HttpError } from 'http-errors';
-import Context from './context.js';
-import Request from './request.js';
-import Response from './response.js';
+import { Context } from './context.js';
+import { Request } from './request.js';
+import { Response } from './response.js';
 import type { ContextDelegation } from './context.js';
 import type { CustomError, AnyProto } from './types.js';
 
@@ -22,7 +22,6 @@ const debug = debuglog('koa:application');
 export type ProtoImplClass<T = object> = new(...args: any[]) => T;
 export type Next = () => Promise<void>;
 export type MiddlewareFunc = (ctx: ContextDelegation, next: Next) => Promise<void> | void;
-export type { ContextDelegation as Context } from './context.js';
 
 /**
  * Expose `Application` class.
@@ -44,7 +43,7 @@ export class Application extends Emitter {
   middleware: MiddlewareFunc[];
   ctxStorage: AsyncLocalStorage<ContextDelegation>;
   silent: boolean;
-  ContextClass: ProtoImplClass<Context>;
+  ContextClass: ProtoImplClass<ContextDelegation>;
   context: AnyProto;
   RequestClass: ProtoImplClass<Request>;
   request: AnyProto;
@@ -82,7 +81,7 @@ export class Application extends Emitter {
     this.middleware = [];
     this.ctxStorage = getAsyncLocalStorage();
     this.silent = false;
-    this.ContextClass = class ApplicationContext extends Context {};
+    this.ContextClass = class ApplicationContext extends Context {} as any;
     this.context = this.ContextClass.prototype;
     this.RequestClass = class ApplicationRequest extends Request {};
     this.request = this.RequestClass.prototype;

@@ -10,19 +10,19 @@ import contentType from 'content-type';
 import parse from 'parseurl';
 import typeis from 'type-is';
 import fresh from 'fresh';
-import type Application from './application.js';
-import type Context from './context.js';
-import type Response from './response.js';
+import type { Application } from './application.js';
+import type { ContextDelegation } from './context.js';
+import type { Response } from './response.js';
 
-export default class Request {
+export class Request {
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
-  ctx: Context;
+  ctx: ContextDelegation;
   response: Response;
   originalUrl: string;
 
-  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
+  constructor(app: Application, ctx: ContextDelegation, req: IncomingMessage, res: ServerResponse) {
     this.app = app;
     this.req = req;
     this.res = res;
