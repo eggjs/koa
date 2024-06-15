@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.2](https://github.com/eggjs/koa/compare/v2.18.1...v2.18.2) (2024-06-15)
+
+
+### Bug Fixes
+
+* should export ContextDelegation and Context both ([#7](https://github.com/eggjs/koa/issues/7)) ([b26b549](https://github.com/eggjs/koa/commit/b26b54974fb4f081c14ef453efce03c9a6604793))
+
 ## [2.18.1](https://github.com/eggjs/koa/compare/v2.18.0...v2.18.1) (2024-06-11)
 
 
