@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.3](https://github.com/eggjs/koa/compare/v2.18.2...v2.18.3) (2024-06-16)
+
+
+### Bug Fixes
+
+* change debug prefix to @eggjs/koa ([#8](https://github.com/eggjs/koa/issues/8)) ([c5e4cc5](https://github.com/eggjs/koa/commit/c5e4cc56205386ce5dd7daafef3c9a56b7daddb8))
+
 ## [2.18.2](https://github.com/eggjs/koa/compare/v2.18.1...v2.18.2) (2024-06-15)
 
 
