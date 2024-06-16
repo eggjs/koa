@@ -1,6 +1,6 @@
 # @eggjs/koa
 
-@eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and drop Node.js < 18.7.0 support.
+@eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and drop Node.js < 18.19.0 support.
 
 <img height="240px" src="/docs/logo.png" alt="Koa middleware framework for nodejs"/>
 
@@ -12,14 +12,14 @@
 
 Expressive HTTP middleware framework for node.js to make web applications and APIs more enjoyable to write. Koa's middleware stack flows in a stack-like manner, allowing you to perform actions downstream then filter and manipulate the response upstream.
 
-Only methods that are common to nearly all HTTP servers are integrated directly into Koa's small ~570 SLOC codebase. This
-includes things like content negotiation, normalization of node inconsistencies, redirection, and a few others.
+Only methods that are common to nearly all HTTP servers are integrated directly into Koa's small codebase.
+This includes things like content negotiation, normalization of node inconsistencies, redirection, and a few others.
 
 Koa is not bundled with any middleware.
 
 ## Installation
 
-@eggjs/koa requires __node v18.7.0__ or higher for Node.js LTS support.
+@eggjs/koa requires __node v18.19.0__ or higher for Node.js LTS support.
 
 ```bash
 npm install @eggjs/koa

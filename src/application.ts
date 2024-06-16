@@ -17,11 +17,12 @@ import { Response } from './response.js';
 import type { ContextDelegation } from './context.js';
 import type { CustomError, AnyProto } from './types.js';
 
-const debug = debuglog('koa:application');
+const debug = debuglog('@eggjs/koa:application');
 
 export type ProtoImplClass<T = object> = new(...args: any[]) => T;
 export type Next = () => Promise<void>;
-export type MiddlewareFunc = (ctx: ContextDelegation, next: Next) => Promise<void> | void;
+type _MiddlewareFunc = (ctx: ContextDelegation, next: Next) => Promise<void> | void;
+export type MiddlewareFunc = _MiddlewareFunc & { _name?: string };
 
 /**
  * Expose `Application` class.
@@ -95,7 +96,7 @@ export class Application extends Emitter {
    *    http.createServer(app.callback()).listen(...)
    */
   listen(...args: any[]) {
-    debug('listen');
+    debug('listen with args: %o', args);
     const server = http.createServer(this.callback());
     return server.listen(...args);
   }
@@ -125,17 +126,16 @@ export class Application extends Emitter {
 
   /**
    * Use the given middleware `fn`.
-   *
-   * Old-style middleware will be converted.
    */
   use(fn: MiddlewareFunc) {
     if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
+    const name = fn._name || fn.name || '-';
     if (isGeneratorFunction(fn)) {
-      throw new TypeError('Support for generators was removed. ' +
+      throw new TypeError(`Support for generators was removed, middleware: ${name}. ` +
         'See the documentation for examples of how to convert old middleware ' +
         'https://github.com/koajs/koa/blob/master/docs/migration.md');
     }
-    debug('use %s #%d', (fn as any)._name || fn.name || '-', this.middleware.length);
+    debug('use %o #%d', name, this.middleware.length);
     this.middleware.push(fn);
     return this;
   }
