@@ -7,11 +7,10 @@ describe('app.use(fn)', () => {
     const app = new Koa();
     const calls: number[] = [];
 
-    app.use((_ctx, next) => {
+    app.use(async function foo(_ctx, next) {
       calls.push(1);
-      return next().then(() => {
-        calls.push(6);
-      });
+      await next();
+      calls.push(6);
     });
 
     app.use((_ctx, next) => {
