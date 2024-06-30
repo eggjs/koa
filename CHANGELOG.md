@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.4](https://github.com/eggjs/koa/compare/v2.18.3...v2.18.4) (2024-06-30)
+
+
+### Bug Fixes
+
+* change env and proxy to getter and setter ([#9](https://github.com/eggjs/koa/issues/9)) ([14aa2c5](https://github.com/eggjs/koa/commit/14aa2c5afff73d853ebd0fc113a259fdc735a1aa))
+
 ## [2.18.3](https://github.com/eggjs/koa/compare/v2.18.2...v2.18.3) (2024-06-16)
 
 
