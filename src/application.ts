@@ -35,11 +35,11 @@ export class Application extends Emitter {
    */
   static HttpError = HttpError;
 
-  proxy: boolean;
+  protected _proxy: boolean;
+  protected _env: string;
   subdomainOffset: number;
   proxyIpHeader: string;
   maxIpsCount: number;
-  env: string;
   keys?: string[];
   middleware: MiddlewareFunc[];
   ctxStorage: AsyncLocalStorage<ContextDelegation>;
@@ -73,11 +73,11 @@ export class Application extends Emitter {
   }) {
     super();
     options = options || {};
-    this.proxy = options.proxy || false;
+    this._proxy = options.proxy || false;
     this.subdomainOffset = options.subdomainOffset || 2;
     this.proxyIpHeader = options.proxyIpHeader || 'X-Forwarded-For';
     this.maxIpsCount = options.maxIpsCount || 0;
-    this.env = options.env || process.env.NODE_ENV || 'development';
+    this._env = options.env || process.env.NODE_ENV || 'development';
     if (options.keys) this.keys = options.keys;
     this.middleware = [];
     this.ctxStorage = getAsyncLocalStorage();
@@ -88,6 +88,20 @@ export class Application extends Emitter {
     this.request = this.RequestClass.prototype;
     this.ResponseClass = class ApplicationResponse extends Response {};
     this.response = this.ResponseClass.prototype;
+  }
+
+  get env() {
+    return this._env;
+  }
+  set env(value: string) {
+    this._env = value;
+  }
+
+  get proxy() {
+    return this._proxy;
+  }
+  set proxy(value: boolean) {
+    this._proxy = value;
   }
 
   /**
