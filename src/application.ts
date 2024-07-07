@@ -187,10 +187,16 @@ export class Application extends Emitter {
    * @private
    */
   protected async handleRequest(ctx: ContextDelegation, fnMiddleware: (ctx: ContextDelegation) => Promise<void>) {
+    this.emit('request', ctx);
     const res = ctx.res;
     res.statusCode = 404;
     const onerror = (err: any) => ctx.onerror(err);
-    onFinished(res, onerror);
+    onFinished(res, (err: any) => {
+      if (err) {
+        onerror(err);
+      }
+      this.emit('response', ctx);
+    });
     try {
       await fnMiddleware(ctx);
       return this._respond(ctx);

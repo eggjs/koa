@@ -4,7 +4,6 @@ import CreateError from 'http-errors';
 import Koa from '../../src/index.js';
 
 describe('app', () => {
-  // ignore test on Node.js v18
   it('should handle socket errors', done => {
     const app = new Koa();
 
@@ -18,6 +17,36 @@ describe('app', () => {
       done();
     });
 
+    request(app.callback())
+      .get('/')
+      .end(() => {
+        // empty
+      });
+  });
+
+  it('should emit request and response event', done => {
+    const app = new Koa();
+    let requestCount = 0;
+    let responseCount = 0;
+    app.on('request', ctx => {
+      assert.equal(ctx.url, '/');
+      requestCount++;
+    });
+    app.on('response', ctx => {
+      assert.equal(ctx.url, '/');
+      assert.equal(ctx.status, 404);
+      responseCount++;
+      if (responseCount === 2) {
+        assert.equal(requestCount, 2);
+        done();
+      }
+    });
+
+    request(app.callback())
+      .get('/')
+      .end(() => {
+        // empty
+      });
     request(app.callback())
       .get('/')
       .end(() => {
