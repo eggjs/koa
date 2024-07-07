@@ -9,3 +9,4 @@ lib
 !lib/application.test-d.ts
 package-lock.json
 .tshy*
+.eslintcache

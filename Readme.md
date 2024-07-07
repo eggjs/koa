@@ -170,10 +170,6 @@ npm test
 
 To report a security vulnerability, please do not open an issue, as this notifies attackers of the vulnerability. Instead, please email [fengmk2](mailto:fengmk2+eggjs@gmail.com) to disclose.
 
-## Authors
-
-See [AUTHORS](AUTHORS).
-
 ## Community
 
 - [Examples](https://github.com/koajs/examples)
@@ -184,3 +180,9 @@ See [AUTHORS](AUTHORS).
 ## License
 
 [MIT](LICENSE)
+
+## Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=eggjs/koa)](https://github.com/eggjs/koa/graphs/contributors)
+
+Made with [contributors-img](https://contrib.rocks).

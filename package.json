@@ -11,7 +11,7 @@
   "scripts": {
     "test": "npm run lint -- --fix && egg-bin test",
     "ci": "npm run lint && egg-bin cov && npm run prepublishOnly && attw --pack",
-    "lint": "eslint src test",
+    "lint": "eslint src test --cache",
     "authors": "git log --format='%aN <%aE>' | sort -u > AUTHORS",
     "prepublishOnly": "tshy && tshy-after"
   },
@@ -107,5 +107,6 @@
     "src"
   ],
   "main": "./dist/commonjs/index.js",
-  "types": "./dist/commonjs/index.d.ts"
+  "types": "./dist/commonjs/index.d.ts",
+  "module": "./dist/esm/index.js"
 }
