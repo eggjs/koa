@@ -168,7 +168,7 @@ export class Application extends Emitter {
     const handleRequest = (req: IncomingMessage, res: ServerResponse) => {
       const ctx = this.createContext(req, res);
       return this.ctxStorage.run(ctx, async () => {
-        return await this.#handleRequest(ctx, fn);
+        return await this.handleRequest(ctx, fn);
       });
     };
 
@@ -186,7 +186,7 @@ export class Application extends Emitter {
    * Handle request in callback.
    * @private
    */
-  async #handleRequest(ctx: ContextDelegation, fnMiddleware: (ctx: ContextDelegation) => Promise<void>) {
+  protected async handleRequest(ctx: ContextDelegation, fnMiddleware: (ctx: ContextDelegation) => Promise<void>) {
     const res = ctx.res;
     res.statusCode = 404;
     const onerror = (err: any) => ctx.onerror(err);
