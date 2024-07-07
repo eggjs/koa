@@ -40,7 +40,7 @@ export class Application extends Emitter {
   subdomainOffset: number;
   proxyIpHeader: string;
   maxIpsCount: number;
-  keys?: string[];
+  protected _keys?: string[];
   middleware: MiddlewareFunc[];
   ctxStorage: AsyncLocalStorage<ContextDelegation>;
   silent: boolean;
@@ -78,7 +78,9 @@ export class Application extends Emitter {
     this.proxyIpHeader = options.proxyIpHeader || 'X-Forwarded-For';
     this.maxIpsCount = options.maxIpsCount || 0;
     this._env = options.env || process.env.NODE_ENV || 'development';
-    if (options.keys) this.keys = options.keys;
+    if (options.keys) {
+      this._keys = options.keys;
+    }
     this.middleware = [];
     this.ctxStorage = getAsyncLocalStorage();
     this.silent = false;
@@ -88,6 +90,14 @@ export class Application extends Emitter {
     this.request = this.RequestClass.prototype;
     this.ResponseClass = class ApplicationResponse extends Response {};
     this.response = this.ResponseClass.prototype;
+  }
+
+  get keys() {
+    return this._keys;
+  }
+
+  set keys(value: string[] | undefined) {
+    this._keys = value;
   }
 
   get env() {
