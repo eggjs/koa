@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.0](https://github.com/eggjs/koa/compare/v2.18.5...v2.19.0) (2024-07-07)
+
+
+### Features
+
+* emit request and response event on app ([d5f08b4](https://github.com/eggjs/koa/commit/d5f08b467385128ba94549681b970272f811fd23))
+
 ## [2.18.5](https://github.com/eggjs/koa/compare/v2.18.4...v2.18.5) (2024-07-07)
 
 

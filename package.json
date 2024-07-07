@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/koa",
-  "version": "2.18.5",
+  "version": "2.19.0",
   "engines": {
     "node": ">= 18.19.0"
   },
