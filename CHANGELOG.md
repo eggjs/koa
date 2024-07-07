@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.1](https://github.com/eggjs/koa/compare/v2.19.0...v2.19.1) (2024-07-07)
+
+
+### Bug Fixes
+
+* change keys to getter and setter ([e0dc2a0](https://github.com/eggjs/koa/commit/e0dc2a014ede8d20f21a6ef485ae080084949620))
+
 ## [2.19.0](https://github.com/eggjs/koa/compare/v2.18.5...v2.19.0) (2024-07-07)
 
 
