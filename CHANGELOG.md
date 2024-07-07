@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.5](https://github.com/eggjs/koa/compare/v2.18.4...v2.18.5) (2024-07-07)
+
+
+### Bug Fixes
+
+* export handleRequest on application ([#10](https://github.com/eggjs/koa/issues/10)) ([dfda217](https://github.com/eggjs/koa/commit/dfda217c51c00d7b0bcbefc281104c6be45ffebb))
+
 ## [2.18.4](https://github.com/eggjs/koa/compare/v2.18.3...v2.18.4) (2024-06-30)
 
 
