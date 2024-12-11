@@ -4,7 +4,7 @@ import util from 'node:util';
 import Stream from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import contentDisposition from 'content-disposition';
-import getType from 'cache-content-type';
+import { getType } from 'cache-content-type';
 import onFinish from 'on-finished';
 import escape from 'escape-html';
 import { is as typeis } from 'type-is';
