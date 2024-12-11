@@ -34,7 +34,7 @@
     "cache-content-type": "^2.0.0",
     "content-disposition": "~0.5.4",
     "content-type": "^1.0.5",
-    "cookies": "~0.8.0",
+    "cookies": "^0.9.1",
     "delegates": "^1.0.0",
     "destroy": "^1.0.4",
     "encodeurl": "^1.0.2",
