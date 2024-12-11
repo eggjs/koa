@@ -28,4 +28,17 @@ describe('app.request', () => {
       .get('/')
       .expect(204);
   });
+
+  it('should access ip work', () => {
+    const app = new Koa();
+    app.use(ctx => {
+      ctx.status = 200;
+      ctx.body = ctx.request.ip;
+    });
+
+    return request(app.listen())
+      .get('/')
+      .expect(200)
+      .expect('::ffff:127.0.0.1');
+  });
 });

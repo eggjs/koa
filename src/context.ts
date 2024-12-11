@@ -201,19 +201,20 @@ export class Context {
     res.end(msg);
   }
 
-  #cookies: Cookies;
+  protected _cookies: Cookies | undefined;
+
   get cookies() {
-    if (!this.#cookies) {
-      this.#cookies = new Cookies(this.req, this.res, {
+    if (!this._cookies) {
+      this._cookies = new Cookies(this.req, this.res, {
         keys: this.app.keys,
         secure: this.request.secure,
       });
     }
-    return this.#cookies;
+    return this._cookies;
   }
 
   set cookies(cookies: Cookies) {
-    this.#cookies = cookies;
+    this._cookies = cookies;
   }
 }
 

@@ -1,11 +1,9 @@
-import net from 'node:net';
-import type { Socket } from 'node:net';
+import net, { type Socket } from 'node:net';
 import { format as stringify } from 'node:url';
-import qs from 'node:querystring';
+import qs, { type ParsedUrlQuery } from 'node:querystring';
 import util from 'node:util';
-import type { ParsedUrlQuery } from 'node:querystring';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import accepts from 'accepts';
+import accepts, { type Accepts } from 'accepts';
 import contentType from 'content-type';
 import parse from 'parseurl';
 import typeis from 'type-is';
@@ -134,19 +132,19 @@ export class Request {
     this.url = stringify(url);
   }
 
-  #parsedUrlQueryCache: Record<string, ParsedUrlQuery>;
+  protected _parsedUrlQueryCache: Record<string, ParsedUrlQuery> | undefined;
 
   /**
    * Get parsed query string.
    */
   get query() {
     const str = this.querystring;
-    if (!this.#parsedUrlQueryCache) {
-      this.#parsedUrlQueryCache = {};
+    if (!this._parsedUrlQueryCache) {
+      this._parsedUrlQueryCache = {};
     }
-    let parsedUrlQuery = this.#parsedUrlQueryCache[str];
+    let parsedUrlQuery = this._parsedUrlQueryCache[str];
     if (!parsedUrlQuery) {
-      parsedUrlQuery = this.#parsedUrlQueryCache[str] = qs.parse(str);
+      parsedUrlQuery = this._parsedUrlQueryCache[str] = qs.parse(str);
     }
     return parsedUrlQuery;
   }
@@ -210,10 +208,16 @@ export class Request {
     const proxy = this.app.proxy;
     let host = proxy ? this.get<string>('X-Forwarded-Host') : '';
     if (!host) {
-      if (this.req.httpVersionMajor >= 2) host = this.get(':authority');
-      if (!host) host = this.get('Host');
+      if (this.req.httpVersionMajor >= 2) {
+        host = this.get(':authority');
+      }
+      if (!host) {
+        host = this.get('Host');
+      }
     }
-    if (!host) return '';
+    if (!host) {
+      return '';
+    }
     return host.split(/\s*,\s*/, 1)[0];
   }
 
@@ -224,27 +228,31 @@ export class Request {
    */
   get hostname() {
     const host = this.host;
-    if (!host) return '';
-    if (host[0] === '[') return this.URL.hostname || ''; // IPv6
+    if (!host) {
+      return '';
+    }
+    if (host[0] === '[') {
+      return this.URL.hostname || ''; // IPv6
+    }
     return host.split(':', 1)[0];
   }
 
-  #memoizedURL: URL;
+  protected _memoizedURL: URL | undefined;
 
   /**
    * Get WHATWG parsed URL.
    * Lazily memoized.
    */
   get URL() {
-    if (!this.#memoizedURL) {
+    if (!this._memoizedURL) {
       const originalUrl = this.originalUrl || ''; // avoid undefined in template string
       try {
-        this.#memoizedURL = new URL(`${this.origin}${originalUrl}`);
+        this._memoizedURL = new URL(`${this.origin}${originalUrl}`);
       } catch {
-        this.#memoizedURL = Object.create(null);
+        this._memoizedURL = Object.create(null);
       }
     }
-    return this.#memoizedURL;
+    return this._memoizedURL!;
   }
 
   /**
@@ -257,7 +265,9 @@ export class Request {
     const status = this.response.status;
 
     // GET or HEAD for weak freshness validation only
-    if (method !== 'GET' && method !== 'HEAD') return false;
+    if (method !== 'GET' && method !== 'HEAD') {
+      return false;
+    }
 
     // 2xx or 304 as per rfc2616 14.26
     if ((status >= 200 && status < 300) || status === 304) {
@@ -308,7 +318,9 @@ export class Request {
    */
   get length() {
     const len = this.get<string>('Content-Length');
-    if (len === '') return;
+    if (len === '') {
+      return;
+    }
     return parseInt(len);
   }
 
@@ -321,8 +333,12 @@ export class Request {
    * may be enabled.
    */
   get protocol() {
-    if (this.socket.encrypted) return 'https';
-    if (!this.app.proxy) return 'http';
+    if (this.socket.encrypted) {
+      return 'https';
+    }
+    if (!this.app.proxy) {
+      return 'http';
+    }
     const proto = this.get<string>('X-Forwarded-Proto');
     return proto ? proto.split(/\s*,\s*/, 1)[0] : 'http';
   }
@@ -356,21 +372,21 @@ export class Request {
     return ips;
   }
 
-  #ip: string;
+  protected _ip: string;
   /**
    * Return request's remote address
    * When `app.proxy` is `true`, parse
    * the "X-Forwarded-For" ip address list and return the first one
    */
   get ip() {
-    if (!this.#ip) {
-      this.#ip = this.ips[0] || this.socket.remoteAddress || '';
+    if (!this._ip) {
+      this._ip = this.ips[0] || this.socket.remoteAddress || '';
     }
-    return this.#ip;
+    return this._ip;
   }
 
   set ip(ip: string) {
-    this.#ip = ip;
+    this._ip = ip;
   }
 
   /**
@@ -395,20 +411,20 @@ export class Request {
       .slice(offset);
   }
 
-  #accept: any;
+  protected _accept: Accepts;
   /**
    * Get accept object.
    * Lazily memoized.
    */
   get accept() {
-    return this.#accept || (this.#accept = accepts(this.req));
+    return this._accept || (this._accept = accepts(this.req));
   }
 
   /**
    * Set accept object.
    */
-  set accept(obj) {
-    this.#accept = obj;
+  set accept(obj: Accepts) {
+    this._accept = obj;
   }
 
   /**
@@ -459,8 +475,19 @@ export class Request {
    *
    *     ['gzip', 'deflate']
    */
-  acceptsEncodings(...args: any[]): string | string[] {
-    return this.accept.encodings(...args);
+  acceptsEncodings(): string[];
+  acceptsEncodings(encodings: string[]): string | false;
+  acceptsEncodings(...encodings: string[]): string | false;
+  acceptsEncodings(encodings?: string | string[], ...others: string[]): string[] | string | false {
+    if (!encodings) {
+      return this.accept.encodings();
+    }
+    if (Array.isArray(encodings)) {
+      encodings = [ ...encodings, ...others ];
+    } else {
+      encodings = [ encodings, ...others ];
+    }
+    return this.accept.encodings(...encodings);
   }
 
   /**
@@ -471,8 +498,19 @@ export class Request {
    *
    *     ['utf-8', 'utf-7', 'iso-8859-1']
    */
-  acceptsCharsets(...args: any[]): string | string[] {
-    return this.accept.charsets(...args);
+  acceptsCharsets(): string[];
+  acceptsCharsets(charsets: string[]): string | false;
+  acceptsCharsets(...charsets: string[]): string | false;
+  acceptsCharsets(charsets?: string | string[], ...others: string[]): string[] | string | false {
+    if (!charsets) {
+      return this.accept.charsets();
+    }
+    if (Array.isArray(charsets)) {
+      charsets = [ ...charsets, ...others ];
+    } else {
+      charsets = [ charsets, ...others ];
+    }
+    return this.accept.charsets(...charsets);
   }
 
   /**
@@ -483,8 +521,19 @@ export class Request {
    *
    *     ['es', 'pt', 'en']
    */
-  acceptsLanguages(...args: any[]): string | string[] {
-    return this.accept.languages(...args);
+  acceptsLanguages(): string[];
+  acceptsLanguages(languages: string[]): string | false;
+  acceptsLanguages(...languages: string[]): string | false;
+  acceptsLanguages(languages?: string | string[], ...others: string[]): string | string[] | false {
+    if (!languages) {
+      return this.accept.languages();
+    }
+    if (Array.isArray(languages)) {
+      languages = [ ...languages, ...others ];
+    } else {
+      languages = [ languages, ...others ];
+    }
+    return this.accept.languages(...languages);
   }
 
   /**
