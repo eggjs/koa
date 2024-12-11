@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.2](https://github.com/eggjs/koa/compare/v2.19.1...v2.19.2) (2024-12-11)
+
+
+### Bug Fixes
+
+* allow delegate access request property ([#11](https://github.com/eggjs/koa/issues/11)) ([2967724](https://github.com/eggjs/koa/commit/2967724289e714bf544f51ca6ae58c64739cda1e))
+
 ## [2.19.1](https://github.com/eggjs/koa/compare/v2.19.0...v2.19.1) (2024-07-07)
 
 
