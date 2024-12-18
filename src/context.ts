@@ -11,6 +11,7 @@ import type { Response } from './response.js';
 import type { CustomError, AnyProto } from './types.js';
 
 export class Context {
+  [key: symbol]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;

@@ -1,4 +1,4 @@
-import { Application } from '../dist/esm/index.js';
+import { Application } from '..';
 
 const app = new Application();
 

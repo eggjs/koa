@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { Application } = require('../dist/commonjs/index.js');
+const { Application } = require('..');
 
 const app = new Application();
 
