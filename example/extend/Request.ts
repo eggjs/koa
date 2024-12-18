@@ -12,8 +12,12 @@ export class CustomRequest extends Request {
     if (this.app.proxy) {
       host = '127.0.0.1';
     }
-    host = host || this.get('host') || '';
-    this[HOST] = host = host.split(/\s*,\s*/)[0];
+    const rawHost = host || this.get('host');
+    if (!rawHost) {
+      this[HOST] = '';
+      return '';
+    }
+    this[HOST] = rawHost.split(/\s*,\s*/)[0];
     return host;
   }
 }
