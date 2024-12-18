@@ -17,6 +17,7 @@ import type { ContextDelegation } from './context.js';
 import type { Request } from './request.js';
 
 export class Response {
+  [key: symbol]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;

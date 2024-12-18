@@ -17,7 +17,7 @@ import { Response } from './response.js';
 import type { ContextDelegation } from './context.js';
 import type { CustomError, AnyProto } from './types.js';
 
-const debug = debuglog('@eggjs/koa:application');
+const debug = debuglog('@eggjs/koa/application');
 
 export type ProtoImplClass<T = object> = new(...args: any[]) => T;
 export type Next = () => Promise<void>;
@@ -29,6 +29,7 @@ export type MiddlewareFunc = _MiddlewareFunc & { _name?: string };
  * Inherits from `Emitter.prototype`.
  */
 export class Application extends Emitter {
+  [key: symbol]: unknown;
   /**
    * Make HttpError available to consumers of the library so that consumers don't
    * have a direct dependency upon `http-errors`
