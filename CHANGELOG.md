@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.0](https://github.com/eggjs/koa/compare/v2.19.2...v2.20.0) (2024-12-18)
+
+
+### Features
+
+* allow to set symbol property on request, response, context and app ([#12](https://github.com/eggjs/koa/issues/12)) ([5e18ed2](https://github.com/eggjs/koa/commit/5e18ed261d62186b7c23ec97cb41c20e9d9d89e7))
+
 ## [2.19.2](https://github.com/eggjs/koa/compare/v2.19.1...v2.19.2) (2024-12-11)
 
 
