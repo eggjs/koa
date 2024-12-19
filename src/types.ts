@@ -7,5 +7,5 @@ export type CustomError = Error & {
 };
 
 export type AnyProto = {
-  [key: string]: any;
+  [key: string | symbol]: any;
 };

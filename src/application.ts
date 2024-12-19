@@ -11,18 +11,17 @@ import onFinished from 'on-finished';
 import statuses from 'statuses';
 import compose from 'koa-compose';
 import { HttpError } from 'http-errors';
-import { Context } from './context.js';
+import { Context, type ContextDelegation } from './context.js';
 import { Request } from './request.js';
 import { Response } from './response.js';
-import type { ContextDelegation } from './context.js';
 import type { CustomError, AnyProto } from './types.js';
 
 const debug = debuglog('@eggjs/koa/application');
 
 export type ProtoImplClass<T = object> = new(...args: any[]) => T;
 export type Next = () => Promise<void>;
-type _MiddlewareFunc = (ctx: ContextDelegation, next: Next) => Promise<void> | void;
-export type MiddlewareFunc = _MiddlewareFunc & { _name?: string };
+type _MiddlewareFunc<T> = (ctx: T, next: Next) => Promise<void> | void;
+export type MiddlewareFunc<T = ContextDelegation> = _MiddlewareFunc<T> & { _name?: string };
 
 /**
  * Expose `Application` class.
@@ -222,7 +221,7 @@ export class Application extends Emitter {
    */
   protected createContext(req: IncomingMessage, res: ServerResponse) {
     const context = new this.ContextClass(this, req, res);
-    return context as ContextDelegation;
+    return context;
   }
 
   /**

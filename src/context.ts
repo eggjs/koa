@@ -11,7 +11,7 @@ import type { Response } from './response.js';
 import type { CustomError, AnyProto } from './types.js';
 
 export class Context {
-  [key: symbol]: unknown;
+  [key: symbol | string]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
@@ -158,7 +158,9 @@ export class Context {
     // We can probably remove it once jest fixes https://github.com/facebook/jest/issues/2549.
     const isNativeError = err instanceof Error ||
       Object.prototype.toString.call(err) === '[object Error]';
-    if (!isNativeError) err = new Error(util.format('non-error thrown: %j', err));
+    if (!isNativeError) {
+      err = new Error(util.format('non-error thrown: %j', err));
+    }
 
     let headerSent = false;
     if (this.response.headerSent || !this.response.writable) {
@@ -282,5 +284,4 @@ export type ContextDelegation = Context & Pick<Request, 'acceptsLanguages' | 'ac
 | 'path' | 'url' | 'accept' | 'origin' | 'href' | 'subdomains' | 'protocol' | 'host' | 'hostname'
 | 'URL' | 'header' | 'headers' | 'secure' | 'stale' | 'fresh' | 'ips' | 'ip'>
 & Pick<Response, 'attachment' | 'redirect' | 'remove' | 'vary' | 'has' | 'set' | 'append' | 'flushHeaders'
-| 'status' | 'message' | 'body' | 'length' | 'type' | 'lastModified' | 'etag' | 'headerSent' | 'writable'>
-& AnyProto;
+| 'status' | 'message' | 'body' | 'length' | 'type' | 'lastModified' | 'etag' | 'headerSent' | 'writable'>;
