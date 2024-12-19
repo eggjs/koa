@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.2](https://github.com/eggjs/koa/compare/v2.20.1...v2.20.2) (2024-12-19)
+
+
+### Bug Fixes
+
+* make Context state property can be override by Sub Class ([#14](https://github.com/eggjs/koa/issues/14)) ([49abe7f](https://github.com/eggjs/koa/commit/49abe7f3e707d383c858ca3b6463e87c30ca2d7a))
+
 ## [2.20.1](https://github.com/eggjs/koa/compare/v2.20.0...v2.20.1) (2024-12-19)
 
 
