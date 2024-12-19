@@ -17,15 +17,14 @@ export class Context {
   res: ServerResponse;
   request: Request & AnyProto;
   response: Response & AnyProto;
-  state: Record<string, any>;
   originalUrl: string;
   respond?: boolean;
+  #state: Record<string, any> = {};
 
   constructor(app: Application, req: IncomingMessage, res: ServerResponse) {
     this.app = app;
     this.req = req;
     this.res = res;
-    this.state = {};
     this.request = new app.RequestClass(app, this, req, res);
     this.response = new app.ResponseClass(app, this as any, req, res);
     this.request.response = this.response;
@@ -218,6 +217,10 @@ export class Context {
 
   set cookies(cookies: Cookies) {
     this._cookies = cookies;
+  }
+
+  get state() {
+    return this.#state;
   }
 }
 
