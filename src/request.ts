@@ -12,6 +12,10 @@ import type { Application } from './application.js';
 import type { ContextDelegation } from './context.js';
 import type { Response } from './response.js';
 
+export interface RequestSocket extends Socket {
+  encrypted: boolean;
+}
+
 export class Request {
   [key: symbol]: unknown;
   app: Application;
@@ -299,7 +303,7 @@ export class Request {
    * Return the request socket.
    */
   get socket() {
-    return this.req.socket as (Socket & { encrypted: boolean; });
+    return this.req.socket as RequestSocket;
   }
 
   /**

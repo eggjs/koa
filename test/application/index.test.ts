@@ -117,4 +117,15 @@ describe('app', () => {
       throw CreateError(500, 'test error');
     }, Koa.HttpError);
   });
+
+  it('should print object work', () => {
+    const app = new Koa();
+    const ctx = (app as any).createContext({} as any, {
+      getHeaders() {},
+    } as any);
+    console.log(ctx.request);
+    console.log(ctx.response);
+    console.log(ctx.context);
+    console.log(app);
+  });
 });
