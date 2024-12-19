@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.1](https://github.com/eggjs/koa/compare/v2.20.0...v2.20.1) (2024-12-19)
+
+
+### Bug Fixes
+
+* let MiddlewareFunc can extend by custom Context interface ([#13](https://github.com/eggjs/koa/issues/13)) ([320fbf5](https://github.com/eggjs/koa/commit/320fbf5ee36e4541ce6f29a059e8a82c3751517f))
+
 ## [2.20.0](https://github.com/eggjs/koa/compare/v2.19.2...v2.20.0) (2024-12-18)
 
 
