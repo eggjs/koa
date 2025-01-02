@@ -151,7 +151,7 @@ export class Application extends Emitter {
   /**
    * Use the given middleware `fn`.
    */
-  use<T = Context>(fn: MiddlewareFunc<T>) {
+  use(fn: MiddlewareFunc) {
     if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
     const name = fn._name || fn.name || '-';
     if (isGeneratorFunction(fn)) {
@@ -160,7 +160,7 @@ export class Application extends Emitter {
         'https://github.com/koajs/koa/blob/master/docs/migration.md');
     }
     debug('use %o #%d', name, this.middleware.length);
-    this.middleware.push(fn as MiddlewareFunc<Context>);
+    this.middleware.push(fn);
     return this;
   }
 

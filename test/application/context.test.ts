@@ -55,8 +55,8 @@ describe('app.context', () => {
     }
 
     const app = new MyApp();
-    app.use((ctx: MyContext) => {
-      ctx.body = `hello, ${ctx.getMsg()}`;
+    app.use(ctx => {
+      ctx.body = `hello, ${(ctx as MyContext).getMsg()}`;
     });
 
     it('should work with sub class', () => {
