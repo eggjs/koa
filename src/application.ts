@@ -27,7 +27,7 @@ export type MiddlewareFunc<T extends Context = Context> = _MiddlewareFunc<T> & {
  * Expose `Application` class.
  * Inherits from `Emitter.prototype`.
  */
-export class Application<T extends Context = Context> extends Emitter {
+export class Application extends Emitter {
   [key: symbol]: unknown;
   /**
    * Make HttpError available to consumers of the library so that consumers don't
@@ -41,14 +41,14 @@ export class Application<T extends Context = Context> extends Emitter {
   proxyIpHeader: string;
   maxIpsCount: number;
   protected _keys?: string[];
-  middleware: MiddlewareFunc<T>[];
-  ctxStorage: AsyncLocalStorage<T>;
+  middleware: MiddlewareFunc<Context>[];
+  ctxStorage: AsyncLocalStorage<Context>;
   silent: boolean;
-  ContextClass: ProtoImplClass<T>;
+  ContextClass: ProtoImplClass<Context>;
   context: AnyProto;
-  RequestClass: ProtoImplClass<Request<T>>;
+  RequestClass: ProtoImplClass<Request>;
   request: AnyProto;
-  ResponseClass: ProtoImplClass<Response<T>>;
+  ResponseClass: ProtoImplClass<Response>;
   response: AnyProto;
 
   /**
@@ -84,11 +84,11 @@ export class Application<T extends Context = Context> extends Emitter {
     this.middleware = [];
     this.ctxStorage = getAsyncLocalStorage();
     this.silent = false;
-    this.ContextClass = class ApplicationContext extends Context {} as ProtoImplClass<T>;
+    this.ContextClass = class ApplicationContext extends Context {} as ProtoImplClass<Context>;
     this.context = this.ContextClass.prototype;
-    this.RequestClass = class ApplicationRequest extends Request {} as ProtoImplClass<Request<T>>;
+    this.RequestClass = class ApplicationRequest extends Request {} as ProtoImplClass<Request>;
     this.request = this.RequestClass.prototype;
-    this.ResponseClass = class ApplicationResponse extends Response {} as ProtoImplClass<Response<T>>;
+    this.ResponseClass = class ApplicationResponse extends Response {} as ProtoImplClass<Response>;
     this.response = this.ResponseClass.prototype;
   }
 
@@ -151,7 +151,7 @@ export class Application<T extends Context = Context> extends Emitter {
   /**
    * Use the given middleware `fn`.
    */
-  use(fn: MiddlewareFunc<T>) {
+  use<T extends Context = Context>(fn: MiddlewareFunc<T>) {
     if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
     const name = fn._name || fn.name || '-';
     if (isGeneratorFunction(fn)) {
@@ -160,7 +160,7 @@ export class Application<T extends Context = Context> extends Emitter {
         'https://github.com/koajs/koa/blob/master/docs/migration.md');
     }
     debug('use %o #%d', name, this.middleware.length);
-    this.middleware.push(fn);
+    this.middleware.push(fn as MiddlewareFunc<Context>);
     return this;
   }
 
@@ -196,7 +196,7 @@ export class Application<T extends Context = Context> extends Emitter {
    * Handle request in callback.
    * @private
    */
-  protected async handleRequest(ctx: T, fnMiddleware: (ctx: T) => Promise<void>) {
+  protected async handleRequest(ctx: Context, fnMiddleware: (ctx: Context) => Promise<void>) {
     this.emit('request', ctx);
     const res = ctx.res;
     res.statusCode = 404;
@@ -246,7 +246,7 @@ export class Application<T extends Context = Context> extends Emitter {
   /**
    * Response helper.
    */
-  protected _respond(ctx: T) {
+  protected _respond(ctx: Context) {
     // allow bypassing koa
     if (ctx.respond === false) return;
 

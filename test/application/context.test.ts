@@ -47,7 +47,7 @@ describe('app.context', () => {
       }
     }
 
-    class MyApp extends Application<MyContext> {
+    class MyApp extends Application {
       constructor() {
         super();
         this.ContextClass = MyContext;
@@ -55,7 +55,7 @@ describe('app.context', () => {
     }
 
     const app = new MyApp();
-    app.use(ctx => {
+    app.use((ctx: MyContext) => {
       ctx.body = `hello, ${ctx.getMsg()}`;
     });
 
