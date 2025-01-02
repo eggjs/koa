@@ -16,15 +16,15 @@ import type { Application } from './application.js';
 import type { Context } from './context.js';
 import type { Request } from './request.js';
 
-export class Response<T extends Context = Context> {
+export class Response {
   [key: symbol]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
-  ctx: T;
+  ctx: Context;
   request: Request;
 
-  constructor(app: Application, ctx: T, req: IncomingMessage, res: ServerResponse) {
+  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
     this.app = app;
     this.req = req;
     this.res = res;

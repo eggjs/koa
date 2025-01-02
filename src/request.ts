@@ -16,16 +16,16 @@ export interface RequestSocket extends Socket {
   encrypted: boolean;
 }
 
-export class Request<T extends Context = Context> {
+export class Request {
   [key: symbol]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
-  ctx: T;
+  ctx: Context;
   response: Response;
   originalUrl: string;
 
-  constructor(app: Application, ctx: T, req: IncomingMessage, res: ServerResponse) {
+  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
     this.app = app;
     this.req = req;
     this.res = res;
