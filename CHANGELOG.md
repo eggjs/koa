@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.6](https://github.com/eggjs/koa/compare/v2.20.5...v2.20.6) (2025-01-02)
+
+
+### Bug Fixes
+
+* remove template on use MiddlewareFunc ([f4315d9](https://github.com/eggjs/koa/commit/f4315d9cebc594bacfaa994f4d6ac548c97c57b8))
+
 ## [2.20.5](https://github.com/eggjs/koa/compare/v2.20.4...v2.20.5) (2025-01-02)
 
 
