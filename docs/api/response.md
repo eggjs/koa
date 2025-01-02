@@ -14,7 +14,6 @@
 
   Response header object. Alias as `response.header`.
 
-
 ### response.socket
 
   Response socket. Points to net.Socket instance as `request.socket`.
@@ -214,6 +213,7 @@ ctx.set('Cache-Control', 'no-cache');
 ```
 
 ### response.append(field, value)
+
   Append additional header `field` with value `val`.
 
 ```js

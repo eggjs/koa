@@ -11,7 +11,7 @@ import onFinished from 'on-finished';
 import statuses from 'statuses';
 import compose from 'koa-compose';
 import { HttpError } from 'http-errors';
-import { Context, type ContextDelegation } from './context.js';
+import { Context } from './context.js';
 import { Request } from './request.js';
 import { Response } from './response.js';
 import type { CustomError, AnyProto } from './types.js';
@@ -21,13 +21,13 @@ const debug = debuglog('@eggjs/koa/application');
 export type ProtoImplClass<T = object> = new(...args: any[]) => T;
 export type Next = () => Promise<void>;
 type _MiddlewareFunc<T> = (ctx: T, next: Next) => Promise<void> | void;
-export type MiddlewareFunc<T = ContextDelegation> = _MiddlewareFunc<T> & { _name?: string };
+export type MiddlewareFunc<T extends Context = Context> = _MiddlewareFunc<T> & { _name?: string };
 
 /**
  * Expose `Application` class.
  * Inherits from `Emitter.prototype`.
  */
-export class Application extends Emitter {
+export class Application<T extends Context = Context> extends Emitter {
   [key: symbol]: unknown;
   /**
    * Make HttpError available to consumers of the library so that consumers don't
@@ -41,14 +41,14 @@ export class Application extends Emitter {
   proxyIpHeader: string;
   maxIpsCount: number;
   protected _keys?: string[];
-  middleware: MiddlewareFunc[];
-  ctxStorage: AsyncLocalStorage<ContextDelegation>;
+  middleware: MiddlewareFunc<T>[];
+  ctxStorage: AsyncLocalStorage<T>;
   silent: boolean;
-  ContextClass: ProtoImplClass<ContextDelegation>;
+  ContextClass: ProtoImplClass<T>;
   context: AnyProto;
-  RequestClass: ProtoImplClass<Request>;
+  RequestClass: ProtoImplClass<Request<T>>;
   request: AnyProto;
-  ResponseClass: ProtoImplClass<Response>;
+  ResponseClass: ProtoImplClass<Response<T>>;
   response: AnyProto;
 
   /**
@@ -84,11 +84,11 @@ export class Application extends Emitter {
     this.middleware = [];
     this.ctxStorage = getAsyncLocalStorage();
     this.silent = false;
-    this.ContextClass = class ApplicationContext extends Context {} as any;
+    this.ContextClass = class ApplicationContext extends Context {} as ProtoImplClass<T>;
     this.context = this.ContextClass.prototype;
-    this.RequestClass = class ApplicationRequest extends Request {};
+    this.RequestClass = class ApplicationRequest extends Request {} as ProtoImplClass<Request<T>>;
     this.request = this.RequestClass.prototype;
-    this.ResponseClass = class ApplicationResponse extends Response {};
+    this.ResponseClass = class ApplicationResponse extends Response {} as ProtoImplClass<Response<T>>;
     this.response = this.ResponseClass.prototype;
   }
 
@@ -151,7 +151,7 @@ export class Application extends Emitter {
   /**
    * Use the given middleware `fn`.
    */
-  use(fn: MiddlewareFunc) {
+  use(fn: MiddlewareFunc<T>) {
     if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
     const name = fn._name || fn.name || '-';
     if (isGeneratorFunction(fn)) {
@@ -196,7 +196,7 @@ export class Application extends Emitter {
    * Handle request in callback.
    * @private
    */
-  protected async handleRequest(ctx: ContextDelegation, fnMiddleware: (ctx: ContextDelegation) => Promise<void>) {
+  protected async handleRequest(ctx: T, fnMiddleware: (ctx: T) => Promise<void>) {
     this.emit('request', ctx);
     const res = ctx.res;
     res.statusCode = 404;
@@ -219,7 +219,7 @@ export class Application extends Emitter {
    * Initialize a new context.
    * @private
    */
-  protected createContext(req: IncomingMessage, res: ServerResponse) {
+  createContext(req: IncomingMessage, res: ServerResponse) {
     const context = new this.ContextClass(this, req, res);
     return context;
   }
@@ -246,7 +246,7 @@ export class Application extends Emitter {
   /**
    * Response helper.
    */
-  protected _respond(ctx: ContextDelegation) {
+  protected _respond(ctx: T) {
     // allow bypassing koa
     if (ctx.respond === false) return;
 
@@ -303,5 +303,3 @@ export class Application extends Emitter {
     res.end(body);
   }
 }
-
-export default Application;

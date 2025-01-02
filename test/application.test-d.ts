@@ -1,11 +1,11 @@
 import { expectType } from 'tsd';
-import { ContextDelegation } from '../src/index.js';
+import { Context } from '../src/index.js';
 import Application from '../src/application.js';
 
-const ctx = {} as ContextDelegation;
+const ctx = {} as Context;
 expectType<string>(ctx.ip);
 expectType<Application>(ctx.app);
 
 const app = {} as Application;
 expectType<string>(app.env);
-expectType<ContextDelegation | undefined>(app.ctxStorage.getStore());
+expectType<Context | undefined>(app.ctxStorage.getStore());
