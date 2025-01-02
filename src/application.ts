@@ -21,7 +21,7 @@ const debug = debuglog('@eggjs/koa/application');
 export type ProtoImplClass<T = object> = new(...args: any[]) => T;
 export type Next = () => Promise<void>;
 type _MiddlewareFunc<T> = (ctx: T, next: Next) => Promise<void> | void;
-export type MiddlewareFunc<T extends Context = Context> = _MiddlewareFunc<T> & { _name?: string };
+export type MiddlewareFunc<T = Context> = _MiddlewareFunc<T> & { _name?: string };
 
 /**
  * Expose `Application` class.
@@ -151,7 +151,7 @@ export class Application extends Emitter {
   /**
    * Use the given middleware `fn`.
    */
-  use<T extends Context = Context>(fn: MiddlewareFunc<T>) {
+  use<T = Context>(fn: MiddlewareFunc<T>) {
     if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
     const name = fn._name || fn.name || '-';
     if (isGeneratorFunction(fn)) {
