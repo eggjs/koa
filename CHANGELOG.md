@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.3](https://github.com/eggjs/koa/compare/v2.20.2...v2.20.3) (2025-01-02)
+
+
+### Bug Fixes
+
+* remove delegates from Context ([#15](https://github.com/eggjs/koa/issues/15)) ([a3bdefe](https://github.com/eggjs/koa/commit/a3bdefed4f37995c0316e8acf1d0387e54d31b44))
+
 ## [2.20.2](https://github.com/eggjs/koa/compare/v2.20.1...v2.20.2) (2024-12-19)
 
 
