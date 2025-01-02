@@ -13,18 +13,18 @@ import destroy from 'destroy';
 import vary from 'vary';
 import encodeUrl from 'encodeurl';
 import type { Application } from './application.js';
-import type { ContextDelegation } from './context.js';
+import type { Context } from './context.js';
 import type { Request } from './request.js';
 
-export class Response {
+export class Response<T extends Context = Context> {
   [key: symbol]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
-  ctx: ContextDelegation;
+  ctx: T;
   request: Request;
 
-  constructor(app: Application, ctx: ContextDelegation, req: IncomingMessage, res: ServerResponse) {
+  constructor(app: Application, ctx: T, req: IncomingMessage, res: ServerResponse) {
     this.app = app;
     this.req = req;
     this.res = res;
@@ -168,16 +168,24 @@ export class Response {
 
   /**
    * Return parsed response Content-Length when present.
+   *
+   * When Content-Length is not defined it will return `undefined`.
    */
-  get length() {
+  get length(): number | undefined {
     if (this.has('Content-Length')) {
       return parseInt(this.get('Content-Length'), 10) || 0;
     }
 
     const { body } = this;
-    if (!body || body instanceof Stream) return undefined;
-    if (typeof body === 'string') return Buffer.byteLength(body);
-    if (Buffer.isBuffer(body)) return body.length;
+    if (!body || body instanceof Stream) {
+      return undefined;
+    }
+    if (typeof body === 'string') {
+      return Buffer.byteLength(body);
+    }
+    if (Buffer.isBuffer(body)) {
+      return body.length;
+    }
     return Buffer.byteLength(JSON.stringify(body));
   }
 
@@ -270,7 +278,7 @@ export class Response {
    * Return the response mime type void of
    * parameters such as "charset".
    */
-  get type() {
+  get type(): string {
     const type = this.get<string>('Content-Type');
     if (!type) return '';
     return type.split(';', 1)[0];

@@ -1,4 +1,4 @@
-import { MiddlewareFunc, Context, type ContextDelegation } from '../../src/index.js';
+import { MiddlewareFunc, Context } from '../../src/index.js';
 
 class CustomContext extends Context {
   // Add your custom properties and methods here
@@ -7,9 +7,7 @@ class CustomContext extends Context {
   }
 }
 
-type ICustomContext = CustomContext & ContextDelegation;
-
-export const middleware: MiddlewareFunc<ICustomContext> = async (ctx, next) => {
+export const middleware: MiddlewareFunc<CustomContext> = async (ctx, next) => {
   console.log('middleware start, %s', ctx.hello, ctx.writable);
   await next();
   console.log('middleware end');

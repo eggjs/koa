@@ -1,10 +1,11 @@
 import util from 'node:util';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { ParsedUrlQuery } from 'node:querystring';
 import createError from 'http-errors';
 import httpAssert from 'http-assert';
-import delegate from 'delegates';
 import statuses from 'statuses';
 import Cookies from 'cookies';
+import { type Accepts } from 'accepts';
 import type { Application } from './application.js';
 import type { Request } from './request.js';
 import type { Response } from './response.js';
@@ -222,69 +223,261 @@ export class Context {
   get state() {
     return this.#state;
   }
+
+  /**
+   * Request delegation.
+   */
+
+  acceptsLanguages(): string[];
+  acceptsLanguages(languages: string[]): string | false;
+  acceptsLanguages(...languages: string[]): string | false;
+  acceptsLanguages(languages?: string | string[], ...others: string[]): string | string[] | false {
+    return this.request.acceptsLanguages(languages as any, ...others);
+  }
+
+  acceptsEncodings(): string[];
+  acceptsEncodings(encodings: string[]): string | false;
+  acceptsEncodings(...encodings: string[]): string | false;
+  acceptsEncodings(encodings?: string | string[], ...others: string[]): string[] | string | false {
+    return this.request.acceptsEncodings(encodings as any, ...others);
+  }
+
+  acceptsCharsets(): string[];
+  acceptsCharsets(charsets: string[]): string | false;
+  acceptsCharsets(...charsets: string[]): string | false;
+  acceptsCharsets(charsets?: string | string[], ...others: string[]): string[] | string | false {
+    return this.request.acceptsCharsets(charsets as any, ...others);
+  }
+
+  accepts(...args: Parameters<Request['accepts']>): string | string[] | false {
+    return this.request.accepts(...args);
+  }
+
+  get<T = string | string []>(field: string): T {
+    return this.request.get(field);
+  }
+
+  is(type?: string | string[], ...types: string[]): string | false | null {
+    return this.request.is(type, ...types);
+  }
+
+  get querystring(): string {
+    return this.request.querystring;
+  }
+
+  set querystring(str: string) {
+    this.request.querystring = str;
+  }
+
+  get idempotent(): boolean {
+    return this.request.idempotent;
+  }
+
+  get socket() {
+    return this.request.socket;
+  }
+
+  get search(): string {
+    return this.request.search;
+  }
+
+  set search(str: string) {
+    this.request.search = str;
+  }
+
+  get method(): string {
+    return this.request.method;
+  }
+
+  set method(method: string) {
+    this.request.method = method;
+  }
+
+  get query(): ParsedUrlQuery {
+    return this.request.query;
+  }
+
+  set query(obj: ParsedUrlQuery) {
+    this.request.query = obj;
+  }
+
+  get path(): string {
+    return this.request.path;
+  }
+
+  set path(path: string) {
+    this.request.path = path;
+  }
+
+  get url(): string {
+    return this.request.url;
+  }
+
+  set url(url: string) {
+    this.request.url = url;
+  }
+
+  get accept(): Accepts {
+    return this.request.accept;
+  }
+
+  set accept(accept: Accepts) {
+    this.request.accept = accept;
+  }
+
+  get origin(): string {
+    return this.request.origin;
+  }
+
+  get href(): string {
+    return this.request.href;
+  }
+
+  get subdomains(): string[] {
+    return this.request.subdomains;
+  }
+
+  get protocol(): string {
+    return this.request.protocol;
+  }
+
+  get host(): string {
+    return this.request.host;
+  }
+
+  get hostname(): string {
+    return this.request.hostname;
+  }
+
+  get URL(): URL {
+    return this.request.URL;
+  }
+
+  get header() {
+    return this.request.header;
+  }
+
+  get headers() {
+    return this.request.headers;
+  }
+
+  get secure(): boolean {
+    return this.request.secure;
+  }
+
+  get stale(): boolean {
+    return this.request.stale;
+  }
+
+  get fresh(): boolean {
+    return this.request.fresh;
+  }
+
+  get ips(): string[] {
+    return this.request.ips;
+  }
+
+  get ip(): string {
+    return this.request.ip;
+  }
+
+  /**
+   * Response delegation.
+   */
+
+  attachment(...args: Parameters<Response['attachment']>) {
+    return this.response.attachment(...args);
+  }
+
+  redirect(...args: Parameters<Response['redirect']>) {
+    return this.response.redirect(...args);
+  }
+
+  remove(...args: Parameters<Response['remove']>) {
+    return this.response.remove(...args);
+  }
+
+  vary(...args: Parameters<Response['vary']>) {
+    return this.response.vary(...args);
+  }
+
+  has(...args: Parameters<Response['has']>) {
+    return this.response.has(...args);
+  }
+
+  set(...args: Parameters<Response['set']>) {
+    return this.response.set(...args);
+  }
+
+  append(...args: Parameters<Response['append']>) {
+    return this.response.append(...args);
+  }
+
+  flushHeaders(...args: Parameters<Response['flushHeaders']>) {
+    return this.response.flushHeaders(...args);
+  }
+
+  get status() {
+    return this.response.status;
+  }
+
+  set status(status: number) {
+    this.response.status = status;
+  }
+
+  get message() {
+    return this.response.message;
+  }
+
+  set message(msg: string) {
+    this.response.message = msg;
+  }
+
+  get body(): any {
+    return this.response.body;
+  }
+
+  set body(val: any) {
+    this.response.body = val;
+  }
+
+  get length(): number | undefined {
+    return this.response.length;
+  }
+
+  set length(n: number | string | undefined) {
+    this.response.length = n;
+  }
+
+  get type(): string {
+    return this.response.type;
+  }
+
+  set type(type: string | null | undefined) {
+    this.response.type = type;
+  }
+
+  get lastModified() {
+    return this.response.lastModified;
+  }
+
+  set lastModified(val: string | Date | undefined) {
+    this.response.lastModified = val;
+  }
+
+  get etag() {
+    return this.response.etag;
+  }
+
+  set etag(val: string) {
+    this.response.etag = val;
+  }
+
+  get headerSent() {
+    return this.response.headerSent;
+  }
+
+  get writable() {
+    return this.response.writable;
+  }
 }
-
-/**
- * Request delegation.
- */
-
-delegate(Context.prototype, 'request')
-  .method('acceptsLanguages')
-  .method('acceptsEncodings')
-  .method('acceptsCharsets')
-  .method('accepts')
-  .method('get')
-  .method('is')
-  .access('querystring')
-  .access('idempotent')
-  .access('socket')
-  .access('search')
-  .access('method')
-  .access('query')
-  .access('path')
-  .access('url')
-  .access('accept')
-  .getter('origin')
-  .getter('href')
-  .getter('subdomains')
-  .getter('protocol')
-  .getter('host')
-  .getter('hostname')
-  .getter('URL')
-  .getter('header')
-  .getter('headers')
-  .getter('secure')
-  .getter('stale')
-  .getter('fresh')
-  .getter('ips')
-  .getter('ip');
-
-/**
- * Response delegation.
- */
-
-delegate(Context.prototype, 'response')
-  .method('attachment')
-  .method('redirect')
-  .method('remove')
-  .method('vary')
-  .method('has')
-  .method('set')
-  .method('append')
-  .method('flushHeaders')
-  .access('status')
-  .access('message')
-  .access('body')
-  .access('length')
-  .access('type')
-  .access('lastModified')
-  .access('etag')
-  .getter('headerSent')
-  .getter('writable');
-
-export type ContextDelegation = Context & Pick<Request, 'acceptsLanguages' | 'acceptsEncodings' | 'acceptsCharsets'
-| 'accepts' | 'get' | 'is' | 'querystring' | 'idempotent' | 'socket' | 'search' | 'method' | 'query'
-| 'path' | 'url' | 'accept' | 'origin' | 'href' | 'subdomains' | 'protocol' | 'host' | 'hostname'
-| 'URL' | 'header' | 'headers' | 'secure' | 'stale' | 'fresh' | 'ips' | 'ip'>
-& Pick<Response, 'attachment' | 'redirect' | 'remove' | 'vary' | 'has' | 'set' | 'append' | 'flushHeaders'
-| 'status' | 'message' | 'body' | 'length' | 'type' | 'lastModified' | 'etag' | 'headerSent' | 'writable'>;

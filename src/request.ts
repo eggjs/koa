@@ -9,23 +9,23 @@ import parse from 'parseurl';
 import typeis from 'type-is';
 import fresh from 'fresh';
 import type { Application } from './application.js';
-import type { ContextDelegation } from './context.js';
+import type { Context } from './context.js';
 import type { Response } from './response.js';
 
 export interface RequestSocket extends Socket {
   encrypted: boolean;
 }
 
-export class Request {
+export class Request<T extends Context = Context> {
   [key: symbol]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
-  ctx: ContextDelegation;
+  ctx: T;
   response: Response;
   originalUrl: string;
 
-  constructor(app: Application, ctx: ContextDelegation, req: IncomingMessage, res: ServerResponse) {
+  constructor(app: Application, ctx: T, req: IncomingMessage, res: ServerResponse) {
     this.app = app;
     this.req = req;
     this.res = res;
@@ -142,7 +142,7 @@ export class Request {
   /**
    * Get parsed query string.
    */
-  get query() {
+  get query(): ParsedUrlQuery {
     const str = this.querystring;
     if (!this._parsedUrlQueryCache) {
       this._parsedUrlQueryCache = {};
@@ -158,7 +158,7 @@ export class Request {
    * Set query string as an object.
    */
 
-  set query(obj) {
+  set query(obj: ParsedUrlQuery) {
     this.querystring = qs.stringify(obj);
   }
 
