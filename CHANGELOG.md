@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.5](https://github.com/eggjs/koa/compare/v2.20.4...v2.20.5) (2025-01-02)
+
+
+### Bug Fixes
+
+* MiddlewareFunc define ([06d494c](https://github.com/eggjs/koa/commit/06d494cb5bf9dd9371aa6f9c8434216c256675e7))
+
 ## [2.20.4](https://github.com/eggjs/koa/compare/v2.20.3...v2.20.4) (2025-01-02)
 
 
