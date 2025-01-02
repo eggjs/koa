@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.4](https://github.com/eggjs/koa/compare/v2.20.3...v2.20.4) (2025-01-02)
+
+
+### Bug Fixes
+
+* remove template on Application ([#16](https://github.com/eggjs/koa/issues/16)) ([0070bcf](https://github.com/eggjs/koa/commit/0070bcf4fb34b64d2e8f23b12c9a4a18ba8b9aed))
+
 ## [2.20.3](https://github.com/eggjs/koa/compare/v2.20.2...v2.20.3) (2025-01-02)
 
 
