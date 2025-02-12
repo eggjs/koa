@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.7](https://github.com/eggjs/koa/compare/v2.20.6...v2.20.7) (2025-02-12)
+
+
+### Bug Fixes
+
+* avoid redos on host and protocol getter ([#17](https://github.com/eggjs/koa/issues/17)) ([cd6b487](https://github.com/eggjs/koa/commit/cd6b48781d3d77968fcec8d5cb7834d4b1664e75))
+
 ## [2.20.6](https://github.com/eggjs/koa/compare/v2.20.5...v2.20.6) (2025-01-02)
 
 
