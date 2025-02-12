@@ -212,6 +212,9 @@ export class Request {
   get host() {
     const proxy = this.app.proxy;
     let host = proxy ? this.get<string>('X-Forwarded-Host') : '';
+    if (host) {
+      host = splitCommaSeparatedValues(host, 1)[0];
+    }
     if (!host) {
       if (this.req.httpVersionMajor >= 2) {
         host = this.get(':authority');
@@ -220,10 +223,7 @@ export class Request {
         host = this.get('Host');
       }
     }
-    if (!host) {
-      return '';
-    }
-    return host.split(/\s*,\s*/, 1)[0];
+    return host;
   }
 
   /**
@@ -344,8 +344,11 @@ export class Request {
     if (!this.app.proxy) {
       return 'http';
     }
-    const proto = this.get<string>('X-Forwarded-Proto');
-    return proto ? proto.split(/\s*,\s*/, 1)[0] : 'http';
+    let proto = this.get<string>('X-Forwarded-Proto');
+    if (proto) {
+      proto = splitCommaSeparatedValues(proto, 1)[0];
+    }
+    return proto || 'http';
   }
 
   /**
@@ -369,7 +372,7 @@ export class Request {
     const proxy = this.app.proxy;
     const val = this.get<string>(this.app.proxyIpHeader);
     let ips = proxy && val
-      ? val.split(/\s*,\s*/)
+      ? splitCommaSeparatedValues(val)
       : [];
     if (this.app.maxIpsCount > 0) {
       ips = ips.slice(-this.app.maxIpsCount);
@@ -631,4 +634,16 @@ export class Request {
       header: this.header,
     };
   }
+}
+
+/**
+ * Split a comma-separated value string into an array of values, with an optional limit.
+ * All the values are trimmed of whitespace and filtered out empty values.
+ *
+ * @param {string} value - The comma-separated value string to split.
+ * @param {number} [limit] - The maximum number of values to return.
+ * @return {string[]} An array of values from the comma-separated string.
+ */
+function splitCommaSeparatedValues(value: string, limit?: number): string[] {
+  return value.split(',', limit).map(v => v.trim()).filter(v => v);
 }

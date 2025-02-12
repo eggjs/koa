@@ -79,7 +79,7 @@ describe('res.body=', () => {
     describe('when it contains leading whitespace', () => {
       it('should default to html', () => {
         const res = response();
-        res.body = '    <h1>Tobi</h1>';
+        res.body = ' '.repeat(10000000) + '\t\r\n<h1>Tobi</h1>';
         assert.strictEqual('text/html; charset=utf-8', res.header['content-type']);
       });
     });

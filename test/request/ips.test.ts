@@ -14,10 +14,22 @@ describe('req.ips', () => {
 
     describe('and proxy is trusted', () => {
       it('should be used', () => {
-        const req = request();
+        let req = request();
         req.app.proxy = true;
         req.header['x-forwarded-for'] = '127.0.0.1,127.0.0.2';
         assert.deepStrictEqual(req.ips, [ '127.0.0.1', '127.0.0.2' ]);
+
+        req = request();
+        req.app.proxy = true;
+        req.header['x-forwarded-for'] = '127.0.0.1,  ,  ,,,,127.0.0.2';
+        assert.deepStrictEqual(req.ips, [ '127.0.0.1', '127.0.0.2' ]);
+      });
+
+      it('should ignore invalid ips', () => {
+        const req = request();
+        req.app.proxy = true;
+        req.header['x-forwarded-for'] = ',  ,  ,,,,   , ,,,  ,';
+        assert.deepStrictEqual(req.ips, []);
       });
     });
   });
