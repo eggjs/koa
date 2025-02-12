@@ -125,7 +125,7 @@ export class Response {
 
     // string
     if (typeof val === 'string') {
-      if (setType) this.type = /^\s*</.test(val) ? 'html' : 'text';
+      if (setType) this.type = /^\s*?</.test(val) ? 'html' : 'text';
       this.length = Buffer.byteLength(val);
       return;
     }

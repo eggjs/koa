@@ -17,7 +17,7 @@ export class CustomRequest extends Request {
       this[HOST] = '';
       return '';
     }
-    this[HOST] = rawHost.split(/\s*,\s*/)[0];
+    this[HOST] = rawHost.split(/,/)[0].trim();
     return host;
   }
 }

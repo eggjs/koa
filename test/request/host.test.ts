@@ -89,6 +89,34 @@ describe('req.host', () => {
         req.header.host = 'bar.com:8000';
         assert.strictEqual(req.host, 'proxy.com:8080');
       });
+
+      it('should fallback to host header when x-forwarded-host is invalid', () => {
+        // h1
+        let req = request();
+        req.app.proxy = true;
+        req.header['x-forwarded-host'] = '  ,    ';
+        req.header.host = 'foo.com';
+        assert.strictEqual(req.host, 'foo.com');
+
+        // h2
+        req = request({
+          httpVersionMajor: 2,
+          httpVersion: '2.0',
+        });
+        req.app.proxy = true;
+        req.header['x-forwarded-host'] = '  ,    ';
+        req.header[':authority'] = 'foo.com:3000';
+        assert.strictEqual(req.host, 'foo.com:3000');
+
+        // no host and no authority
+        req = request({
+          httpVersionMajor: 2,
+          httpVersion: '2.0',
+        });
+        req.app.proxy = true;
+        req.header['x-forwarded-host'] = '  ,    ';
+        assert.strictEqual(req.host, '');
+      });
     });
   });
 });
