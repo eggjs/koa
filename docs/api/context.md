@@ -135,8 +135,6 @@ Koa uses [http-errors](https://github.com/jshttp/http-errors) to create errors. 
 ctx.assert(ctx.state.user, 401, 'User not found. Please login!');
 ```
 
-Koa uses [http-assert](https://github.com/jshttp/http-assert) for assertions.
-
 ### ctx.respond
 
   To bypass Koa's built-in response handling, you may explicitly set `ctx.respond = false;`. Use this if you want to write to the raw `res` object instead of letting Koa handle the response for you.
