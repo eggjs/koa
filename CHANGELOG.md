@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.21.0](https://github.com/eggjs/koa/compare/v2.20.7...v2.21.0) (2025-03-13)
+
+
+### Features
+
+* remove http-assert ([#18](https://github.com/eggjs/koa/issues/18)) ([ce79a68](https://github.com/eggjs/koa/commit/ce79a6800b019dc70b19747214f2d90c56292aa5))
+
 ## [2.20.7](https://github.com/eggjs/koa/compare/v2.20.6...v2.20.7) (2025-02-12)
 
 
