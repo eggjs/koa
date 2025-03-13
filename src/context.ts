@@ -2,7 +2,6 @@ import util from 'node:util';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { ParsedUrlQuery } from 'node:querystring';
 import createError from 'http-errors';
-import httpAssert from 'http-assert';
 import statuses from 'statuses';
 import Cookies from 'cookies';
 import { type Accepts } from 'accepts';
@@ -72,20 +71,28 @@ export class Context {
   /**
    * Similar to .throw(), adds assertion.
    *
-   *    this.assert(this.user, 401, 'Please login!');
+   * ```ts
+   * this.assert(this.user, 401, 'Please login!');
+   * ```
    *
-   * See: https://github.com/jshttp/http-assert
    * @param {Mixed} value
    * @param {Number} status
-   * @param {String} opts
+   * @param {String} errorMessage
+   * @param {Object} errorProps
    */
-  assert(value: any, status?: number, opts?: Record<string, any>): void;
-  assert(value: any, status?: number, msg?: string, opts?: Record<string, any>): void;
-  assert(value: any, status?: number, msgOrOptions?: string | Record<string, any>, opts?: Record<string, any>) {
-    if (typeof msgOrOptions === 'string') {
-      return httpAssert(value, status, msgOrOptions, opts);
+  assert(value: any, status?: number, errorProps?: Record<string, any>): void;
+  assert(value: any, status?: number, errorMessage?: string, errorProps?: Record<string, any>): void;
+  assert(value: any, status?: number, errorMessageOrProps?: string | Record<string, any>, errorProps?: Record<string, any>) {
+    if (value) {
+      return;
     }
-    return httpAssert(value, status, msgOrOptions);
+    status = status ?? 500;
+    if (typeof errorMessageOrProps === 'string') {
+      // assert(value, status, errorMessage, errorProps?)
+      throw createError(status, errorMessageOrProps, errorProps ?? {});
+    }
+    // assert(value, status, errorProps?)
+    throw createError(status, errorMessageOrProps ?? {});
   }
 
   /**
