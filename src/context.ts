@@ -71,19 +71,28 @@ export class Context {
   /**
    * Similar to .throw(), adds assertion.
    *
-   *    this.assert(this.user, 401, 'Please login!');
+   * ```ts
+   * this.assert(this.user, 401, 'Please login!');
+   * ```
    *
    * @param {Mixed} value
    * @param {Number} status
-   * @param {String} opts
+   * @param {String} errorMessage
+   * @param {Object} errorProps
    */
-  assert(value: any, status?: number, opts?: Record<string, any>): void;
-  assert(value: any, status?: number, msg?: string, opts?: Record<string, any>): void;
-  assert(value: any, status?: number, msgOrOptions?: string | Record<string, any>, opts?: Record<string, any>) {
+  assert(value: any, status?: number, errorProps?: Record<string, any>): void;
+  assert(value: any, status?: number, errorMessage?: string, errorProps?: Record<string, any>): void;
+  assert(value: any, status?: number, errorMessageOrProps?: string | Record<string, any>, errorProps?: Record<string, any>) {
     if (value) {
       return;
     }
-    throw createError(status!, msgOrOptions!, opts!);
+    status = status ?? 500;
+    if (typeof errorMessageOrProps === 'string') {
+      // assert(value, status, errorMessage, errorProps?)
+      throw createError(status, errorMessageOrProps, errorProps ?? {});
+    }
+    // assert(value, status, errorProps?)
+    throw createError(status, errorMessageOrProps ?? {});
   }
 
   /**
