@@ -1,26 +1,83 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import context from '../test-helpers/context.js';
 
 describe('ctx.assert(value, status)', () => {
   it('should throw an error', () => {
     const ctx = context();
 
-    try {
+    assert.throws(() => {
       ctx.assert(false, 404);
-      throw new Error('asdf');
-    } catch (err: any) {
-      assert.strictEqual(err.message, 'Not Found');
-      assert.strictEqual(err.status, 404);
-      assert.strictEqual(err.expose, true);
-    }
+    }, {
+      message: 'Not Found',
+      status: 404,
+      expose: true,
+    });
 
-    try {
+    assert.throws(() => {
       ctx.assert(false, 401, 'Please login!');
-      throw new Error('asdf');
-    } catch (err: any) {
-      assert.strictEqual(err.message, 'Please login!');
-      assert.strictEqual(err.status, 401);
-      assert.strictEqual(err.expose, true);
-    }
+    }, {
+      message: 'Please login!',
+      status: 401,
+      expose: true,
+    });
+  });
+
+  it('should throw an error with error message', () => {
+    const ctx = context();
+
+    assert.throws(() => {
+      ctx.assert(false, 404, 'Not Found');
+    }, {
+      message: 'Not Found',
+      status: 404,
+      expose: true,
+    });
+  });
+
+  it('should throw an error with error message and error props', () => {
+    const ctx = context();
+
+    assert.throws(() => {
+      ctx.assert(false, 404, 'Not Found', { foo: 'bar' });
+    }, {
+      message: 'Not Found',
+      status: 404,
+      expose: true,
+      foo: 'bar',
+    });
+  });
+
+  it('should throw an error with error props', () => {
+    const ctx = context();
+
+    assert.throws(() => {
+      ctx.assert(false, 500, { foo: 'bar' });
+    }, {
+      message: 'Internal Server Error',
+      status: 500,
+      expose: false,
+      foo: 'bar',
+    });
+
+    assert.throws(() => {
+      ctx.assert(false, 500, { foo: 'bar', message: 'Internal Server Error custom message' });
+    }, {
+      message: 'Internal Server Error custom message',
+      status: 500,
+      expose: false,
+      foo: 'bar',
+    });
+  });
+
+  it('should throw an error with default status', () => {
+    const ctx = context();
+
+    assert.throws(() => {
+      ctx.assert(false);
+    }, {
+      message: 'Internal Server Error',
+      status: 500,
+      expose: false,
+    });
   });
 });
