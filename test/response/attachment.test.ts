@@ -53,7 +53,7 @@ describe('contentDisposition(filename, options)', () => {
   describe('with "fallback" option', () => {
     it('should require a string or Boolean', () => {
       const ctx = context();
-      // eslint-disable-next-line typescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       assert.throws(() => { ctx.attachment('plans.pdf', { fallback: 42 } as any); },
         /fallback.*string/);
     });
@@ -151,7 +151,7 @@ describe('contentDisposition(filename, options)', () => {
 
     it('should require a string', () => {
       const ctx = context();
-      // eslint-disable-next-line typescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       assert.throws(() => { ctx.attachment(undefined, { type: 42 } as any); },
         /invalid type/);
     });

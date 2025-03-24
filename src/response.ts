@@ -94,7 +94,7 @@ export class Response {
     this.res.statusMessage = msg;
   }
 
-  // eslint-disable-next-line typescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   _body: any;
   _explicitNullBody: boolean;
 

@@ -19,7 +19,7 @@ import type { CustomError, AnyProto } from './types.js';
 
 const debug = debuglog('@eggjs/koa/application');
 
-// eslint-disable-next-line typescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type ProtoImplClass<T = object> = new(...args: any[]) => T;
 export type Next = () => Promise<void>;
 type _MiddlewareFunc<T> = (ctx: T, next: Next) => Promise<void> | void;
@@ -121,7 +121,7 @@ export class Application extends Emitter {
    *
    *    http.createServer(app.callback()).listen(...)
    */
-  // eslint-disable-next-line typescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   listen(...args: any[]) {
     debug('listen with args: %o', args);
     const server = http.createServer(this.callback());
