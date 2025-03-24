@@ -1,10 +1,12 @@
 import util from 'node:util';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { ParsedUrlQuery } from 'node:querystring';
+import type { ParsedUrlQuery } from 'node:querystring';
+
 import createError from 'http-errors';
 import statuses from 'statuses';
 import Cookies from 'cookies';
-import { type Accepts } from 'accepts';
+import type { Accepts } from 'accepts';
+
 import type { Application } from './application.js';
 import type { Request } from './request.js';
 import type { Response } from './response.js';
@@ -19,6 +21,7 @@ export class Context {
   response: Response & AnyProto;
   originalUrl: string;
   respond?: boolean;
+  // oxlint-disable-next-line typescript/no-explicit-any
   #state: Record<string, any> = {};
 
   constructor(app: Application, req: IncomingMessage, res: ServerResponse) {
@@ -26,10 +29,10 @@ export class Context {
     this.req = req;
     this.res = res;
     this.request = new app.RequestClass(app, this, req, res);
-    this.response = new app.ResponseClass(app, this as any, req, res);
+    this.response = new app.ResponseClass(app, this, req, res);
     this.request.response = this.response;
     this.response.request = this.request;
-    this.originalUrl = req.url!;
+    this.originalUrl = req.url ?? '/';
   }
 
   /**
@@ -74,15 +77,10 @@ export class Context {
    * ```ts
    * this.assert(this.user, 401, 'Please login!');
    * ```
-   *
-   * @param {Mixed} value
-   * @param {Number} status
-   * @param {String} errorMessage
-   * @param {Object} errorProps
    */
-  assert(value: any, status?: number, errorProps?: Record<string, any>): void;
-  assert(value: any, status?: number, errorMessage?: string, errorProps?: Record<string, any>): void;
-  assert(value: any, status?: number, errorMessageOrProps?: string | Record<string, any>, errorProps?: Record<string, any>) {
+  assert(value: unknown, status?: number, errorProps?: Record<string, unknown>): void;
+  assert(value: unknown, status?: number, errorMessage?: string, errorProps?: Record<string, unknown>): void;
+  assert(value: unknown, status?: number, errorMessageOrProps?: string | Record<string, unknown>, errorProps?: Record<string, unknown>) {
     if (value) {
       return;
     }
@@ -132,6 +130,7 @@ export class Context {
   throw(error: Error, status: number): void;
   throw(error: Error, status: number, errorProps: object): void;
   throw(arg1: number | string | Error, arg2?: number | string | Error | object, errorProps?: object) {
+    // oxlint-disable-next-line typescript/no-explicit-any
     const args: any[] = [];
     if (typeof arg2 === 'number') {
       // throw(error, status)
@@ -171,7 +170,8 @@ export class Context {
 
     let headerSent = false;
     if (this.response.headerSent || !this.response.writable) {
-      headerSent = (err as any).headerSent = true;
+      headerSent = true;
+      err.headerSent = true;
     }
 
     // delegate
@@ -187,10 +187,14 @@ export class Context {
     const { res } = this;
 
     // first unset all headers
-    res.getHeaderNames().forEach(name => res.removeHeader(name));
+    for (const name of res.getHeaderNames()) {
+      res.removeHeader(name);
+    }
 
     // then set those specified
-    if (err.headers) this.response.set(err.headers);
+    if (err.headers) {
+      this.response.set(err.headers);
+    }
 
     // force text/plain
     this.response.type = 'text';
@@ -198,15 +202,20 @@ export class Context {
     let statusCode = err.status || err.statusCode;
 
     // ENOENT support
-    if (err.code === 'ENOENT') statusCode = 404;
+    if (err.code === 'ENOENT') {
+      statusCode = 404;
+    }
 
     // default to 500
-    if (typeof statusCode !== 'number' || !statuses.message[statusCode]) statusCode = 500;
+    if (typeof statusCode !== 'number' || !statuses.message[statusCode]) {
+      statusCode = 500;
+    }
 
     // respond
     const statusMessage = statuses.message[statusCode] as string;
     const msg = err.expose ? err.message : statusMessage;
-    this.response.status = err.status = statusCode;
+    err.status = statusCode;
+    this.response.status = statusCode;
     this.response.length = Buffer.byteLength(msg);
     res.end(msg);
   }
@@ -239,25 +248,27 @@ export class Context {
   acceptsLanguages(languages: string[]): string | false;
   acceptsLanguages(...languages: string[]): string | false;
   acceptsLanguages(languages?: string | string[], ...others: string[]): string | string[] | false {
-    return this.request.acceptsLanguages(languages as any, ...others);
+    return this.request.acceptsLanguages(languages as string, ...others);
   }
 
   acceptsEncodings(): string[];
   acceptsEncodings(encodings: string[]): string | false;
   acceptsEncodings(...encodings: string[]): string | false;
   acceptsEncodings(encodings?: string | string[], ...others: string[]): string[] | string | false {
-    return this.request.acceptsEncodings(encodings as any, ...others);
+    return this.request.acceptsEncodings(encodings as string, ...others);
   }
 
   acceptsCharsets(): string[];
   acceptsCharsets(charsets: string[]): string | false;
   acceptsCharsets(...charsets: string[]): string | false;
   acceptsCharsets(charsets?: string | string[], ...others: string[]): string[] | string | false {
-    return this.request.acceptsCharsets(charsets as any, ...others);
+    return this.request.acceptsCharsets(charsets as string, ...others);
   }
 
-  accepts(...args: Parameters<Request['accepts']>): string | string[] | false {
-    return this.request.accepts(...args);
+  accepts(args: string[]): string | string[] | false;
+  accepts(...args: string[]): string | string[] | false;
+  accepts(args?: string | string[], ...others: string[]): string | string[] | false {
+    return this.request.accepts(args as string, ...others);
   }
 
   get<T = string | string []>(field: string): T {
@@ -440,10 +451,12 @@ export class Context {
     this.response.message = msg;
   }
 
+  // oxlint-disable-next-line typescript/no-explicit-any
   get body(): any {
     return this.response.body;
   }
 
+  // oxlint-disable-next-line typescript/no-explicit-any
   set body(val: any) {
     this.response.body = val;
   }

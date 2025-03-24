@@ -1,5 +1,7 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+
 import request from 'supertest';
+
 import context from '../test-helpers/context.js';
 import Koa from '../../src/index.js';
 
@@ -51,7 +53,8 @@ describe('contentDisposition(filename, options)', () => {
   describe('with "fallback" option', () => {
     it('should require a string or Boolean', () => {
       const ctx = context();
-      assert.throws(() => { ctx.attachment('plans.pdf', { fallback: 42 }); },
+      // eslint-disable-next-line typescript/no-explicit-any
+      assert.throws(() => { ctx.attachment('plans.pdf', { fallback: 42 } as any); },
         /fallback.*string/);
     });
 
@@ -148,7 +151,8 @@ describe('contentDisposition(filename, options)', () => {
 
     it('should require a string', () => {
       const ctx = context();
-      assert.throws(() => { ctx.attachment(undefined, { type: 42 }); },
+      // eslint-disable-next-line typescript/no-explicit-any
+      assert.throws(() => { ctx.attachment(undefined, { type: 42 } as any); },
         /invalid type/);
     });
 

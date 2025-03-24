@@ -95,7 +95,7 @@ describe('ctx.flushHeaders()', () => {
 
       setTimeout(() => {
         stream.end(JSON.stringify({ message: 'hello!' }));
-      }, 10000);
+      }, 10_000);
     });
 
     const server = app.listen(function(err: Error) {

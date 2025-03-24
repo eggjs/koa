@@ -22,7 +22,7 @@ describe('ctx.cookies', () => {
       if (Array.isArray(cookies)) {
         cookies = cookies.join(',');
       }
-      const cookie = /^name=/.test(cookies);
+      const cookie = cookies.startsWith("name=");
       assert.strictEqual(cookie, true);
     });
 
@@ -65,7 +65,7 @@ describe('ctx.cookies', () => {
         if (Array.isArray(cookies)) {
           cookies = cookies.join(',');
         }
-        assert.strictEqual(/^name=/.test(cookies), true);
+        assert.strictEqual(cookies.startsWith("name="), true);
         assert.strictEqual(/(,|^)name\.sig=/.test(cookies), true);
       });
     });
@@ -93,7 +93,7 @@ describe('ctx.cookies', () => {
         if (Array.isArray(cookies)) {
           cookies = cookies.join(',');
         }
-        assert.strictEqual(/^name=/.test(cookies), true);
+        assert.strictEqual(cookies.startsWith("name="), true);
         assert.strictEqual(/(,|^)name\.sig=/.test(cookies), true);
         assert.strictEqual(/secure/.test(cookies), true);
       });

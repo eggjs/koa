@@ -3,11 +3,13 @@ import { format as stringify } from 'node:url';
 import qs, { type ParsedUrlQuery } from 'node:querystring';
 import util from 'node:util';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+
 import accepts, { type Accepts } from 'accepts';
 import contentType from 'content-type';
 import parse from 'parseurl';
 import typeis from 'type-is';
 import fresh from 'fresh';
+
 import type { Application } from './application.js';
 import type { Context } from './context.js';
 import type { Response } from './response.js';
@@ -30,7 +32,7 @@ export class Request {
     this.req = req;
     this.res = res;
     this.ctx = ctx;
-    this.originalUrl = req.url!;
+    this.originalUrl = req.url ?? '/';
   }
 
   /**
@@ -70,7 +72,7 @@ export class Request {
    */
 
   get url() {
-    return this.req.url!;
+    return this.req.url ?? '/';
   }
 
   /**
@@ -95,7 +97,9 @@ export class Request {
 
   get href() {
     // support: `GET http://example.com/foo`
-    if (/^https?:\/\//i.test(this.originalUrl)) return this.originalUrl;
+    if (/^https?:\/\//i.test(this.originalUrl)) {
+      return this.originalUrl;
+    }
     return this.origin + this.originalUrl;
   }
 
@@ -104,34 +108,32 @@ export class Request {
    */
 
   get method() {
-    return this.req.method!;
+    return this.req.method ?? 'GET';
   }
 
   /**
    * Set request method.
    */
-
-  set method(val) {
+  set method(val: string) {
     this.req.method = val;
   }
 
   /**
    * Get request pathname.
    */
-
   get path() {
-    return parse(this.req)!.pathname as string;
+    return parse(this.req)?.pathname ?? '';
   }
 
   /**
    * Set pathname, retaining the query string when present.
    */
+  set path(pathname: string) {
+    const url = parse(this.req);
+    if (!url) return;
+    if (url.pathname === pathname) return;
 
-  set path(path) {
-    const url = parse(this.req)!;
-    if (url.pathname === path) return;
-
-    url.pathname = path;
+    url.pathname = pathname;
     url.path = null;
 
     this.url = stringify(url);
@@ -149,7 +151,8 @@ export class Request {
     }
     let parsedUrlQuery = this._parsedUrlQueryCache[str];
     if (!parsedUrlQuery) {
-      parsedUrlQuery = this._parsedUrlQueryCache[str] = qs.parse(str);
+      parsedUrlQuery = qs.parse(str);
+      this._parsedUrlQueryCache[str] = parsedUrlQuery;
     }
     return parsedUrlQuery;
   }
@@ -157,7 +160,6 @@ export class Request {
   /**
    * Set query string as an object.
    */
-
   set query(obj: ParsedUrlQuery) {
     this.querystring = qs.stringify(obj);
   }
@@ -165,18 +167,17 @@ export class Request {
   /**
    * Get query string.
    */
-
   get querystring() {
     if (!this.req) return '';
-    return parse(this.req)!.query as string || '';
+    return parse(this.req)?.query as string ?? '';
   }
 
   /**
    * Set query string.
    */
-
-  set querystring(str) {
-    const url = parse(this.req)!;
+  set querystring(str: string) {
+    const url = parse(this.req);
+    if (!url) return;
     if (url.search === `?${str}`) return;
 
     url.search = str;
@@ -188,18 +189,17 @@ export class Request {
    * Get the search string. Same as the query string
    * except it includes the leading ?.
    */
-
   get search() {
-    if (!this.querystring) return '';
-    return `?${this.querystring}`;
+    const querystring = this.querystring;
+    if (!querystring) return '';
+    return `?${querystring}`;
   }
 
   /**
    * Set the search string. Same as
    * request.querystring= but included for ubiquity.
    */
-
-  set search(str) {
+  set search(str: string) {
     this.querystring = str;
   }
 
@@ -257,7 +257,7 @@ export class Request {
         this._memoizedURL = Object.create(null);
       }
     }
-    return this._memoizedURL!;
+    return this._memoizedURL as URL;
   }
 
   /**
@@ -326,7 +326,7 @@ export class Request {
     if (len === '') {
       return;
     }
-    return parseInt(len);
+    return Number.parseInt(len);
   }
 
   /**
@@ -471,8 +471,10 @@ export class Request {
    *     this.accepts('html', 'json');
    *     // => "json"
    */
-  accepts(...args: any[]): string | string[] | false {
-    return this.accept.types(...args);
+  accepts(args: string[]): string | string[] | false;
+  accepts(...args: string[]): string | string[] | false;
+  accepts(args?: string | string[], ...others: string[]): string | string[] | false {
+    return this.accept.types(args as string, ...others);
   }
 
   /**
@@ -566,8 +568,10 @@ export class Request {
    *     this.is('html'); // => false
    */
   is(type?: string | string[], ...types: string[]): string | false | null {
-    const testTypes: string[] = Array.isArray(type) ? type :
-      (type ? [ type ] : []);
+    let testTypes: string[] = [];
+    if (type) {
+      testTypes = Array.isArray(type) ? type : [ type ];
+    }
     return typeis(this.req, [ ...testTypes, ...types ]);
   }
 
@@ -642,8 +646,8 @@ export class Request {
  *
  * @param {string} value - The comma-separated value string to split.
  * @param {number} [limit] - The maximum number of values to return.
- * @return {string[]} An array of values from the comma-separated string.
+ * @returns {string[]} An array of values from the comma-separated string.
  */
 function splitCommaSeparatedValues(value: string, limit?: number): string[] {
-  return value.split(',', limit).map(v => v.trim()).filter(v => v);
+  return value.split(',', limit).map(v => v.trim()).filter(v => v.length > 0);
 }

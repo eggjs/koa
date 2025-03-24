@@ -3,8 +3,8 @@ import { Application as Koa } from '../../src/application.js';
 
 export default function context(req?: any, res?: any, app?: Koa) {
   const socket = new stream.Duplex();
-  req = Object.assign({ headers: {}, socket }, stream.Readable.prototype, req);
-  res = Object.assign({ _headers: {}, socket }, stream.Writable.prototype, res);
+  req = {headers: {}, socket, ...stream.Readable.prototype, ...req};
+  res = {_headers: {}, socket, ...stream.Writable.prototype, ...res};
   req.socket.remoteAddress = req.socket.remoteAddress || '127.0.0.1';
   app = app || new Koa();
   res.getHeader = (k: string) => {

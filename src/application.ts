@@ -1,15 +1,16 @@
-import { debuglog } from 'node:util';
+import util, { debuglog } from 'node:util';
 import Emitter from 'node:events';
-import util from 'node:util';
 import Stream from 'node:stream';
 import http from 'node:http';
 import type { AsyncLocalStorage } from 'node:async_hooks';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+
 import { getAsyncLocalStorage } from 'gals';
 import { isGeneratorFunction } from 'is-type-of';
 import onFinished from 'on-finished';
 import statuses from 'statuses';
 import compose from 'koa-compose';
+
 import { HttpError } from 'http-errors';
 import { Context } from './context.js';
 import { Request } from './request.js';
@@ -18,6 +19,7 @@ import type { CustomError, AnyProto } from './types.js';
 
 const debug = debuglog('@eggjs/koa/application');
 
+// eslint-disable-next-line typescript/no-explicit-any
 export type ProtoImplClass<T = object> = new(...args: any[]) => T;
 export type Next = () => Promise<void>;
 type _MiddlewareFunc<T> = (ctx: T, next: Next) => Promise<void> | void;
@@ -55,7 +57,7 @@ export class Application extends Emitter {
    * Initialize a new `Application`.
     *
     * @param {object} [options] Application options
-    * @param {string} [options.env='development'] Environment
+    * @param {string} [options.env] Environment, default is `development`
     * @param {string[]} [options.keys] Signed cookie keys
     * @param {boolean} [options.proxy] Trust proxy headers
     * @param {number} [options.subdomainOffset] Subdomain offset
@@ -119,6 +121,7 @@ export class Application extends Emitter {
    *
    *    http.createServer(app.callback()).listen(...)
    */
+  // eslint-disable-next-line typescript/no-explicit-any
   listen(...args: any[]) {
     debug('listen with args: %o', args);
     const server = http.createServer(this.callback());
@@ -200,8 +203,9 @@ export class Application extends Emitter {
     this.emit('request', ctx);
     const res = ctx.res;
     res.statusCode = 404;
-    const onerror = (err: any) => ctx.onerror(err);
-    onFinished(res, (err: any) => {
+    const onerror = (err: CustomError) => ctx.onerror(err);
+    // oxlint-disable-next-line promise/prefer-await-to-callbacks
+    onFinished(res, (err: CustomError | null) => {
       if (err) {
         onerror(err);
       }
@@ -211,7 +215,7 @@ export class Application extends Emitter {
       await fnMiddleware(ctx);
       return this._respond(ctx);
     } catch (err) {
-      return onerror(err);
+      return onerror(err as CustomError);
     }
   }
 
@@ -240,7 +244,8 @@ export class Application extends Emitter {
     if (this.silent) return;
 
     const msg = err.stack || err.toString();
-    console.error(`\n${msg.replace(/^/gm, '  ')}\n`);
+    // oxlint-disable-next-line no-console
+    console.error(`\n${msg.replaceAll(/^/gm, '  ')}\n`);
   }
 
   /**
@@ -272,7 +277,7 @@ export class Application extends Emitter {
     }
 
     // status body
-    if (body == null) {
+    if (body === null || body === undefined) {
       if (ctx.response._explicitNullBody) {
         ctx.response.remove('Content-Type');
         ctx.response.remove('Transfer-Encoding');

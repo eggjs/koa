@@ -13,7 +13,7 @@ describe('ctx.redirect(url)', () => {
 
   it('should url formatting is required before redirect', () => {
     const ctx = context();
-    ctx.redirect('http://google.com\\@baidu.com');
+    ctx.redirect(String.raw`http://google.com\@baidu.com`);
     assert.strictEqual(ctx.response.header.location, 'http://google.com/@baidu.com');
     assert.strictEqual(ctx.status, 302);
   });
@@ -134,8 +134,8 @@ describe('ctx.redirect(url)', () => {
 
 function escape(html: string) {
   return String(html)
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+    .replaceAll("&", '&amp;')
+    .replaceAll("\"", '&quot;')
+    .replaceAll("<", '&lt;')
+    .replaceAll(">", '&gt;');
 }

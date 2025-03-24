@@ -4,7 +4,7 @@ import request from 'supertest';
 import statuses from 'statuses';
 import Koa from '../../src/index.js';
 
-const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
 describe('app.respond', () => {
   describe('when ctx.respond === false', () => {

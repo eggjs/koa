@@ -3,7 +3,8 @@ import { extname } from 'node:path';
 import util from 'node:util';
 import Stream from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import contentDisposition from 'content-disposition';
+
+import contentDisposition, { type Options as ContentDispositionOptions } from 'content-disposition';
 import { getType } from 'cache-content-type';
 import onFinish from 'on-finished';
 import escape from 'escape-html';
@@ -12,6 +13,7 @@ import statuses from 'statuses';
 import destroy from 'destroy';
 import vary from 'vary';
 import encodeUrl from 'encodeurl';
+
 import type { Application } from './application.js';
 import type { Context } from './context.js';
 import type { Request } from './request.js';
@@ -70,17 +72,19 @@ export class Response {
     assert(code >= 100 && code <= 999, `invalid status code: ${code}`);
     this._explicitStatus = true;
     this.res.statusCode = code;
-    if (this.req.httpVersionMajor < 2) {
-      this.res.statusMessage = statuses.message[code]!;
+    if (this.req.httpVersionMajor < 2 && statuses.message[code]) {
+      this.res.statusMessage = statuses.message[code];
     }
-    if (this.body && statuses.empty[code]) this.body = null;
+    if (this.body && statuses.empty[code]) {
+      this.body = null;
+    }
   }
 
   /**
    * Get response status message
    */
   get message(): string {
-    return this.res.statusMessage || statuses.message[this.status]!;
+    return this.res.statusMessage ?? statuses.message[this.status];
   }
 
   /**
@@ -90,6 +94,7 @@ export class Response {
     this.res.statusMessage = msg;
   }
 
+  // eslint-disable-next-line typescript/no-explicit-any
   _body: any;
   _explicitNullBody: boolean;
 
@@ -108,9 +113,13 @@ export class Response {
     this._body = val;
 
     // no content
-    if (val == null) {
-      if (!statuses.empty[this.status]) this.status = 204;
-      if (val === null) this._explicitNullBody = true;
+    if (val === null || val === undefined) {
+      if (!statuses.empty[this.status]) {
+        this.status = 204;
+      }
+      if (val === null) {
+        this._explicitNullBody = true;
+      }
       this.remove('Content-Type');
       this.remove('Content-Length');
       this.remove('Transfer-Encoding');
@@ -140,14 +149,18 @@ export class Response {
     // stream
     if (val instanceof Stream) {
       onFinish(this.res, destroy.bind(null, val));
-      // eslint-disable-next-line eqeqeq
+      // oxlint-disable-next-line eqeqeq
       if (original != val) {
         val.once('error', err => this.ctx.onerror(err));
         // overwriting
-        if (original != null) this.remove('Content-Length');
+        if (original !== null && original !== undefined) {
+          this.remove('Content-Length');
+        }
       }
 
-      if (setType) this.type = 'bin';
+      if (setType) {
+        this.type = 'bin';
+      }
       return;
     }
 
@@ -173,7 +186,7 @@ export class Response {
    */
   get length(): number | undefined {
     if (this.has('Content-Length')) {
-      return parseInt(this.get('Content-Length'), 10) || 0;
+      return Number.parseInt(this.get('Content-Length')) || 0;
     }
 
     const { body } = this;
@@ -246,7 +259,7 @@ export class Response {
   /**
    * Set Content-Disposition header to "attachment" with optional `filename`.
    */
-  attachment(filename?: string, options?: any) {
+  attachment(filename?: string, options?: ContentDispositionOptions) {
     if (filename) this.type = extname(filename);
     this.set('Content-Disposition', contentDisposition(filename, options));
   }
@@ -292,9 +305,11 @@ export class Response {
    *     this.response.is('html', 'json')
    */
   is(type?: string | string[], ...types: string[]): string | false {
-    const testTypes: string[] = Array.isArray(type) ? type :
-      (type ? [ type ] : []);
-    return typeis(this.type as string, [ ...testTypes, ...types ]);
+    let testTypes: string[] = [];
+    if (type) {
+      testTypes = Array.isArray(type) ? type : [ type ];
+    }
+    return typeis(this.type, [ ...testTypes, ...types ]);
   }
 
   /**
@@ -379,17 +394,18 @@ export class Response {
    *    this.set('Accept', 'application/json');
    *    this.set({ Accept: 'text/plain', 'X-API-Key': 'tobi' });
    */
-  set(field: string | Record<string, string>, val?: string | number | any[]) {
+  set(field: string | Record<string, string>, val?: string | number | unknown[]) {
     if (this.headerSent) return;
     if (typeof field === 'string') {
+      let value = val as string | string[];
       if (Array.isArray(val)) {
-        val = val.map(v => {
+        value = val.map(v => {
           return typeof v === 'string' ? v : String(v);
         });
       } else if (typeof val !== 'string') {
-        val = String(val);
+        value = String(val);
       }
-      this.res.setHeader(field, val);
+      this.res.setHeader(field, value);
     } else {
       for (const key in field) {
         this.set(key, field[key]);
@@ -408,9 +424,9 @@ export class Response {
    * this.append('Warning', '199 Miscellaneous warning');
    */
   append(field: string, val: string | string[]) {
-    const prev = this.get(field);
+    const prev = this.get<string | string[]>(field);
 
-    let value: any | any[] = val;
+    let value = val;
     if (prev) {
       value = Array.isArray(prev)
         ? prev.concat(value)

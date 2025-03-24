@@ -14,9 +14,17 @@
     "preci": "npm run lint",
     "ci": "egg-bin cov",
     "postci": "npm run prepublishOnly && attw --pack",
-    "lint": "eslint src test --cache",
+    "lint": "oxlint",
     "authors": "git log --format='%aN <%aE>' | sort -u > AUTHORS",
-    "prepublishOnly": "tshy && tshy-after"
+    "prepublishOnly": "tshy && tshy-after",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown --cache",
+    "*.{ts,js,json,md,yml}": [
+      "prettier --ignore-unknown --write",
+      "oxlint --fix"
+    ]
   },
   "repository": {
     "type": "git",
@@ -33,6 +41,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@types/content-disposition": "^0.5.8",
     "accepts": "^1.3.8",
     "cache-content-type": "^2.0.0",
     "content-disposition": "~0.5.4",
@@ -53,11 +62,10 @@
     "vary": "^1.1.2"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.1",
+    "@arethetypeswrong/cli": "^0.17.4",
     "@eggjs/bin": "^7.0.1",
-    "@eggjs/tsconfig": "^1.3.3",
+    "@eggjs/tsconfig": "2",
     "@types/accepts": "^1.3.7",
-    "@types/content-disposition": "^0.5.8",
     "@types/content-type": "^1.1.8",
     "@types/cookies": "^0.9.0",
     "@types/destroy": "^1.0.3",
@@ -74,8 +82,10 @@
     "@types/supertest": "^6.0.2",
     "@types/type-is": "^1.6.6",
     "@types/vary": "^1.1.3",
-    "eslint": "^8.41.0",
-    "eslint-config-egg": "14",
+    "husky": "9",
+    "lint-staged": "15",
+    "oxlint": "^0.16.2",
+    "prettier": "3",
     "mm": "^4.0.1",
     "supertest": "^3.1.0",
     "tsd": "^0.31.0",

@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+
 import context from '../test-helpers/context.js';
 
 describe('ctx.accepts(types)', () => {

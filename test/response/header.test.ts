@@ -24,7 +24,7 @@ describe('res.header', () => {
 
     app.use(ctx => {
       ctx.set('x-foo', '42');
-      header = Object.assign({}, ctx.response.header);
+      header = { ...ctx.response.header};
     });
 
     await request(app.callback())
