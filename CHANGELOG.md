@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.0](https://github.com/eggjs/koa/compare/v2.21.0...v2.22.0) (2025-03-25)
+
+
+### Features
+
+* use oxlint and prettier ([#19](https://github.com/eggjs/koa/issues/19)) ([7911d7b](https://github.com/eggjs/koa/commit/7911d7bdd74ca6d87852095001fcbde511ed7c26))
+
 ## [2.21.0](https://github.com/eggjs/koa/compare/v2.20.7...v2.21.0) (2025-03-13)
 
 
