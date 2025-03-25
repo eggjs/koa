@@ -4,7 +4,9 @@ import util from 'node:util';
 import Stream from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
-import contentDisposition, { type Options as ContentDispositionOptions } from 'content-disposition';
+import contentDisposition, {
+  type Options as ContentDispositionOptions,
+} from 'content-disposition';
 import { getType } from 'cache-content-type';
 import onFinish from 'on-finished';
 import escape from 'escape-html';
@@ -26,7 +28,12 @@ export class Response {
   ctx: Context;
   request: Request;
 
-  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
+  constructor(
+    app: Application,
+    ctx: Context,
+    req: IncomingMessage,
+    res: ServerResponse
+  ) {
     this.app = app;
     this.req = req;
     this.res = res;
@@ -108,7 +115,9 @@ export class Response {
   /**
    * Set response body.
    */
-  set body(val: string | Buffer | object | Stream | null | undefined | boolean) {
+  set body(
+    val: string | Buffer | object | Stream | null | undefined | boolean
+  ) {
     const original = this._body;
     this._body = val;
 
@@ -307,9 +316,9 @@ export class Response {
   is(type?: string | string[], ...types: string[]): string | false {
     let testTypes: string[] = [];
     if (type) {
-      testTypes = Array.isArray(type) ? type : [ type ];
+      testTypes = Array.isArray(type) ? type : [type];
     }
-    return typeis(this.type, [ ...testTypes, ...types ]);
+    return typeis(this.type, [...testTypes, ...types]);
   }
 
   /**
@@ -394,7 +403,10 @@ export class Response {
    *    this.set('Accept', 'application/json');
    *    this.set({ Accept: 'text/plain', 'X-API-Key': 'tobi' });
    */
-  set(field: string | Record<string, string>, val?: string | number | unknown[]) {
+  set(
+    field: string | Record<string, string>,
+    val?: string | number | unknown[]
+  ) {
     if (this.headerSent) return;
     if (typeof field === 'string') {
       let value = val as string | string[];
@@ -428,9 +440,7 @@ export class Response {
 
     let value = val;
     if (prev) {
-      value = Array.isArray(prev)
-        ? prev.concat(value)
-        : [ prev ].concat(val);
+      value = Array.isArray(prev) ? prev.concat(value) : [prev].concat(val);
     }
 
     return this.set(field, value);

@@ -17,10 +17,16 @@ describe('res.body=', () => {
         const res = response();
 
         res.body = '<em>hey</em>';
-        assert.strictEqual('text/html; charset=utf-8', res.header['content-type']);
+        assert.strictEqual(
+          'text/html; charset=utf-8',
+          res.header['content-type']
+        );
 
         res.body = { foo: 'bar' };
-        assert.strictEqual('application/json; charset=utf-8', res.header['content-type']);
+        assert.strictEqual(
+          'application/json; charset=utf-8',
+          res.header['content-type']
+        );
       });
     });
 
@@ -36,7 +42,10 @@ describe('res.body=', () => {
     it('should default to text', () => {
       const res = response();
       res.body = 'Tobi';
-      assert.strictEqual('text/plain; charset=utf-8', res.header['content-type']);
+      assert.strictEqual(
+        'text/plain; charset=utf-8',
+        res.header['content-type']
+      );
     });
 
     it('should set length', () => {
@@ -49,7 +58,10 @@ describe('res.body=', () => {
       it('should default to text', () => {
         const res = response();
         res.body = 'aklsdjf < klajsdlfjasd';
-        assert.strictEqual('text/plain; charset=utf-8', res.header['content-type']);
+        assert.strictEqual(
+          'text/plain; charset=utf-8',
+          res.header['content-type']
+        );
       });
     });
   });
@@ -58,7 +70,10 @@ describe('res.body=', () => {
     it('should default to html', () => {
       const res = response();
       res.body = '<h1>Tobi</h1>';
-      assert.strictEqual('text/html; charset=utf-8', res.header['content-type']);
+      assert.strictEqual(
+        'text/html; charset=utf-8',
+        res.header['content-type']
+      );
     });
 
     it('should set length', () => {
@@ -80,7 +95,10 @@ describe('res.body=', () => {
       it('should default to html', () => {
         const res = response();
         res.body = ' '.repeat(10_000_000) + '\t\r\n<h1>Tobi</h1>';
-        assert.strictEqual('text/html; charset=utf-8', res.header['content-type']);
+        assert.strictEqual(
+          'text/html; charset=utf-8',
+          res.header['content-type']
+        );
       });
     });
   });
@@ -96,7 +114,10 @@ describe('res.body=', () => {
 
       const res = response();
       res.body = '<?xml version="1.0" encoding="UTF-8"?>\n<俄语>данные</俄语>';
-      assert.strictEqual('text/html; charset=utf-8', res.header['content-type']);
+      assert.strictEqual(
+        'text/html; charset=utf-8',
+        res.header['content-type']
+      );
     });
   });
 
@@ -104,7 +125,10 @@ describe('res.body=', () => {
     it('should default to an octet stream', () => {
       const res = response();
       res.body = fs.createReadStream('LICENSE');
-      assert.strictEqual('application/octet-stream', res.header['content-type']);
+      assert.strictEqual(
+        'application/octet-stream',
+        res.header['content-type']
+      );
     });
 
     it('should add error handler to the stream, but only once', () => {
@@ -122,7 +146,10 @@ describe('res.body=', () => {
     it('should default to an octet stream', () => {
       const res = response();
       res.body = Buffer.from('hey');
-      assert.strictEqual('application/octet-stream', res.header['content-type']);
+      assert.strictEqual(
+        'application/octet-stream',
+        res.header['content-type']
+      );
     });
 
     it('should set length', () => {
@@ -136,7 +163,10 @@ describe('res.body=', () => {
     it('should default to json', () => {
       const res = response();
       res.body = { foo: 'bar' };
-      assert.strictEqual('application/json; charset=utf-8', res.header['content-type']);
+      assert.strictEqual(
+        'application/json; charset=utf-8',
+        res.header['content-type']
+      );
     });
   });
 });

@@ -74,15 +74,18 @@ describe('ctx.is(type)', () => {
       assert.strictEqual(ctx.is('image/*', 'image/png'), 'image/png');
       assert.strictEqual(ctx.is('image/png', 'image/*'), 'image/png');
 
-      assert.strictEqual(ctx.is([ 'text/*', 'image/*' ]), 'image/png');
-      assert.strictEqual(ctx.is([ 'image/*', 'text/*' ]), 'image/png');
-      assert.strictEqual(ctx.is([ 'image/*', 'image/png' ]), 'image/png');
-      assert.strictEqual(ctx.is([ 'image/png', 'image/*' ]), 'image/png');
+      assert.strictEqual(ctx.is(['text/*', 'image/*']), 'image/png');
+      assert.strictEqual(ctx.is(['image/*', 'text/*']), 'image/png');
+      assert.strictEqual(ctx.is(['image/*', 'image/png']), 'image/png');
+      assert.strictEqual(ctx.is(['image/png', 'image/*']), 'image/png');
 
       assert.strictEqual(ctx.is('jpeg'), false);
       assert.strictEqual(ctx.is('.jpeg'), false);
       assert.strictEqual(ctx.is('text/*', 'application/*'), false);
-      assert.strictEqual(ctx.is('text/html', 'text/plain', 'application/json; charset=utf-8'), false);
+      assert.strictEqual(
+        ctx.is('text/html', 'text/plain', 'application/json; charset=utf-8'),
+        false
+      );
     });
   });
 

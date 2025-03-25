@@ -19,7 +19,7 @@ Koa is not bundled with any middleware.
 
 ## Installation
 
-@eggjs/koa requires __node v18.19.0__ or higher for Node.js LTS support.
+@eggjs/koa requires **node v18.19.0** or higher for Node.js LTS support.
 
 ```bash
 npm install @eggjs/koa
@@ -33,7 +33,7 @@ import { Application } from '@eggjs/koa';
 const app = new Application();
 
 // response
-app.use((ctx) => {
+app.use(ctx => {
   ctx.body = 'Hello Koa';
 });
 
@@ -55,7 +55,7 @@ Koa is a middleware framework that can take two different kinds of functions as 
 
 Here is an example of logger middleware with each of the different functions:
 
-### ___async___ functions
+### **_async_** functions
 
 ```ts
 app.use(async (ctx, next) => {
@@ -84,7 +84,7 @@ app.use((ctx, next) => {
 ## Context, Request and Response
 
 Each middleware receives a Koa `Context` object that encapsulates an incoming
-http message and the corresponding response to that message.  `ctx` is often used
+http message and the corresponding response to that message. `ctx` is often used
 as the parameter name for the context object.
 
 ```ts
@@ -112,11 +112,11 @@ app.use(async (ctx, next) => {
 Koa provides a `Response` object as the `response` property of the `Context`.  
 Koa's `Response` object provides helpful methods for working with
 http responses which delegate to a [ServerResponse](https://nodejs.org/api/http.html#http_class_http_serverresponse)
-.  
+.
 
 Koa's pattern of delegating to Node's request and response objects rather than extending them
 provides a cleaner interface and reduces conflicts between different middleware and with Node
-itself as well as providing better support for stream handling.  The `IncomingMessage` can still be
+itself as well as providing better support for stream handling. The `IncomingMessage` can still be
 directly accessed as the `req` property on the `Context` and `ServerResponse` can be directly
 accessed as the `res` property on the `Context`.
 
@@ -130,8 +130,8 @@ app.use(async (ctx, next) => {
 });
 ```
 
-The `Context` object also provides shortcuts for methods on its `request` and `response`.  In the prior
-examples,  `ctx.type` can be used instead of `ctx.response.type` and `ctx.accepts` can be used
+The `Context` object also provides shortcuts for methods on its `request` and `response`. In the prior
+examples, `ctx.type` can be used instead of `ctx.response.type` and `ctx.accepts` can be used
 instead of `ctx.request.accepts`.
 
 For more information on `Request`, `Response` and `Context`, see the [Request API Reference](docs/api/request.md),

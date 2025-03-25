@@ -1,5 +1,4 @@
 {
   "extends": "@eggjs/tsconfig",
-  "compilerOptions": {
-  }
+  "compilerOptions": {}
 }

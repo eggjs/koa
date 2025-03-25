@@ -16,9 +16,7 @@ describe('app.response', () => {
       ctx.status = 204;
     });
 
-    return request(app1.listen())
-      .get('/')
-      .expect(204);
+    return request(app1.listen()).get('/').expect(204);
   });
 
   it('should not affect the original prototype', () => {
@@ -27,9 +25,7 @@ describe('app.response', () => {
       ctx.status = 204;
     });
 
-    return request(app2.listen())
-      .get('/')
-      .expect(204);
+    return request(app2.listen()).get('/').expect(204);
   });
 
   it('should not include status message in body for http2', async () => {
@@ -37,9 +33,7 @@ describe('app.response', () => {
       ctx.req.httpVersionMajor = 2;
       ctx.status = 404;
     });
-    const response = await request(app3.listen())
-      .get('/')
-      .expect(404);
+    const response = await request(app3.listen()).get('/').expect(404);
     assert.strictEqual(response.text, '404');
   });
 
@@ -49,9 +43,7 @@ describe('app.response', () => {
       assert.strictEqual(ctx.response._explicitNullBody, true);
     });
 
-    return request(app4.listen())
-      .get('/')
-      .expect(204);
+    return request(app4.listen()).get('/').expect(204);
   });
 
   it('should not set ._explicitNullBody incorrectly', async () => {
@@ -64,8 +56,6 @@ describe('app.response', () => {
       assert.strictEqual(ctx.response._explicitNullBody, undefined);
     });
 
-    return request(app5.listen())
-      .get('/')
-      .expect(204);
+    return request(app5.listen()).get('/').expect(204);
   });
 });

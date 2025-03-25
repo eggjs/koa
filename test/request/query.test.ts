@@ -8,7 +8,7 @@ describe('ctx.query', () => {
       assert(Object.keys(ctx.query).length === 0);
     });
 
-    it('should return the same object each time it\'s accessed', () => {
+    it("should return the same object each time it's accessed", () => {
       const ctx = context({ url: '/' });
       ctx.query.a = '2';
       assert.strictEqual(ctx.query.a, '2');

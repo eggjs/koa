@@ -30,22 +30,25 @@ describe('ctx.href', () => {
     });
     const server = app.listen(() => {
       const address = server.address() as AddressInfo;
-      http.get({
-        host: 'localhost',
-        path: 'http://example.com/foo',
-        port: address.port,
-      }, res => {
-        assert.strictEqual(res.statusCode, 200);
-        let buf = '';
-        res.setEncoding('utf8');
-        res.on('data', s => {
-          buf += s;
-        });
-        res.on('end', () => {
-          assert.strictEqual(buf, 'http://example.com/foo');
-          done();
-        });
-      });
+      http.get(
+        {
+          host: 'localhost',
+          path: 'http://example.com/foo',
+          port: address.port,
+        },
+        res => {
+          assert.strictEqual(res.statusCode, 200);
+          let buf = '';
+          res.setEncoding('utf8');
+          res.on('data', s => {
+            buf += s;
+          });
+          res.on('end', () => {
+            assert.strictEqual(buf, 'http://example.com/foo');
+            done();
+          });
+        }
+      );
     });
   });
 });

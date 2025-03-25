@@ -7,7 +7,7 @@ describe('ctx.acceptsLanguages(langs)', () => {
       it('should return accepted types', () => {
         const ctx = context();
         ctx.req.headers['accept-language'] = 'en;q=0.8, es, pt';
-        assert.deepStrictEqual(ctx.acceptsLanguages(), [ 'es', 'pt', 'en' ]);
+        assert.deepStrictEqual(ctx.acceptsLanguages(), ['es', 'pt', 'en']);
       });
     });
   });
@@ -43,7 +43,7 @@ describe('ctx.acceptsLanguages(langs)', () => {
     it('should return the best fit', () => {
       const ctx = context();
       ctx.req.headers['accept-language'] = 'en;q=0.8, es, pt';
-      assert.strictEqual(ctx.acceptsLanguages([ 'es', 'en' ]), 'es');
+      assert.strictEqual(ctx.acceptsLanguages(['es', 'en']), 'es');
     });
   });
 });

@@ -27,7 +27,12 @@ export class Request {
   response: Response;
   originalUrl: string;
 
-  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
+  constructor(
+    app: Application,
+    ctx: Context,
+    req: IncomingMessage,
+    res: ServerResponse
+  ) {
     this.app = app;
     this.req = req;
     this.res = res;
@@ -169,7 +174,7 @@ export class Request {
    */
   get querystring() {
     if (!this.req) return '';
-    return parse(this.req)?.query as string ?? '';
+    return (parse(this.req)?.query as string) ?? '';
   }
 
   /**
@@ -295,7 +300,7 @@ export class Request {
    * Check if the request is idempotent.
    */
   get idempotent() {
-    const methods = [ 'GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE' ];
+    const methods = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'];
     return methods.includes(this.method);
   }
 
@@ -371,9 +376,7 @@ export class Request {
   get ips() {
     const proxy = this.app.proxy;
     const val = this.get<string>(this.app.proxyIpHeader);
-    let ips = proxy && val
-      ? splitCommaSeparatedValues(val)
-      : [];
+    let ips = proxy && val ? splitCommaSeparatedValues(val) : [];
     if (this.app.maxIpsCount > 0) {
       ips = ips.slice(-this.app.maxIpsCount);
     }
@@ -413,10 +416,7 @@ export class Request {
     const offset = this.app.subdomainOffset;
     const hostname = this.hostname;
     if (net.isIP(hostname)) return [];
-    return hostname
-      .split('.')
-      .reverse()
-      .slice(offset);
+    return hostname.split('.').reverse().slice(offset);
   }
 
   protected _accept: Accepts;
@@ -473,7 +473,10 @@ export class Request {
    */
   accepts(args: string[]): string | string[] | false;
   accepts(...args: string[]): string | string[] | false;
-  accepts(args?: string | string[], ...others: string[]): string | string[] | false {
+  accepts(
+    args?: string | string[],
+    ...others: string[]
+  ): string | string[] | false {
     return this.accept.types(args as string, ...others);
   }
 
@@ -488,14 +491,17 @@ export class Request {
   acceptsEncodings(): string[];
   acceptsEncodings(encodings: string[]): string | false;
   acceptsEncodings(...encodings: string[]): string | false;
-  acceptsEncodings(encodings?: string | string[], ...others: string[]): string[] | string | false {
+  acceptsEncodings(
+    encodings?: string | string[],
+    ...others: string[]
+  ): string[] | string | false {
     if (!encodings) {
       return this.accept.encodings();
     }
     if (Array.isArray(encodings)) {
-      encodings = [ ...encodings, ...others ];
+      encodings = [...encodings, ...others];
     } else {
-      encodings = [ encodings, ...others ];
+      encodings = [encodings, ...others];
     }
     return this.accept.encodings(...encodings);
   }
@@ -511,14 +517,17 @@ export class Request {
   acceptsCharsets(): string[];
   acceptsCharsets(charsets: string[]): string | false;
   acceptsCharsets(...charsets: string[]): string | false;
-  acceptsCharsets(charsets?: string | string[], ...others: string[]): string[] | string | false {
+  acceptsCharsets(
+    charsets?: string | string[],
+    ...others: string[]
+  ): string[] | string | false {
     if (!charsets) {
       return this.accept.charsets();
     }
     if (Array.isArray(charsets)) {
-      charsets = [ ...charsets, ...others ];
+      charsets = [...charsets, ...others];
     } else {
-      charsets = [ charsets, ...others ];
+      charsets = [charsets, ...others];
     }
     return this.accept.charsets(...charsets);
   }
@@ -534,14 +543,17 @@ export class Request {
   acceptsLanguages(): string[];
   acceptsLanguages(languages: string[]): string | false;
   acceptsLanguages(...languages: string[]): string | false;
-  acceptsLanguages(languages?: string | string[], ...others: string[]): string | string[] | false {
+  acceptsLanguages(
+    languages?: string | string[],
+    ...others: string[]
+  ): string | string[] | false {
     if (!languages) {
       return this.accept.languages();
     }
     if (Array.isArray(languages)) {
-      languages = [ ...languages, ...others ];
+      languages = [...languages, ...others];
     } else {
-      languages = [ languages, ...others ];
+      languages = [languages, ...others];
     }
     return this.accept.languages(...languages);
   }
@@ -570,9 +582,9 @@ export class Request {
   is(type?: string | string[], ...types: string[]): string | false | null {
     let testTypes: string[] = [];
     if (type) {
-      testTypes = Array.isArray(type) ? type : [ type ];
+      testTypes = Array.isArray(type) ? type : [type];
     }
-    return typeis(this.req, [ ...testTypes, ...types ]);
+    return typeis(this.req, [...testTypes, ...types]);
   }
 
   /**
@@ -602,9 +614,9 @@ export class Request {
    *     this.get('Something');
    *     // => ''
    */
-  get<T = string | string []>(field: string): T {
+  get<T = string | string[]>(field: string): T {
     const req = this.req;
-    switch (field = field.toLowerCase()) {
+    switch ((field = field.toLowerCase())) {
       case 'referer':
       case 'referrer':
         return (req.headers.referrer || req.headers.referer || '') as T;
@@ -649,5 +661,8 @@ export class Request {
  * @returns {string[]} An array of values from the comma-separated string.
  */
 function splitCommaSeparatedValues(value: string, limit?: number): string[] {
-  return value.split(',', limit).map(v => v.trim()).filter(v => v.length > 0);
+  return value
+    .split(',', limit)
+    .map(v => v.trim())
+    .filter(v => v.length > 0);
 }
