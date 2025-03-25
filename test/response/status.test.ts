@@ -1,6 +1,8 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+
 import request from 'supertest';
 import statuses from 'statuses';
+
 import { response } from '../test-helpers/context.js';
 import Koa from '../../src/index.js';
 
@@ -57,7 +59,8 @@ describe('res.status=', () => {
   describe('when a status string', () => {
     it('should throw', () => {
       assert.throws(() => {
-        (response() as any).status = 'forbidden';
+        // @ts-expect-error for testing
+        response().status = 'forbidden';
       }, /status code must be a number/);
     });
   });
@@ -72,19 +75,17 @@ describe('res.status=', () => {
         ctx.set('Content-Length', '15');
         ctx.set('Transfer-Encoding', 'chunked');
         ctx.status = status;
-        assert(ctx.response.header['content-type'] == null);
-        assert(ctx.response.header['content-length'] == null);
-        assert(ctx.response.header['transfer-encoding'] == null);
+        assert.equal(ctx.response.header['content-type'], undefined);
+        assert.equal(ctx.response.header['content-length'], undefined);
+        assert.equal(ctx.response.header['transfer-encoding'], undefined);
       });
 
-      const res = await request(app.callback())
-        .get('/')
-        .expect(status);
+      const res = await request(app.callback()).get('/').expect(status);
 
-      assert.strictEqual(res.headers.hasOwnProperty('content-type'), false);
-      assert.strictEqual(res.headers.hasOwnProperty('content-length'), false);
-      assert.strictEqual(res.headers.hasOwnProperty('content-encoding'), false);
-      assert.strictEqual(res.text.length, 0);
+      assert.equal(Object.hasOwn(res.headers, 'content-type'), false);
+      assert.equal(Object.hasOwn(res.headers, 'content-length'), false);
+      assert.equal(Object.hasOwn(res.headers, 'content-encoding'), false);
+      assert.equal(res.text.length, 0);
     });
 
     it('should strip content related header fields after status set', async () => {
@@ -98,14 +99,12 @@ describe('res.status=', () => {
         ctx.set('Transfer-Encoding', 'chunked');
       });
 
-      const res = await request(app.callback())
-        .get('/')
-        .expect(status);
+      const res = await request(app.callback()).get('/').expect(status);
 
-      assert.strictEqual(res.headers.hasOwnProperty('content-type'), false);
-      assert.strictEqual(res.headers.hasOwnProperty('content-length'), false);
-      assert.strictEqual(res.headers.hasOwnProperty('content-encoding'), false);
-      assert.strictEqual(res.text.length, 0);
+      assert.equal(Object.hasOwn(res.headers, 'content-type'), false);
+      assert.equal(Object.hasOwn(res.headers, 'content-length'), false);
+      assert.equal(Object.hasOwn(res.headers, 'content-encoding'), false);
+      assert.equal(res.text.length, 0);
     });
   }
 

@@ -20,10 +20,12 @@ import type { CustomError, AnyProto } from './types.js';
 const debug = debuglog('@eggjs/koa/application');
 
 // oxlint-disable-next-line typescript/no-explicit-any
-export type ProtoImplClass<T = object> = new(...args: any[]) => T;
+export type ProtoImplClass<T = object> = new (...args: any[]) => T;
 export type Next = () => Promise<void>;
 type _MiddlewareFunc<T> = (ctx: T, next: Next) => Promise<void> | void;
-export type MiddlewareFunc<T = Context> = _MiddlewareFunc<T> & { _name?: string };
+export type MiddlewareFunc<T extends Context = Context> = _MiddlewareFunc<T> & {
+  _name?: string;
+};
 
 /**
  * Expose `Application` class.
@@ -55,15 +57,15 @@ export class Application extends Emitter {
 
   /**
    * Initialize a new `Application`.
-    *
-    * @param {object} [options] Application options
-    * @param {string} [options.env] Environment, default is `development`
-    * @param {string[]} [options.keys] Signed cookie keys
-    * @param {boolean} [options.proxy] Trust proxy headers
-    * @param {number} [options.subdomainOffset] Subdomain offset
-    * @param {string} [options.proxyIpHeader] Proxy IP header, defaults to X-Forwarded-For
-    * @param {number} [options.maxIpsCount] Max IPs read from proxy IP header, default to 0 (means infinity)
-    */
+   *
+   * @param {object} [options] Application options
+   * @param {string} [options.env] Environment, default is `development`
+   * @param {string[]} [options.keys] Signed cookie keys
+   * @param {boolean} [options.proxy] Trust proxy headers
+   * @param {number} [options.subdomainOffset] Subdomain offset
+   * @param {string} [options.proxyIpHeader] Proxy IP header, defaults to X-Forwarded-For
+   * @param {number} [options.maxIpsCount] Max IPs read from proxy IP header, default to 0 (means infinity)
+   */
 
   constructor(options?: {
     proxy?: boolean;
@@ -86,11 +88,14 @@ export class Application extends Emitter {
     this.middleware = [];
     this.ctxStorage = getAsyncLocalStorage();
     this.silent = false;
-    this.ContextClass = class ApplicationContext extends Context {} as ProtoImplClass<Context>;
+    this.ContextClass =
+      class ApplicationContext extends Context {} as ProtoImplClass<Context>;
     this.context = this.ContextClass.prototype;
-    this.RequestClass = class ApplicationRequest extends Request {} as ProtoImplClass<Request>;
+    this.RequestClass =
+      class ApplicationRequest extends Request {} as ProtoImplClass<Request>;
     this.request = this.RequestClass.prototype;
-    this.ResponseClass = class ApplicationResponse extends Response {} as ProtoImplClass<Response>;
+    this.ResponseClass =
+      class ApplicationResponse extends Response {} as ProtoImplClass<Response>;
     this.response = this.ResponseClass.prototype;
   }
 
@@ -154,16 +159,19 @@ export class Application extends Emitter {
   /**
    * Use the given middleware `fn`.
    */
-  use(fn: MiddlewareFunc) {
-    if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
+  use<T extends Context = Context>(fn: MiddlewareFunc<T>) {
+    if (typeof fn !== 'function')
+      throw new TypeError('middleware must be a function!');
     const name = fn._name || fn.name || '-';
     if (isGeneratorFunction(fn)) {
-      throw new TypeError(`Support for generators was removed, middleware: ${name}. ` +
-        'See the documentation for examples of how to convert old middleware ' +
-        'https://github.com/koajs/koa/blob/master/docs/migration.md');
+      throw new TypeError(
+        `Support for generators was removed, middleware: ${name}. ` +
+          'See the documentation for examples of how to convert old middleware ' +
+          'https://github.com/koajs/koa/blob/master/docs/migration.md'
+      );
     }
     debug('use %o #%d', name, this.middleware.length);
-    this.middleware.push(fn);
+    this.middleware.push(fn as MiddlewareFunc<Context>);
     return this;
   }
 
@@ -199,7 +207,10 @@ export class Application extends Emitter {
    * Handle request in callback.
    * @private
    */
-  protected async handleRequest(ctx: Context, fnMiddleware: (ctx: Context) => Promise<void>) {
+  protected async handleRequest(
+    ctx: Context,
+    fnMiddleware: (ctx: Context) => Promise<void>
+  ) {
     this.emit('request', ctx);
     const res = ctx.res;
     res.statusCode = 404;
@@ -236,9 +247,11 @@ export class Application extends Emitter {
     // When dealing with cross-globals a normal `instanceof` check doesn't work properly.
     // See https://github.com/koajs/koa/issues/1466
     // We can probably remove it once jest fixes https://github.com/facebook/jest/issues/2549.
-    const isNativeError = err instanceof Error ||
+    const isNativeError =
+      err instanceof Error ||
       Object.prototype.toString.call(err) === '[object Error]';
-    if (!isNativeError) throw new TypeError(util.format('non-error thrown: %j', err));
+    if (!isNativeError)
+      throw new TypeError(util.format('non-error thrown: %j', err));
 
     if (err.status === 404 || err.expose) return;
     if (this.silent) return;

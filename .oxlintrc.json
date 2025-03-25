@@ -140,7 +140,9 @@
     "jsdoc/require-param": "allow"
   },
   "ignorePatterns": [
-    "index.d.ts", "test/fixtures/**", "__snapshots__", "test",
+    "index.d.ts",
+    "test/fixtures/**",
+    "__snapshots__",
     "example/helloworld.cjs"
   ]
 }

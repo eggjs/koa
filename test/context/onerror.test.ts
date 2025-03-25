@@ -1,14 +1,17 @@
-import assert from 'node:assert';
-import request from 'supertest';
+import assert from 'node:assert/strict';
+import type { ServerResponse } from 'node:http';
 import { runInNewContext } from 'node:vm';
-import Koa from '../../src/index.js';
+
+import request from 'supertest';
+
+import Koa, { type Context } from '../../src/index.js';
 import context from '../test-helpers/context.js';
 
 describe('ctx.onerror(err)', () => {
   it('should respond', () => {
     const app = new Koa();
 
-    app.use((ctx: any) => {
+    app.use((ctx: Context) => {
       ctx.body = 'something else';
 
       ctx.throw(418, 'boom');
@@ -26,7 +29,7 @@ describe('ctx.onerror(err)', () => {
   it('should unset all headers', async () => {
     const app = new Koa();
 
-    app.use((ctx: any) => {
+    app.use((ctx: Context) => {
       ctx.set('Vary', 'Accept-Encoding');
       ctx.set('X-CSRF-Token', 'asdf');
       ctx.body = 'response';
@@ -42,14 +45,14 @@ describe('ctx.onerror(err)', () => {
       .expect('Content-Type', 'text/plain; charset=utf-8')
       .expect('Content-Length', '4');
 
-    assert.strictEqual(res.headers.hasOwnProperty('vary'), false);
-    assert.strictEqual(res.headers.hasOwnProperty('x-csrf-token'), false);
+    assert.equal(Object.hasOwn(res.headers, 'vary'), false);
+    assert.equal(Object.hasOwn(res.headers, 'x-csrf-token'), false);
   });
 
   it('should set headers specified in the error', async () => {
     const app = new Koa();
 
-    app.use((ctx: any) => {
+    app.use((ctx: Context) => {
       ctx.set('Vary', 'Accept-Encoding');
       ctx.set('X-CSRF-Token', 'asdf');
       ctx.body = 'response';
@@ -71,8 +74,8 @@ describe('ctx.onerror(err)', () => {
       .expect('Content-Type', 'text/plain; charset=utf-8')
       .expect('X-New-Header', 'Value');
 
-    assert.strictEqual(res.headers.hasOwnProperty('vary'), false);
-    assert.strictEqual(res.headers.hasOwnProperty('x-csrf-token'), false);
+    assert.equal(Object.hasOwn(res.headers, 'vary'), false);
+    assert.equal(Object.hasOwn(res.headers, 'x-csrf-token'), false);
   });
 
   it.skip('should ignore error after headerSent', done => {
@@ -84,7 +87,7 @@ describe('ctx.onerror(err)', () => {
       done();
     });
 
-    app.use(async (ctx: any) => {
+    app.use(async (ctx: Context) => {
       ctx.status = 200;
       ctx.set('X-Foo', 'Bar');
       ctx.flushHeaders();
@@ -92,19 +95,16 @@ describe('ctx.onerror(err)', () => {
       ctx.body = 'response';
     });
 
-    request(app.callback())
-      .get('/')
-      .expect('X-Foo', 'Bar')
-      .expect(200);
+    request(app.callback()).get('/').expect('X-Foo', 'Bar').expect(200);
   });
 
   it('should set status specified in the error using statusCode', () => {
     const app = new Koa();
 
-    app.use((ctx: any) => {
+    app.use((ctx: Context) => {
       ctx.body = 'something else';
       const err = new Error('Not found');
-      (err as any).statusCode = 404;
+      (err as unknown as { statusCode: number }).statusCode = 404;
       throw err;
     });
 
@@ -122,10 +122,10 @@ describe('ctx.onerror(err)', () => {
       it('should respond 500', () => {
         const app = new Koa();
 
-        app.use((ctx: any) => {
+        app.use((ctx: Context) => {
           ctx.body = 'something else';
           const err = new Error('some error');
-          (err as any).statusCode = 'notnumber';
+          (err as unknown as { statusCode: string }).statusCode = 'notnumber';
           throw err;
         });
 
@@ -145,10 +145,10 @@ describe('ctx.onerror(err)', () => {
       it('should respond 500', () => {
         const app = new Koa();
 
-        app.use((ctx: any) => {
+        app.use((ctx: Context) => {
           ctx.body = 'something else';
           const err = new Error('some error');
-          (err as any).status = 'notnumber';
+          (err as unknown as { status: string }).status = 'notnumber';
           throw err;
         });
 
@@ -165,10 +165,10 @@ describe('ctx.onerror(err)', () => {
       it('should respond 404', () => {
         const app = new Koa();
 
-        app.use((ctx: any) => {
+        app.use((ctx: Context) => {
           ctx.body = 'something else';
           const err = new Error('test for ENOENT');
-          (err as any).code = 'ENOENT';
+          (err as unknown as { code: string }).code = 'ENOENT';
           throw err;
         });
 
@@ -185,10 +185,10 @@ describe('ctx.onerror(err)', () => {
       it('should respond 500', () => {
         const app = new Koa();
 
-        app.use((ctx: any) => {
+        app.use((ctx: Context) => {
           ctx.body = 'something else';
           const err = new Error('some error');
-          (err as any).status = 9999;
+          (err as unknown as { status: number }).status = 9999;
           throw err;
         });
 
@@ -217,6 +217,7 @@ describe('ctx.onerror(err)', () => {
 
       const server = app.listen();
 
+      // oxlint-disable-next-line promise/avoid-new
       const gotRightErrorPromise = new Promise<void>((resolve, reject) => {
         app.on('error', receivedError => {
           try {
@@ -228,9 +229,7 @@ describe('ctx.onerror(err)', () => {
         });
       });
 
-      await request(server)
-        .get('/')
-        .expect(418);
+      await request(server).get('/').expect(418);
 
       await gotRightErrorPromise;
     });
@@ -257,11 +256,11 @@ describe('ctx.onerror(err)', () => {
       let removed = 0;
       const ctx = context();
 
-      (ctx.app as any).emit = () => {
+      (ctx.app as unknown as { emit: () => void }).emit = () => {
         // ignore
       };
       ctx.res = {
-        getHeaderNames: () => [ 'content-type', 'content-length' ],
+        getHeaderNames: () => ['content-type', 'content-length'],
         removeHeader: () => removed++,
         end: () => {
           // ignore
@@ -269,7 +268,7 @@ describe('ctx.onerror(err)', () => {
         emit: () => {
           // ignore
         },
-      } as any;
+      } as unknown as ServerResponse;
 
       ctx.onerror(new Error('error'));
 

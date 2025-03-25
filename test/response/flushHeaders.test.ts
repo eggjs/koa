@@ -1,15 +1,17 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import http from 'node:http';
 import { PassThrough } from 'node:stream';
 import type { AddressInfo } from 'node:net';
+
 import request from 'supertest';
-import Koa from '../../src/index.js';
+
+import Koa, { type Context } from '../../src/index.js';
 
 describe('ctx.flushHeaders()', () => {
   it('should set headersSent', () => {
     const app = new Koa();
 
-    app.use((ctx: any) => {
+    app.use((ctx: Context) => {
       ctx.body = 'Body';
       ctx.status = 200;
       ctx.flushHeaders();
@@ -18,16 +20,13 @@ describe('ctx.flushHeaders()', () => {
 
     const server = app.listen();
 
-    return request(server)
-      .get('/')
-      .expect(200)
-      .expect('Body');
+    return request(server).get('/').expect(200).expect('Body');
   });
 
   it('should allow a response afterwards', () => {
     const app = new Koa();
 
-    app.use((ctx: any) => {
+    app.use((ctx: Context) => {
       ctx.status = 200;
       ctx.res.setHeader('Content-Type', 'text/plain');
       ctx.flushHeaders();
@@ -45,7 +44,7 @@ describe('ctx.flushHeaders()', () => {
   it('should send the correct status code', () => {
     const app = new Koa();
 
-    app.use((ctx: any) => {
+    app.use((ctx: Context) => {
       ctx.status = 401;
       ctx.res.setHeader('Content-Type', 'text/plain');
       ctx.flushHeaders();
@@ -63,7 +62,7 @@ describe('ctx.flushHeaders()', () => {
   it('should ignore set header after flushHeaders', async () => {
     const app = new Koa();
 
-    app.use((ctx: any) => {
+    app.use((ctx: Context) => {
       ctx.status = 401;
       ctx.res.setHeader('Content-Type', 'text/plain');
       ctx.flushHeaders();
@@ -79,8 +78,16 @@ describe('ctx.flushHeaders()', () => {
       .expect(401)
       .expect('Content-Type', 'text/plain');
 
-    assert.strictEqual(res.headers['x-shouldnt-work'], undefined, 'header set after flushHeaders');
-    assert.strictEqual(res.headers.vary, undefined, 'header set after flushHeaders');
+    assert.strictEqual(
+      res.headers['x-shouldnt-work'],
+      undefined,
+      'header set after flushHeaders'
+    );
+    assert.strictEqual(
+      res.headers.vary,
+      undefined,
+      'header set after flushHeaders'
+    );
   });
 
   it('should flush headers first and delay to send data', done => {
@@ -89,8 +96,10 @@ describe('ctx.flushHeaders()', () => {
     app.use(ctx => {
       ctx.type = 'json';
       ctx.status = 200;
-      ctx.headers.Link = '</css/mycss.css>; as=style; rel=preload, <https://img.craftflair.com>; rel=preconnect; crossorigin';
-      const stream = ctx.body = new PassThrough();
+      ctx.headers.Link =
+        '</css/mycss.css>; as=style; rel=preload, <https://img.craftflair.com>; rel=preconnect; crossorigin';
+      const stream = new PassThrough();
+      ctx.body = stream;
       ctx.flushHeaders();
 
       setTimeout(() => {
@@ -98,14 +107,16 @@ describe('ctx.flushHeaders()', () => {
       }, 10_000);
     });
 
-    const server = app.listen(function(err: Error) {
+    // oxlint-disable-next-line promise/prefer-await-to-callbacks
+    const server = app.listen((err: Error) => {
       if (err) return done(err);
 
       const port = (server.address() as AddressInfo).port;
 
-      http.request({
-        port,
-      })
+      http
+        .request({
+          port,
+        })
         .on('response', res => {
           const onData = () => done(new Error('boom'));
           res.on('data', onData);
@@ -131,10 +142,12 @@ describe('ctx.flushHeaders()', () => {
     app.use(ctx => {
       ctx.type = 'json';
       ctx.status = 200;
-      ctx.headers.Link = '</css/mycss.css>; as=style; rel=preload, <https://img.craftflair.com>; rel=preconnect; crossorigin';
+      ctx.headers.Link =
+        '</css/mycss.css>; as=style; rel=preload, <https://img.craftflair.com>; rel=preconnect; crossorigin';
       ctx.length = 20;
       ctx.flushHeaders();
-      const stream = ctx.body = new PassThrough();
+      const stream = new PassThrough();
+      ctx.body = stream;
 
       setTimeout(() => {
         stream.emit('error', new Error('mock error'));
@@ -143,8 +156,10 @@ describe('ctx.flushHeaders()', () => {
 
     const server = app.listen();
 
-    request(server).get('/').end(() => {
-      // ignore
-    });
+    request(server)
+      .get('/')
+      .end(() => {
+        // ignore
+      });
   });
 });

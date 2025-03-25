@@ -1,20 +1,23 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { request } from '../test-helpers/context.js';
 
 describe('req.protocol', () => {
   describe('when encrypted', () => {
     it('should return "https"', () => {
       const req = request();
-      (req.req as any).socket = { encrypted: true };
-      assert.strictEqual(req.protocol, 'https');
+      // @ts-expect-error for testing
+      req.req.socket = { encrypted: true };
+      assert.equal(req.protocol, 'https');
     });
   });
 
   describe('when unencrypted', () => {
     it('should return "http"', () => {
       const req = request();
-      (req.req as any).socket = {};
-      assert.strictEqual(req.protocol, 'http');
+      // @ts-expect-error for testing
+      req.req.socket = {};
+      assert.equal(req.protocol, 'http');
     });
   });
 
@@ -23,18 +26,20 @@ describe('req.protocol', () => {
       it('should be used', () => {
         const req = request();
         req.app.proxy = true;
-        (req.req as any).socket = {};
+        // @ts-expect-error for testing
+        req.req.socket = {};
         req.header['x-forwarded-proto'] = 'https, http';
-        assert.strictEqual(req.protocol, 'https');
+        assert.equal(req.protocol, 'https');
       });
 
       describe('and X-Forwarded-Proto is empty', () => {
         it('should return "http"', () => {
           const req = request();
           req.app.proxy = true;
-          (req.req as any).socket = {};
+          // @ts-expect-error for testing
+          req.req.socket = {};
           req.header['x-forwarded-proto'] = '';
-          assert.strictEqual(req.protocol, 'http');
+          assert.equal(req.protocol, 'http');
         });
       });
     });
@@ -42,9 +47,10 @@ describe('req.protocol', () => {
     describe('and proxy is not trusted', () => {
       it('should not be used', () => {
         const req = request();
-        (req.req as any).socket = {};
+        // @ts-expect-error for testing
+        req.req.socket = {};
         req.header['x-forwarded-proto'] = 'https, http';
-        assert.strictEqual(req.protocol, 'http');
+        assert.equal(req.protocol, 'http');
       });
     });
   });

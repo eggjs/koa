@@ -1,5 +1,6 @@
 import util from 'node:util';
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { response } from '../test-helpers/context.js';
 
 describe('res.inspect()', () => {
@@ -7,9 +8,10 @@ describe('res.inspect()', () => {
     it('should return null', () => {
       const res = response();
       res.body = 'hello';
-      delete (res as any).res;
-      assert.strictEqual(res.inspect(), undefined);
-      assert.strictEqual(util.inspect(res), 'undefined');
+      // @ts-expect-error for testing
+      delete res.res;
+      assert.equal(res.inspect(), undefined);
+      assert.equal(util.inspect(res), 'undefined');
     });
   });
 
@@ -27,7 +29,7 @@ describe('res.inspect()', () => {
       body: 'hello',
     };
 
-    assert.deepStrictEqual(res.inspect(), expected);
-    assert.deepStrictEqual(util.inspect(res), util.inspect(expected));
+    assert.deepEqual(res.inspect(), expected);
+    assert.deepEqual(util.inspect(res), util.inspect(expected));
   });
 });

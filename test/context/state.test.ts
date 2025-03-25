@@ -1,5 +1,7 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+
 import request from 'supertest';
+
 import Koa from '../../src/index.js';
 
 describe('ctx.state', () => {
@@ -7,19 +9,17 @@ describe('ctx.state', () => {
     const app = new Koa();
 
     app.use(ctx => {
-      assert.deepStrictEqual(ctx.state, {});
+      assert.deepEqual(ctx.state, {});
       ctx.state.user = 'example';
     });
 
     app.use(ctx => {
-      assert.deepStrictEqual(ctx.state, { user: 'example' });
+      assert.deepEqual(ctx.state, { user: 'example' });
     });
 
     const server = app.listen();
 
-    return request(server)
-      .get('/')
-      .expect(404);
+    return request(server).get('/').expect(404);
   });
 
   it('should override state getter', () => {
@@ -31,18 +31,17 @@ describe('ctx.state', () => {
     };
 
     app.use(ctx => {
-      assert.deepStrictEqual(ctx.state, { foo: 'bar' });
-      (ctx.state as any).user = 'example';
+      assert.deepEqual(ctx.state, { foo: 'bar' });
+      // @ts-expect-error for testing
+      ctx.state.user = 'example';
     });
 
     app.use(ctx => {
-      assert.deepStrictEqual(ctx.state, { foo: 'bar' });
+      assert.deepEqual(ctx.state, { foo: 'bar' });
     });
 
     const server = app.listen();
 
-    return request(server)
-      .get('/')
-      .expect(404);
+    return request(server).get('/').expect(404);
   });
 });

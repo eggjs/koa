@@ -1,4 +1,5 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+
 import context from '../test-helpers/context.js';
 
 describe('ctx.toJSON()', () => {
@@ -11,25 +12,32 @@ describe('ctx.toJSON()', () => {
     ctx.status = 200;
     ctx.body = '<p>Hey</p>';
 
+    // oxlint-disable-next-line unicorn/prefer-structured-clone
     const obj = JSON.parse(JSON.stringify(ctx));
     const req = obj.request;
     const res = obj.response;
 
-    assert.deepStrictEqual({
-      method: 'POST',
-      url: '/items',
-      header: {
-        'content-type': 'text/plain',
+    assert.deepEqual(
+      {
+        method: 'POST',
+        url: '/items',
+        header: {
+          'content-type': 'text/plain',
+        },
       },
-    }, req);
+      req
+    );
 
-    assert.deepStrictEqual({
-      status: 200,
-      message: 'OK',
-      header: {
-        'content-type': 'text/html; charset=utf-8',
-        'content-length': '10',
+    assert.deepEqual(
+      {
+        status: 200,
+        message: 'OK',
+        header: {
+          'content-type': 'text/html; charset=utf-8',
+          'content-length': '10',
+        },
       },
-    }, res);
+      res
+    );
   });
 });

@@ -1,5 +1,6 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import util from 'node:util';
+
 import context from '../test-helpers/context.js';
 
 describe('req.inspect()', () => {
@@ -7,7 +8,7 @@ describe('req.inspect()', () => {
     it('should return null', () => {
       const request = context().request;
       request.method = 'GET';
-      delete (request as any).req;
+      delete (request as unknown as { req: unknown }).req;
       assert(undefined === request.inspect());
       assert(util.inspect(request) === 'undefined');
     });
@@ -27,7 +28,7 @@ describe('req.inspect()', () => {
       },
     };
 
-    assert.deepStrictEqual(request.inspect(), expected);
-    assert.deepStrictEqual(util.inspect(request), util.inspect(expected));
+    assert.deepEqual(request.inspect(), expected);
+    assert.deepEqual(util.inspect(request), util.inspect(expected));
   });
 });

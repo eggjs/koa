@@ -1,5 +1,5 @@
+import assert from 'node:assert/strict';
 
-import assert from 'node:assert';
 import request from 'supertest';
 import Koa from '../../src/index.js';
 
@@ -8,28 +8,32 @@ describe('app.currentContext', () => {
     const app = new Koa({});
 
     app.use(async ctx => {
-      assert(ctx === app.currentContext);
+      assert.equal(ctx, app.currentContext);
+
+      // oxlint-disable-next-line promise/avoid-new
       await new Promise<void>(resolve => {
         setTimeout(() => {
-          assert(ctx === app.currentContext);
+          assert.equal(ctx, app.currentContext);
           resolve();
         }, 1);
       });
+      // oxlint-disable-next-line promise/avoid-new
       await new Promise<void>(resolve => {
-        assert(ctx === app.currentContext);
+        assert.equal(ctx, app.currentContext);
         setImmediate(() => {
-          assert(ctx === app.currentContext);
+          assert.equal(ctx, app.currentContext);
           resolve();
         });
       });
-      assert(ctx === app.currentContext);
+      assert.equal(ctx, app.currentContext);
+      assert(app.currentContext);
       app.currentContext.body = 'ok';
     });
 
     const requestServer = async () => {
-      assert(app.currentContext === undefined);
+      assert.equal(app.currentContext, undefined);
       await request(app.callback()).get('/').expect('ok');
-      assert(app.currentContext === undefined);
+      assert.equal(app.currentContext, undefined);
     };
 
     await Promise.all([
@@ -48,11 +52,12 @@ describe('app.currentContext', () => {
       throw new Error('error message');
     });
 
+    // oxlint-disable-next-line promise/avoid-new
     const handleError = new Promise<void>((resolve, reject) => {
       app.on('error', (err, ctx) => {
         try {
-          assert.strictEqual(err.message, 'error message');
-          assert.strictEqual(app.currentContext, ctx);
+          assert.equal(err.message, 'error message');
+          assert.equal(app.currentContext, ctx);
           resolve();
         } catch (e) {
           reject(e);
