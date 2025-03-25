@@ -1,4 +1,7 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+
+import type { HttpError } from 'http-errors';
+
 import context from '../test-helpers/context.js';
 
 describe('ctx.throw(msg)', () => {
@@ -7,9 +10,10 @@ describe('ctx.throw(msg)', () => {
 
     try {
       ctx.throw('boom');
-    } catch (err: any) {
-      assert.strictEqual(err.status, 500);
-      assert.strictEqual(err.expose, false);
+    } catch (e) {
+      const err = e as HttpError;
+      assert.equal(err.status, 500);
+      assert.equal(err.expose, false);
     }
   });
 });
@@ -21,10 +25,11 @@ describe('ctx.throw(err)', () => {
 
     try {
       ctx.throw(err);
-    } catch (err: any) {
-      assert.strictEqual(err.status, 500);
-      assert.strictEqual(err.message, 'test');
-      assert.strictEqual(err.expose, false);
+    } catch (e) {
+      const err = e as HttpError;
+      assert.equal(err.status, 500);
+      assert.equal(err.message, 'test');
+      assert.equal(err.expose, false);
     }
   });
 });
@@ -36,7 +41,8 @@ describe('ctx.throw(err, status)', () => {
 
     try {
       ctx.throw(error, 422);
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.status, 422);
       assert.strictEqual(err.message, 'test');
       assert.strictEqual(err.expose, true);
@@ -51,7 +57,8 @@ describe('ctx.throw(status, err)', () => {
 
     try {
       ctx.throw(422, error);
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.status, 422);
       assert.strictEqual(err.message, 'test');
       assert.strictEqual(err.expose, true);
@@ -65,7 +72,8 @@ describe('ctx.throw(msg, status)', () => {
 
     try {
       ctx.throw('name required', 400);
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.message, 'name required');
       assert.strictEqual(err.status, 400);
       assert.strictEqual(err.expose, true);
@@ -79,7 +87,8 @@ describe('ctx.throw(status, msg)', () => {
 
     try {
       ctx.throw(400, 'name required');
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.message, 'name required');
       assert.strictEqual(400, err.status);
       assert.strictEqual(true, err.expose);
@@ -93,7 +102,8 @@ describe('ctx.throw(status, errorProps)', () => {
 
     try {
       ctx.throw(400, { foo: 'bar' });
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.message, 'Bad Request');
       assert.strictEqual(400, err.status);
       assert.strictEqual(true, err.expose);
@@ -108,7 +118,8 @@ describe('ctx.throw(status)', () => {
 
     try {
       ctx.throw(400);
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.message, 'Bad Request');
       assert.strictEqual(err.status, 400);
       assert.strictEqual(err.expose, true);
@@ -120,7 +131,8 @@ describe('ctx.throw(status)', () => {
 
     try {
       ctx.throw(999);
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.message, 'Internal Server Error');
       assert.strictEqual(err.status, 500);
       assert.strictEqual(err.expose, false);
@@ -133,9 +145,10 @@ describe('ctx.throw(status)', () => {
 
       try {
         const err = new Error('some error');
-        (err as any).status = -1;
+        (err as unknown as { status: number }).status = -1;
         ctx.throw(err);
-      } catch (err: any) {
+      } catch (e) {
+        const err = e as HttpError;
         assert.strictEqual(err.message, 'some error');
         assert.strictEqual(err.expose, false);
         assert.strictEqual(err.status, 500);
@@ -150,7 +163,8 @@ describe('ctx.throw(status, msg, props)', () => {
 
     try {
       ctx.throw(400, 'msg', { prop: true });
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.message, 'msg');
       assert.strictEqual(err.status, 400);
       assert.strictEqual(err.expose, true);
@@ -167,7 +181,8 @@ describe('ctx.throw(status, msg, props)', () => {
           prop: true,
           status: -1,
         });
-      } catch (err: any) {
+      } catch (e) {
+        const err = e as HttpError;
         assert.strictEqual(err.message, 'msg');
         assert.strictEqual(err.status, 400);
         assert.strictEqual(err.expose, true);
@@ -183,7 +198,8 @@ describe('ctx.throw(msg, props)', () => {
 
     try {
       ctx.throw('msg', { prop: true });
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.message, 'msg');
       assert.strictEqual(err.status, 500);
       assert.strictEqual(err.expose, false);
@@ -198,7 +214,8 @@ describe('ctx.throw(status, props)', () => {
 
     try {
       ctx.throw(400, { prop: true });
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.message, 'Bad Request');
       assert.strictEqual(err.status, 400);
       assert.strictEqual(err.expose, true);
@@ -213,7 +230,8 @@ describe('ctx.throw(err, props)', () => {
 
     try {
       ctx.throw(new Error('test'), { prop: true });
-    } catch (err: any) {
+    } catch (e) {
+      const err = e as HttpError;
       assert.strictEqual(err.message, 'test');
       assert.strictEqual(err.status, 500);
       assert.strictEqual(err.expose, false);

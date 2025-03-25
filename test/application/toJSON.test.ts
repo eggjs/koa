@@ -6,10 +6,13 @@ describe('app.toJSON()', () => {
     const app = new Koa();
     const obj = app.toJSON();
 
-    assert.deepStrictEqual({
-      subdomainOffset: 2,
-      proxy: false,
-      env: 'test',
-    }, obj);
+    assert.deepStrictEqual(
+      {
+        subdomainOffset: 2,
+        proxy: false,
+        env: 'test',
+      },
+      obj
+    );
   });
 });

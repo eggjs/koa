@@ -4,8 +4,10 @@ export type CustomError = Error & {
   statusCode?: number;
   code?: string;
   expose?: boolean;
+  headerSent?: boolean;
 };
 
-export type AnyProto = {
+export interface AnyProto {
+  // oxlint-disable-next-line typescript/no-explicit-any
   [key: string | symbol]: any;
-};
+}

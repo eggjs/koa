@@ -13,9 +13,7 @@ describe('app.request', () => {
       ctx.status = 204;
     });
 
-    return request(app1.listen())
-      .get('/')
-      .expect(204);
+    return request(app1.listen()).get('/').expect(204);
   });
 
   it('should not affect the original prototype', () => {
@@ -24,9 +22,7 @@ describe('app.request', () => {
       ctx.status = 204;
     });
 
-    return request(app2.listen())
-      .get('/')
-      .expect(204);
+    return request(app2.listen()).get('/').expect(204);
   });
 
   it('should access ip work', () => {

@@ -1,6 +1,9 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+import type { ServerResponse, IncomingMessage } from 'node:http';
+
 import request from 'supertest';
-import CreateError from 'http-errors';
+import createHttpError, { HttpError } from 'http-errors';
+
 import Koa from '../../src/index.js';
 
 describe('app', () => {
@@ -59,12 +62,14 @@ describe('app', () => {
 
     app.use(ctx => {
       // set .writable to false
-      (ctx.socket as any).writable = false;
+      (ctx.socket as unknown as { writable: boolean }).writable = false;
       ctx.status = 204;
       // throw if .writeHead or .end is called
-      ctx.res.writeHead =
+      ctx.res.writeHead = () => {
+        throw new Error('response sent (writeHead)');
+      };
       ctx.res.end = () => {
-        throw new Error('response sent');
+        throw new Error('response sent (end)');
       };
     });
 
@@ -99,7 +104,7 @@ describe('app', () => {
   });
 
   it('should set signed cookie keys from the constructor', () => {
-    const keys = [ 'customkey' ];
+    const keys = ['customkey'];
     const app = new Koa({ keys });
     assert.strictEqual(app.keys, keys);
   });
@@ -112,17 +117,22 @@ describe('app', () => {
 
   it('should have a static property exporting `HttpError` from http-errors library', () => {
     assert.notEqual(Koa.HttpError, undefined);
-    assert.deepStrictEqual(Koa.HttpError, CreateError.HttpError);
+    assert.equal(Koa.HttpError, HttpError);
     assert.throws(() => {
-      throw CreateError(500, 'test error');
+      throw createHttpError(500, 'test error');
     }, Koa.HttpError);
   });
 
-  it('should print object work', () => {
+  it('should print object works', () => {
     const app = new Koa();
-    const ctx = (app as any).createContext({} as any, {
-      getHeaders() {},
-    } as any);
+    const ctx = app.createContext(
+      {} as unknown as IncomingMessage,
+      {
+        getHeaders() {
+          return {};
+        },
+      } as unknown as ServerResponse
+    );
     console.log(ctx.request);
     console.log(ctx.response);
     console.log(ctx.context);

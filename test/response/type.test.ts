@@ -7,7 +7,10 @@ describe('ctx.type=', () => {
       const ctx = context();
       ctx.type = 'text/plain';
       assert.strictEqual(ctx.type, 'text/plain');
-      assert.strictEqual(ctx.response.header['content-type'], 'text/plain; charset=utf-8');
+      assert.strictEqual(
+        ctx.response.header['content-type'],
+        'text/plain; charset=utf-8'
+      );
     });
   });
 
@@ -16,7 +19,10 @@ describe('ctx.type=', () => {
       const ctx = context();
       ctx.type = 'json';
       assert.strictEqual(ctx.type, 'application/json');
-      assert.strictEqual(ctx.response.header['content-type'], 'application/json; charset=utf-8');
+      assert.strictEqual(
+        ctx.response.header['content-type'],
+        'application/json; charset=utf-8'
+      );
     });
   });
 
@@ -25,7 +31,10 @@ describe('ctx.type=', () => {
       const ctx = context();
       ctx.type = 'text/html';
       assert.strictEqual(ctx.type, 'text/html');
-      assert.strictEqual(ctx.response.header['content-type'], 'text/html; charset=utf-8');
+      assert.strictEqual(
+        ctx.response.header['content-type'],
+        'text/html; charset=utf-8'
+      );
     });
   });
 
@@ -34,7 +43,10 @@ describe('ctx.type=', () => {
       const ctx = context();
       ctx.type = 'text/html; charset=foo';
       assert.strictEqual(ctx.type, 'text/html');
-      assert.strictEqual(ctx.response.header['content-type'], 'text/html; charset=foo');
+      assert.strictEqual(
+        ctx.response.header['content-type'],
+        'text/html; charset=foo'
+      );
     });
   });
 
