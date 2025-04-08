@@ -256,7 +256,7 @@ export class Response {
     if (this.ctx.accepts('html')) {
       url = escape(url);
       this.type = 'text/html; charset=utf-8';
-      this.body = `Redirecting to <a href="${url}">${url}</a>.`;
+      this.body = `Redirecting to ${url}.`;
       return;
     }
 

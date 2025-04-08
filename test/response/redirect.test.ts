@@ -75,20 +75,19 @@ describe('ctx.redirect(url)', () => {
         ctx.response.header['content-type'],
         'text/html; charset=utf-8'
       );
-      assert.equal(ctx.body, `Redirecting to <a href="${url}/">${url}/</a>.`);
+      assert.equal(ctx.body, `Redirecting to ${url}/.`);
     });
 
     it('should escape the url', () => {
       const ctx = context();
-      let url = '<script>';
+      const url = '<script>';
       ctx.header.accept = 'text/html';
       ctx.redirect(url);
-      url = escape(url);
       assert.equal(
         ctx.response.header['content-type'],
         'text/html; charset=utf-8'
       );
-      assert.equal(ctx.body, `Redirecting to <a href="${url}">${url}</a>.`);
+      assert.equal(ctx.body, 'Redirecting to &lt;script&gt;.');
     });
   });
 
@@ -139,11 +138,3 @@ describe('ctx.redirect(url)', () => {
     });
   });
 });
-
-function escape(html: string) {
-  return String(html)
-    .replaceAll('&', '&amp;')
-    .replaceAll('"', '&quot;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;');
-}
