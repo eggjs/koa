@@ -89,6 +89,18 @@ describe('ctx.redirect(url)', () => {
       );
       assert.equal(ctx.body, 'Redirecting to &lt;script&gt;.');
     });
+
+    it('should keep raw url', () => {
+      const ctx = context();
+      ctx.header.accept = 'text/html';
+      // oxlint-disable-next-line no-script-url
+      ctx.redirect('javascript:alert(1)');
+      assert.equal(
+        ctx.response.header['content-type'],
+        'text/html; charset=utf-8'
+      );
+      assert.equal(ctx.body, 'Redirecting to javascript:alert(1).');
+    });
   });
 
   describe('when text is accepted', () => {
