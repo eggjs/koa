@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.1](https://github.com/eggjs/koa/compare/v2.22.0...v2.22.1) (2025-04-08)
+
+
+### Bug Fixes
+
+* don't render redirect values in anchor ref ([8af1bed](https://github.com/eggjs/koa/commit/8af1bed1aeab9cb27333ec7083d777e1da77dfe6))
+
 ## [2.22.0](https://github.com/eggjs/koa/compare/v2.21.0...v2.22.0) (2025-03-25)
 
 
