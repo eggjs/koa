@@ -75,8 +75,8 @@ export class Response {
    */
   set status(code: number) {
     if (this.headerSent) return;
-    assert(Number.isInteger(code), 'status code must be a number');
-    assert(code >= 100 && code <= 999, `invalid status code: ${code}`);
+    assert.ok(Number.isInteger(code), 'status code must be a number');
+    assert.ok(code >= 100 && code <= 999, `invalid status code: ${code}`);
     this._explicitStatus = true;
     this.res.statusCode = code;
     if (this.req.httpVersionMajor < 2 && statuses.message[code]) {

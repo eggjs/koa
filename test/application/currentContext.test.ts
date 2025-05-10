@@ -26,7 +26,7 @@ describe('app.currentContext', () => {
         });
       });
       assert.equal(ctx, app.currentContext);
-      assert(app.currentContext);
+      assert.ok(app.currentContext);
       app.currentContext.body = 'ok';
     });
 

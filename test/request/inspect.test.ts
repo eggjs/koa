@@ -9,8 +9,8 @@ describe('req.inspect()', () => {
       const request = context().request;
       request.method = 'GET';
       delete (request as unknown as { req: unknown }).req;
-      assert(undefined === request.inspect());
-      assert(util.inspect(request) === 'undefined');
+      assert.ok(undefined === request.inspect());
+      assert.ok(util.inspect(request) === 'undefined');
     });
   });
 

@@ -95,7 +95,7 @@ describe('app.use(fn)', () => {
         } as unknown as MiddlewareFunc);
       },
       err => {
-        assert(err instanceof TypeError);
+        assert.ok(err instanceof TypeError);
         assert.match(err.message, /Support for generators was removed/);
         return true;
       }
@@ -123,7 +123,7 @@ describe('app.use(fn)', () => {
         } as unknown as MiddlewareFunc);
       },
       err => {
-        assert(err instanceof TypeError);
+        assert.ok(err instanceof TypeError);
         assert.match(err.message, /Support for generators was removed/);
         return true;
       }

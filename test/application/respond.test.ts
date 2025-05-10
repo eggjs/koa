@@ -53,7 +53,7 @@ describe('app.respond', () => {
         .expect(200)
         .expect('lol')
         .expect(res => {
-          assert(!res.headers.foo);
+          assert.ok(!res.headers.foo);
         });
     });
 
@@ -108,7 +108,7 @@ describe('app.respond', () => {
 
       assert.equal(res.headers['content-type'], 'text/plain; charset=utf-8');
       assert.equal(res.headers['content-length'], '5');
-      assert(!res.text);
+      assert.ok(!res.text);
     });
 
     it('should keep json headers', async () => {
@@ -127,7 +127,7 @@ describe('app.respond', () => {
         'application/json; charset=utf-8'
       );
       assert.equal(res.headers['content-length'], '17');
-      assert(!res.text);
+      assert.ok(!res.text);
     });
 
     it('should keep string headers', async () => {
@@ -143,7 +143,7 @@ describe('app.respond', () => {
 
       assert.equal(res.headers['content-type'], 'text/plain; charset=utf-8');
       assert.equal(res.headers['content-length'], '11');
-      assert(!res.text);
+      assert.ok(!res.text);
     });
 
     it('should keep buffer headers', async () => {
@@ -159,7 +159,7 @@ describe('app.respond', () => {
 
       assert.equal(res.headers['content-type'], 'application/octet-stream');
       assert.equal(res.headers['content-length'], '11');
-      assert(!res.text);
+      assert.ok(!res.text);
     });
 
     it('should keep stream header if set manually', async () => {
@@ -177,7 +177,7 @@ describe('app.respond', () => {
       const res = await request(server).head('/').expect(200);
 
       assert.equal(Number.parseInt(res.header['content-length']), length);
-      assert(!res.text);
+      assert.ok(!res.text);
     });
 
     it('should respond with a 404 if no body was set', () => {
@@ -353,7 +353,7 @@ describe('app.respond', () => {
           .expect('custom status');
 
         assert.equal(res.statusCode, 700);
-        assert((res as unknown as { res: { statusMessage: string } }).res);
+        assert.ok((res as unknown as { res: { statusMessage: string } }).res);
         assert.equal(
           (res as unknown as { res: { statusMessage: string } }).res
             .statusMessage,
@@ -376,7 +376,7 @@ describe('app.respond', () => {
         const res = await request(server).get('/').expect(200).expect('ok');
 
         assert.equal(res.statusCode, 200);
-        assert((res as unknown as { res: { statusMessage: string } }).res);
+        assert.ok((res as unknown as { res: { statusMessage: string } }).res);
         assert.equal(
           (res as unknown as { res: { statusMessage: string } }).res
             .statusMessage,
@@ -721,13 +721,17 @@ describe('app.respond', () => {
 
       app.use((ctx, next) => {
         // oxlint-disable-next-line promise/prefer-await-to-then
-        return next()
-          .then(() => {
-            ctx.body = 'Hello';
-          })
-          .catch(() => {
-            ctx.body = 'Got error';
-          });
+        return (
+          next()
+            // oxlint-disable-next-line promise/prefer-await-to-then
+            .then(() => {
+              ctx.body = 'Hello';
+            })
+            // oxlint-disable-next-line promise/prefer-await-to-then
+            .catch(() => {
+              ctx.body = 'Got error';
+            })
+        );
       });
 
       app.use(() => {

@@ -5,14 +5,14 @@ import { request } from '../test-helpers/context.js';
 describe('req.URL', () => {
   it('should not throw when host is void', () => {
     // Accessing the URL should not throw.
-    assert(request().URL);
+    assert.ok(request().URL);
   });
 
   it('should not throw when header.host is invalid', () => {
     const req = request();
     req.header.host = 'invalid host';
     // Accessing the URL should not throw.
-    assert(req.URL);
+    assert.ok(req.URL);
   });
 
   it('should return empty object when invalid', () => {

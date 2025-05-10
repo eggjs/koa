@@ -51,7 +51,7 @@ describe('res.status=', () => {
           httpVersion: '2.0',
         });
         res.status = 200;
-        assert(!res.res.statusMessage);
+        assert.ok(!res.res.statusMessage);
       });
     });
   });
