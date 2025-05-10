@@ -34,7 +34,7 @@ describe('ctx.cookies', () => {
           try {
             ctx.cookies.set('foo', 'bar', { signed: true });
           } catch (err) {
-            assert(err instanceof Error);
+            assert.ok(err instanceof Error);
             ctx.body = err.message;
           }
         });

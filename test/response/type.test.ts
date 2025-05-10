@@ -54,8 +54,8 @@ describe('ctx.type=', () => {
     it('should not set a content-type', () => {
       const ctx = context();
       ctx.type = 'asdf';
-      assert(!ctx.type);
-      assert(!ctx.response.header['content-type']);
+      assert.ok(!ctx.type);
+      assert.ok(!ctx.response.header['content-type']);
     });
   });
 });
@@ -64,7 +64,7 @@ describe('ctx.type', () => {
   describe('with no Content-Type', () => {
     it('should return ""', () => {
       const ctx = context();
-      assert(!ctx.type);
+      assert.ok(!ctx.type);
     });
   });
 

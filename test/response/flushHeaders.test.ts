@@ -135,7 +135,7 @@ describe('ctx.flushHeaders()', () => {
   it('should catch stream error', done => {
     const app = new Koa();
     app.once('error', err => {
-      assert(err.message === 'mock error');
+      assert.ok(err.message === 'mock error');
       done();
     });
 

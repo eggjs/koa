@@ -7,7 +7,7 @@ describe('ctx.accept', () => {
     const ctx = context();
     ctx.req.headers.accept =
       'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
-    assert(ctx.accept instanceof Accept);
+    assert.ok(ctx.accept instanceof Accept);
   });
 });
 
