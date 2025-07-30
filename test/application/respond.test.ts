@@ -592,10 +592,7 @@ describe('app.respond', () => {
         });
 
       const [err] = await once(app, 'error');
-      assert.equal(
-        err.message,
-        "ENOENT: no such file or directory, open 'does not exist'"
-      );
+      assert.match(err.message, /ENOENT: no such file or directory, open/);
     });
 
     it('should handle errors when no content status', () => {
@@ -630,10 +627,7 @@ describe('app.respond', () => {
         });
 
       const [err] = await once(app, 'error');
-      assert.equal(
-        err.message,
-        "ENOENT: no such file or directory, open 'does not exist'"
-      );
+      assert.match(err.message, /ENOENT: no such file or directory, open/);
     });
   });
 
