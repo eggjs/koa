@@ -1,14 +1,8 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
-    // "noEmit": true,
-    "erasableSyntaxOnly": true,
-    "verbatimModuleSyntax": true,
-    "rewriteRelativeImportExtensions": true,
     "rootDir": "./src",
-    "outDir": "./dist",
-    // https://node.green/#ES2024
-    "target": "ES2024"
+    "outDir": "./dist"
   },
   "include": ["src"],
   "exclude": ["test", "example"]
