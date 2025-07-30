@@ -1,5 +1,47 @@
 # Changelog
 
+## [3.0.0](https://github.com/eggjs/koa/compare/v2.22.2...v3.0.0) (2025-07-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node.js < 22.17.1 support
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai
+-->
+## Summary by CodeRabbit
+
+* **New Features**
+* Added example projects demonstrating usage with both CommonJS and ES
+modules.
+  * Introduced a new TypeScript example for quick server setup.
+
+* **Breaking Changes**
+  * Minimum required Node.js version raised to 22.17.1.
+* Major version bumped to 3.0.0-alpha.0 with updated package structure
+and exports.
+
+* **Documentation**
+* Updated installation instructions and Node.js version requirements in
+the README.
+  * Removed the AUTHORS file.
+
+* **Chores**
+* Updated development dependencies and scripts for modern Node.js and
+TypeScript.
+  * Streamlined configuration files and ignored build artifacts.
+* Adjusted GitHub Actions workflows to test fewer Node.js versions and
+support all branches on merge groups.
+
+* **Tests**
+  * Migrated tests to use Node.js native test runner.
+  * Improved test strictness and modernized async control flow.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
+
+### Features
+
+* esm only ([#24](https://github.com/eggjs/koa/issues/24)) ([e0c8218](https://github.com/eggjs/koa/commit/e0c82188d6c70c4badecc8c6bea26147160ede30))
+
 ## [2.22.2](https://github.com/eggjs/koa/compare/v2.22.1...v2.22.2) (2025-07-30)
 
 
