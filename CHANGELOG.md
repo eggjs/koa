@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.2](https://github.com/eggjs/koa/compare/v2.22.1...v2.22.2) (2025-07-30)
+
+
+### Bug Fixes
+
+* only allow back redirect to the same origin referer ([#23](https://github.com/eggjs/koa/issues/23)) ([82f99b6](https://github.com/eggjs/koa/commit/82f99b6d3610b9e6713661082314b89fe9396186))
+
 ## [2.22.1](https://github.com/eggjs/koa/compare/v2.22.0...v2.22.1) (2025-04-08)
 
 
