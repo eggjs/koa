@@ -258,7 +258,7 @@ export class Response {
    */
   redirect(url: string, alt?: string) {
     // location
-    if ('back' === url) {
+    if (url === 'back') {
       url = this._getBackReferrer() || alt || '/';
     }
     if (url.startsWith('https://') || url.startsWith('http://')) {
