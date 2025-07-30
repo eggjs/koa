@@ -10,5 +10,6 @@
     // https://node.green/#ES2024
     "target": "ES2024"
   },
+  "include": ["src"],
   "exclude": ["test", "example"]
 }
