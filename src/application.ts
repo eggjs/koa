@@ -187,7 +187,6 @@ export class Application extends Emitter {
 
     const handleRequest = (req: IncomingMessage, res: ServerResponse) => {
       const ctx = this.createContext(req, res);
-      // oxlint-disable-next-line arrow-body-style
       return this.ctxStorage.run(ctx, async () => {
         return await this.handleRequest(ctx, fn);
       });
