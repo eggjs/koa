@@ -62,7 +62,7 @@
     "vary": "^1.1.2"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "@eggjs/bin": "^7.0.1",
     "@eggjs/tsconfig": "2",
     "@types/accepts": "^1.3.7",
@@ -84,9 +84,9 @@
     "@types/vary": "^1.1.3",
     "husky": "9",
     "lint-staged": "15",
-    "oxlint": "^0.16.2",
-    "prettier": "3",
     "mm": "^4.0.1",
+    "oxlint": "^1.9.0",
+    "prettier": "3",
     "supertest": "^3.1.0",
     "tsd": "^0.31.0",
     "tshy": "3",

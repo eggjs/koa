@@ -1,9 +1,8 @@
 import util, { debuglog } from 'node:util';
 import Emitter from 'node:events';
 import Stream from 'node:stream';
-import http from 'node:http';
 import type { AsyncLocalStorage } from 'node:async_hooks';
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 
 import { getAsyncLocalStorage } from 'gals';
 import { isGeneratorFunction } from 'is-type-of';
@@ -188,6 +187,7 @@ export class Application extends Emitter {
 
     const handleRequest = (req: IncomingMessage, res: ServerResponse) => {
       const ctx = this.createContext(req, res);
+      // oxlint-disable-next-line arrow-body-style
       return this.ctxStorage.run(ctx, async () => {
         return await this.handleRequest(ctx, fn);
       });
