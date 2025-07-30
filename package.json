@@ -11,7 +11,7 @@
   "description": "Koa web app framework for https://eggjs.org",
   "scripts": {
     "pretest": "npm run lint -- --fix",
-    "test": "node --test --test-force-exit --test-update-snapshots",
+    "test": "node --test --test-force-exit --test-update-snapshots --experimental-strip-types",
     "preci": "npm run lint",
     "ci": "NODE_V8_COVERAGE=./coverage npm test -- --experimental-test-coverage",
     "postci": "npm run prepublishOnly",
