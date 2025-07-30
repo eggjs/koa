@@ -411,9 +411,7 @@ export class Response {
     if (typeof field === 'string') {
       let value = val as string | string[];
       if (Array.isArray(val)) {
-        value = val.map(v => {
-          return typeof v === 'string' ? v : String(v);
-        });
+        value = val.map(v => (typeof v === 'string' ? v : String(v)));
       } else if (typeof val !== 'string') {
         value = String(val);
       }

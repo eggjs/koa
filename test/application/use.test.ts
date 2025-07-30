@@ -87,7 +87,8 @@ describe('app.use(fn)', () => {
     app.use((_ctx, next) => next());
     assert.throws(
       () => {
-        app.use(function* generatorMiddileware(_ctx: unknown, next: unknown) {
+        // oxlint-disable-next-line consistent-function-scoping
+        app.use(function* generatorMiddleware(_ctx: unknown, next: unknown) {
           console.log('pre generator');
           yield next;
           // this.body = 'generator';

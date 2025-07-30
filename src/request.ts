@@ -618,10 +618,12 @@ export class Request {
     const req = this.req;
     switch ((field = field.toLowerCase())) {
       case 'referer':
-      case 'referrer':
+      case 'referrer': {
         return (req.headers.referrer || req.headers.referer || '') as T;
-      default:
+      }
+      default: {
         return (req.headers[field] || '') as T;
+      }
     }
   }
 
