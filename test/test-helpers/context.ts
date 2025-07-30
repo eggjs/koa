@@ -9,12 +9,8 @@ export default function context(req?: any, res?: any, app?: Koa) {
   res = { _headers: {}, socket, ...stream.Writable.prototype, ...res };
   req.socket.remoteAddress = req.socket.remoteAddress || '127.0.0.1';
   app = app || new Koa();
-  res.getHeader = (k: string) => {
-    return res._headers[k.toLowerCase()];
-  };
-  res.hasHeader = (k: string) => {
-    return k.toLowerCase() in res._headers;
-  };
+  res.getHeader = (k: string) => res._headers[k.toLowerCase()];
+  res.hasHeader = (k: string) => k.toLowerCase() in res._headers;
   res.setHeader = (k: string, v: string | string[]) => {
     res._headers[k.toLowerCase()] = v;
   };
@@ -22,9 +18,7 @@ export default function context(req?: any, res?: any, app?: Koa) {
     // oxlint-disable-next-line no-dynamic-delete
     delete res._headers[k.toLowerCase()];
   };
-  res.getHeaders = () => {
-    return res._headers;
-  };
+  res.getHeaders = () => res._headers;
   return app.createContext(req, res);
 }
 

@@ -67,6 +67,7 @@
     "no-else-return": "error",
     "no-throw-literal": "error",
     "id-length": "allow",
+    "arrow-body-style": "allow",
 
     // import
     "import/exports-last": "allow",
