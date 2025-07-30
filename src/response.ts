@@ -226,6 +226,22 @@ export class Response {
     vary(this.res, field);
   }
 
+  _getBackReferrer() {
+    const referrer = this.ctx.get<string>('Referrer');
+    if (referrer) {
+      // referrer is a relative path
+      if (referrer.startsWith('/')) {
+        return referrer;
+      }
+
+      // referrer is an absolute URL, check if it's the same origin
+      const url = new URL(referrer, this.ctx.href);
+      if (url.host === this.ctx.host) {
+        return referrer;
+      }
+    }
+  }
+
   /**
    * Perform a 302 redirect to `url`.
    *
@@ -242,7 +258,9 @@ export class Response {
    */
   redirect(url: string, alt?: string) {
     // location
-    if (url === 'back') url = this.ctx.get<string>('Referrer') || alt || '/';
+    if (url === 'back') {
+      url = this._getBackReferrer() || alt || '/';
+    }
     if (url.startsWith('https://') || url.startsWith('http://')) {
       // formatting url again avoid security escapes
       url = new URL(url).toString();
