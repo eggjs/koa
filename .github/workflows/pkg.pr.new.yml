@@ -1,4 +1,4 @@
-name: Publish Any Commit
+name: Publish Any Commit for 2.x
 on: [push, pull_request]
 
 jobs:

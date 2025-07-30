@@ -1,10 +1,10 @@
-# @eggjs/koa
+# @eggjs/koa@2
 
 @eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and drop Node.js < 18.19.0 support.
 
 <img height="240px" src="/docs/logo.png" alt="Koa middleware framework for nodejs"/>
 
-[![NPM version](https://img.shields.io/npm/v/@eggjs/koa.svg?style=flat-square)](https://npmjs.org/package/@eggjs/koa)
+[![NPM version](https://img.shields.io/npm/v/@eggjs/koa/release-2.x.svg?style=flat-square)](https://www.npmjs.com/package/@eggjs/koa/v/release-2.x)
 [![NPM download](https://img.shields.io/npm/dm/@eggjs/koa.svg?style=flat-square)](https://npmjs.org/package/@eggjs/koa)
 [![Node.js CI](https://github.com/eggjs/koa/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/eggjs/koa/actions/workflows/node.js.yml)
 [![Test coverage](https://img.shields.io/codecov/c/github/eggjs/koa.svg?style=flat-square)](https://codecov.io/gh/eggjs/koa)
@@ -22,7 +22,7 @@ Koa is not bundled with any middleware.
 @eggjs/koa requires **node v18.19.0** or higher for Node.js LTS support.
 
 ```bash
-npm install @eggjs/koa
+npm install @eggjs/koa@2
 ```
 
 ## Hello Koa
