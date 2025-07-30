@@ -10,9 +10,9 @@ import parse from 'parseurl';
 import typeis from 'type-is';
 import fresh from 'fresh';
 
-import type { Application } from './application.js';
-import type { Context } from './context.js';
-import type { Response } from './response.js';
+import type { Application } from './application.ts';
+import type { Context } from './context.ts';
+import type { Response } from './response.ts';
 
 export interface RequestSocket extends Socket {
   encrypted: boolean;

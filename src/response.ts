@@ -16,9 +16,9 @@ import destroy from 'destroy';
 import vary from 'vary';
 import encodeUrl from 'encodeurl';
 
-import type { Application } from './application.js';
-import type { Context } from './context.js';
-import type { Request } from './request.js';
+import type { Application } from './application.ts';
+import type { Context } from './context.ts';
+import type { Request } from './request.ts';
 
 export class Response {
   [key: symbol]: unknown;

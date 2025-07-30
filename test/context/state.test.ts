@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 
 import request from 'supertest';
 
-import Koa from '../../src/index.js';
+import Koa from '../../src/index.ts';
 
 describe('ctx.state', () => {
   it('should provide a ctx.state namespace', () => {

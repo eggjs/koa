@@ -150,6 +150,6 @@
     "index.d.ts",
     "test/fixtures/**",
     "__snapshots__",
-    "example/helloworld.cjs"
+    "example/cjs/helloworld.js"
   ]
 }

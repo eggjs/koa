@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 
-import { response } from '../test-helpers/context.js';
+import { response } from '../test-helpers/context.ts';
 
 describe('res.message', () => {
   it('should return the response status message', () => {

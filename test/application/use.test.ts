@@ -1,9 +1,9 @@
-// eslint-disable prefer-await-to-callbacks
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 
 import request from 'supertest';
 
-import Koa, { type MiddlewareFunc } from '../../src/index.js';
+import Koa, { type MiddlewareFunc } from '../../src/index.ts';
 
 describe('app.use(fn)', () => {
   it('should compose middleware', async () => {
@@ -95,6 +95,7 @@ describe('app.use(fn)', () => {
           console.log('post generator');
         } as unknown as MiddlewareFunc);
       },
+      // oxlint-disable-next-line prefer-await-to-callbacks
       err => {
         assert.ok(err instanceof TypeError);
         assert.match(err.message, /Support for generators was removed/);
@@ -123,6 +124,7 @@ describe('app.use(fn)', () => {
           // empty
         } as unknown as MiddlewareFunc);
       },
+      // oxlint-disable-next-line prefer-await-to-callbacks
       err => {
         assert.ok(err instanceof TypeError);
         assert.match(err.message, /Support for generators was removed/);

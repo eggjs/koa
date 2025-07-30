@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 
 import request from 'supertest';
-import Koa from '../../src/index.js';
+import Koa from '../../src/index.ts';
 
 describe('app.currentContext', () => {
   it('should get currentContext', async () => {

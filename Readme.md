@@ -1,6 +1,6 @@
 # @eggjs/koa
 
-@eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and drop Node.js < 18.19.0 support.
+@eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and drop Node.js < 22.17.1 support.
 
 <img height="240px" src="/docs/logo.png" alt="Koa middleware framework for nodejs"/>
 
@@ -19,7 +19,7 @@ Koa is not bundled with any middleware.
 
 ## Installation
 
-@eggjs/koa requires **node v18.19.0** or higher for Node.js LTS support.
+@eggjs/koa@3 requires **node v22.17.1** or higher for Node.js LTS support.
 
 ```bash
 npm install @eggjs/koa

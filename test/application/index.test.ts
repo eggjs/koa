@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 import type { ServerResponse, IncomingMessage } from 'node:http';
+import { once } from 'node:events';
 
 import request from 'supertest';
 import createHttpError, { HttpError } from 'http-errors';
 
-import Koa from '../../src/index.js';
+import Koa from '../../src/index.ts';
 
 describe('app', () => {
-  it('should handle socket errors', done => {
+  it('should handle socket errors', async () => {
     const app = new Koa();
 
     app.use(ctx => {
@@ -17,7 +19,6 @@ describe('app', () => {
 
     app.on('error', err => {
       assert.strictEqual(err.message, 'boom');
-      done();
     });
 
     request(app.callback())
@@ -25,9 +26,12 @@ describe('app', () => {
       .end(() => {
         // empty
       });
+
+    const [err] = await once(app, 'error');
+    assert.strictEqual(err.message, 'boom');
   });
 
-  it('should emit request and response event', done => {
+  it('should emit request and response event', async () => {
     const app = new Koa();
     let requestCount = 0;
     let responseCount = 0;
@@ -39,10 +43,6 @@ describe('app', () => {
       assert.equal(ctx.url, '/');
       assert.equal(ctx.status, 404);
       responseCount++;
-      if (responseCount === 2) {
-        assert.equal(requestCount, 2);
-        done();
-      }
     });
 
     request(app.callback())
@@ -50,14 +50,25 @@ describe('app', () => {
       .end(() => {
         // empty
       });
+
+    await once(app, 'request');
+    await once(app, 'response');
+    assert.equal(requestCount, 1);
+    assert.equal(responseCount, 1);
+
     request(app.callback())
       .get('/')
       .end(() => {
         // empty
       });
+
+    await once(app, 'request');
+    await once(app, 'response');
+    assert.equal(requestCount, 2);
+    assert.equal(responseCount, 2);
   });
 
-  it('should not .writeHead when !socket.writable', done => {
+  it('should not .writeHead when !socket.writable', async () => {
     const app = new Koa();
 
     app.use(ctx => {
@@ -74,13 +85,17 @@ describe('app', () => {
     });
 
     // hackish, but the response should occur in a single tick
-    setImmediate(done);
+    setImmediate(() => {
+      // empty
+    });
 
     request(app.callback())
       .get('/')
       .end(() => {
         // empty
       });
+
+    await once(app, 'request');
   });
 
   it('should set development env when NODE_ENV missing', () => {
@@ -104,7 +119,7 @@ describe('app', () => {
   });
 
   it('should set signed cookie keys from the constructor', () => {
-    const keys = ['customkey'];
+    const keys = ['custom-key'];
     const app = new Koa({ keys });
     assert.strictEqual(app.keys, keys);
   });

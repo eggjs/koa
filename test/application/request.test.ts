@@ -1,6 +1,9 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+
 import request from 'supertest';
-import Koa from '../../src/index.js';
+
+import Koa from '../../src/index.ts';
 
 describe('app.request', () => {
   const app1 = new Koa();

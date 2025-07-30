@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 
 import request from 'supertest';
 
-import Koa, { type Context } from '../../src/index.js';
+import Koa, { type Context } from '../../src/index.ts';
 
 describe('ctx.cookies', () => {
   describe('ctx.cookies.set()', () => {

@@ -10,3 +10,4 @@ lib
 package-lock.json
 .tshy*
 .eslintcache
+tsconfig.tsbuildinfo

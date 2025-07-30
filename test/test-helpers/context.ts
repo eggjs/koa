@@ -1,6 +1,6 @@
 import stream from 'node:stream';
 
-import { Application as Koa } from '../../src/application.js';
+import { Application as Koa } from '../../src/application.ts';
 
 // oxlint-disable-next-line typescript/no-explicit-any
 export default function context(req?: any, res?: any, app?: Koa) {

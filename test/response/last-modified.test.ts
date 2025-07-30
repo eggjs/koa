@@ -1,5 +1,7 @@
-import assert from 'node:assert';
-import { response } from '../test-helpers/context.js';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+
+import { response } from '../test-helpers/context.ts';
 
 describe('res.lastModified', () => {
   it('should set the header as a UTCString', () => {
