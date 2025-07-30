@@ -13,7 +13,7 @@
     "pretest": "npm run lint -- --fix",
     "test": "node --test --test-force-exit --test-update-snapshots --experimental-strip-types",
     "preci": "npm run lint",
-    "ci": "NODE_V8_COVERAGE=./coverage c8 -r html -r lcov -r text npm test",
+    "ci": "c8 -r html -r lcov -r text npm test",
     "postci": "npm run prepublishOnly",
     "lint": "oxlint",
     "prepublishOnly": "npm run clean && npm run build",
