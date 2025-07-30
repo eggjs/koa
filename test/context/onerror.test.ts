@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 import type { ServerResponse } from 'node:http';
 import { runInNewContext } from 'node:vm';
 
 import request from 'supertest';
 
-import Koa, { type Context } from '../../src/index.js';
-import context from '../test-helpers/context.js';
+import Koa, { type Context } from '../../src/index.ts';
+import context from '../test-helpers/context.ts';
 
 describe('ctx.onerror(err)', () => {
   it('should respond', () => {

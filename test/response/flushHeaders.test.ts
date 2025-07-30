@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
-import http from 'node:http';
-import { PassThrough } from 'node:stream';
 import type { AddressInfo } from 'node:net';
+import http from 'node:http';
+import { describe, it } from 'node:test';
+import { once } from 'node:events';
+import { PassThrough } from 'node:stream';
 
 import request from 'supertest';
 
-import Koa, { type Context } from '../../src/index.js';
+import Koa, { type Context } from '../../src/index.ts';
 
 describe('ctx.flushHeaders()', () => {
   it('should set headersSent', () => {
@@ -90,7 +92,7 @@ describe('ctx.flushHeaders()', () => {
     );
   });
 
-  it('should flush headers first and delay to send data', done => {
+  it('should flush headers first and delay to send data', async () => {
     const app = new Koa();
 
     app.use(ctx => {
@@ -107,9 +109,17 @@ describe('ctx.flushHeaders()', () => {
       }, 10_000);
     });
 
+    let resolve: () => void;
+    let reject: (err: Error) => void;
+    // oxlint-disable-next-line avoid-new
+    const promise = new Promise<void>((_resolve, _reject) => {
+      resolve = _resolve;
+      reject = _reject;
+    });
+
     // oxlint-disable-next-line promise/prefer-await-to-callbacks
     const server = app.listen((err: Error) => {
-      if (err) return done(err);
+      if (err) return reject(err);
 
       const port = (server.address() as AddressInfo).port;
 
@@ -118,25 +128,26 @@ describe('ctx.flushHeaders()', () => {
           port,
         })
         .on('response', res => {
-          const onData = () => done(new Error('boom'));
+          const onData = () => reject(new Error('boom'));
           res.on('data', onData);
 
           // shouldn't receive any data for a while
           setTimeout(() => {
             res.removeListener('data', onData);
-            done();
+            resolve();
           }, 1000);
         })
-        .on('error', done)
+        .on('error', reject)
         .end();
     });
+
+    await promise;
   });
 
-  it('should catch stream error', done => {
+  it('should catch stream error', async () => {
     const app = new Koa();
     app.once('error', err => {
-      assert.ok(err.message === 'mock error');
-      done();
+      assert.equal(err.message, 'mock error');
     });
 
     app.use(ctx => {
@@ -161,5 +172,8 @@ describe('ctx.flushHeaders()', () => {
       .end(() => {
         // ignore
       });
+
+    const [err] = await once(app, 'error');
+    assert.equal(err.message, 'mock error');
   });
 });

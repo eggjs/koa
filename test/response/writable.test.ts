@@ -1,9 +1,10 @@
+import type { Server } from 'node:http';
 import net, { type AddressInfo } from 'node:net';
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 import { setTimeout as sleep } from 'node:timers/promises';
-import type { Server } from 'node:http';
 
-import Koa from '../../src/index.js';
+import Koa from '../../src/index.ts';
 
 describe('res.writable', () => {
   describe('when continuous requests in one persistent connection', () => {

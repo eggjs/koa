@@ -1,6 +1,9 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+
 import Accept from 'accepts';
-import context, { request as Request } from '../test-helpers/context.js';
+
+import context, { request as Request } from '../test-helpers/context.ts';
 
 describe('ctx.accept', () => {
   it('should return an Accept instance', () => {

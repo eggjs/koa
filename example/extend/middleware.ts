@@ -1,4 +1,4 @@
-import { Context, type MiddlewareFunc } from '../../src/index.js';
+import { Context, type MiddlewareFunc } from '../../src/index.ts';
 
 class CustomContext extends Context {
   // Add your custom properties and methods here

@@ -1,9 +1,9 @@
-import { Application } from './application.js';
+import { Application } from './application.ts';
 
 export default Application;
 
-export * from './application.js';
-export * from './context.js';
-export * from './request.js';
-export * from './response.js';
-export type { CustomError, AnyProto } from './types.js';
+export * from './application.ts';
+export * from './context.ts';
+export * from './request.ts';
+export * from './response.ts';
+export type { CustomError, AnyProto } from './types.ts';

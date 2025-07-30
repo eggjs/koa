@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 
 import request from 'supertest';
 
-import { Application, Context } from '../../src/index.js';
+import { Application, Context } from '../../src/index.ts';
 
 describe('app.context', () => {
   const app1 = new Application();

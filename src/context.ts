@@ -7,10 +7,10 @@ import statuses from 'statuses';
 import Cookies from 'cookies';
 import type { Accepts } from 'accepts';
 
-import type { Application } from './application.js';
-import type { Request } from './request.js';
-import type { Response } from './response.js';
-import type { CustomError, AnyProto } from './types.js';
+import type { Application } from './application.ts';
+import type { Request } from './request.ts';
+import type { Response } from './response.ts';
+import type { CustomError, AnyProto } from './types.ts';
 
 export class Context {
   [key: symbol | string]: unknown;

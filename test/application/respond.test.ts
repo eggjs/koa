@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 import fs from 'node:fs';
 import { scheduler } from 'node:timers/promises';
 
 import request from 'supertest';
 import statuses from 'statuses';
 
-import Koa from '../../src/index.js';
+import Koa from '../../src/index.ts';
+import { once } from 'node:events';
 
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
@@ -571,7 +573,7 @@ describe('app.respond', () => {
       assert.deepEqual(res.body, pkg);
     });
 
-    it('should handle errors', done => {
+    it('should handle errors', async () => {
       const app = new Koa();
 
       app.use(ctx => {
@@ -585,7 +587,15 @@ describe('app.respond', () => {
         .get('/')
         .expect('Content-Type', 'text/plain; charset=utf-8')
         .expect(404)
-        .end(done);
+        .end(() => {
+          // empty
+        });
+
+      const [err] = await once(app, 'error');
+      assert.equal(
+        err.message,
+        "ENOENT: no such file or directory, open 'does not exist'"
+      );
     });
 
     it('should handle errors when no content status', () => {
@@ -601,7 +611,7 @@ describe('app.respond', () => {
       return request(server).get('/').expect(204);
     });
 
-    it('should handle all intermediate stream body errors', done => {
+    it('should handle all intermediate stream body errors', async () => {
       const app = new Koa();
 
       app.use(ctx => {
@@ -612,7 +622,18 @@ describe('app.respond', () => {
 
       const server = app.listen();
 
-      request(server).get('/').expect(404).end(done);
+      request(server)
+        .get('/')
+        .expect(404)
+        .end(() => {
+          // empty
+        });
+
+      const [err] = await once(app, 'error');
+      assert.equal(
+        err.message,
+        "ENOENT: no such file or directory, open 'does not exist'"
+      );
     });
   });
 
@@ -656,7 +677,7 @@ describe('app.respond', () => {
   });
 
   describe('when an error occurs', () => {
-    it('should emit "error" on the app', done => {
+    it('should emit "error" on the app', async () => {
       const app = new Koa();
 
       app.use(() => {
@@ -665,7 +686,6 @@ describe('app.respond', () => {
 
       app.on('error', err => {
         assert.equal(err.message, 'boom');
-        done();
       });
 
       request(app.callback())
@@ -673,6 +693,8 @@ describe('app.respond', () => {
         .end(() => {
           // ignore
         });
+
+      await once(app, 'error');
     });
 
     describe('with an .expose property', () => {

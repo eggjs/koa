@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 
 import type { HttpError } from 'http-errors';
 
-import context from '../test-helpers/context.js';
+import context from '../test-helpers/context.ts';
 
 describe('ctx.throw(msg)', () => {
   it('should set .status to 500', () => {

@@ -1,22 +1,25 @@
 {
   "name": "@eggjs/koa",
-  "version": "2.22.2",
+  "version": "3.0.0-alpha.0",
   "engines": {
-    "node": ">= 18.19.0"
+    "node": ">= 22.17.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "alpha"
   },
   "description": "Koa web app framework for https://eggjs.org",
   "scripts": {
     "pretest": "npm run lint -- --fix",
-    "test": "egg-bin test",
+    "test": "node --test --test-force-exit --test-update-snapshots",
     "preci": "npm run lint",
     "ci": "egg-bin cov",
     "postci": "npm run prepublishOnly && attw --pack",
     "lint": "oxlint",
     "authors": "git log --format='%aN <%aE>' | sort -u > AUTHORS",
-    "prepublishOnly": "tshy && tshy-after",
+    "prepublishOnly": "npm run clean && npm run build",
+    "build": "tsc --build",
+    "clean": "rm -rf dist",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -63,7 +66,6 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
-    "@eggjs/bin": "^7.0.1",
     "@eggjs/tsconfig": "2",
     "@types/accepts": "^1.3.7",
     "@types/content-type": "^1.1.8",
@@ -74,8 +76,7 @@
     "@types/fresh": "^0.5.2",
     "@types/http-errors": "^2.0.4",
     "@types/koa-compose": "^3.2.8",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "22",
+    "@types/node": "24",
     "@types/on-finished": "^2.3.4",
     "@types/parseurl": "^1.3.3",
     "@types/statuses": "^2.0.5",
@@ -88,36 +89,13 @@
     "oxlint": "^1.9.0",
     "prettier": "3",
     "supertest": "^3.1.0",
-    "tsd": "^0.31.0",
-    "tshy": "3",
-    "tshy-after": "^1.0.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8.3"
   },
   "type": "module",
-  "tshy": {
-    "exports": {
-      "./package.json": "./package.json",
-      ".": "./src/index.ts"
-    }
-  },
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/commonjs/index.d.ts",
-        "default": "./dist/commonjs/index.js"
-      }
-    }
-  },
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "src"
-  ],
-  "main": "./dist/commonjs/index.js",
-  "types": "./dist/commonjs/index.d.ts",
-  "module": "./dist/esm/index.js"
+  ]
 }

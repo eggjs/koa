@@ -1,8 +1,11 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 import util from 'node:util';
-import Koa from '../../src/index.js';
+
+import Koa from '../../src/index.ts';
 
 describe('app.inspect()', () => {
+  process.env.NODE_ENV = 'test';
   const app = new Koa();
 
   it('should work', () => {

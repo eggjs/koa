@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 
-import { request } from '../test-helpers/context.js';
+import { request } from '../test-helpers/context.ts';
 
 describe('ctx.idempotent', () => {
   describe('when the request method is idempotent', () => {

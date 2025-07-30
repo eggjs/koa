@@ -1,9 +1,11 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 import Stream from 'node:stream';
 import http from 'node:http';
 import type { AddressInfo } from 'node:net';
-import Koa from '../../src/index.js';
-import context from '../test-helpers/context.js';
+
+import Koa from '../../src/index.ts';
+import context from '../test-helpers/context.ts';
 
 describe('ctx.href', () => {
   it('should return the full request url', () => {

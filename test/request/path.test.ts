@@ -1,6 +1,9 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+
 import parseurl from 'parseurl';
-import context from '../test-helpers/context.js';
+
+import context from '../test-helpers/context.ts';
 
 describe('ctx.path', () => {
   it('should return the pathname', () => {

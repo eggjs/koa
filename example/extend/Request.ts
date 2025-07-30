@@ -1,4 +1,4 @@
-import { Request } from '../../src/index.js';
+import { Request } from '../../src/index.ts';
 
 const HOST = Symbol('request host');
 

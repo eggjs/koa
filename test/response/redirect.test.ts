@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
 
 import request from 'supertest';
 
-import context from '../test-helpers/context.js';
-import Koa from '../../src/index.js';
+import context from '../test-helpers/context.ts';
+import Koa from '../../src/index.ts';
 
 describe('ctx.redirect(url)', () => {
   it('should redirect to the given url', () => {

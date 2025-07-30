@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import context from '../test-helpers/context.js';
+import { describe, it } from 'node:test';
+
+import context from '../test-helpers/context.ts';
 
 describe('ctx.assert(value, status)', () => {
   it('should throw an error', () => {

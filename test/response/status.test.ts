@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
+import { describe, it, beforeEach } from 'node:test';
 
 import request from 'supertest';
 import statuses from 'statuses';
 
-import { response } from '../test-helpers/context.js';
-import Koa from '../../src/index.js';
+import { response } from '../test-helpers/context.ts';
+import Koa from '../../src/index.ts';
 
 describe('res.status=', () => {
   describe('when a status code', () => {

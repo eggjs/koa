@@ -1,6 +1,8 @@
 import fs from 'node:fs';
-import assert from 'node:assert';
-import { response } from '../test-helpers/context.js';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+
+import { response } from '../test-helpers/context.ts';
 
 describe('res.length', () => {
   describe('when Content-Length is defined', () => {

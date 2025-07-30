@@ -11,10 +11,10 @@ import statuses from 'statuses';
 import compose from 'koa-compose';
 
 import { HttpError } from 'http-errors';
-import { Context } from './context.js';
-import { Request } from './request.js';
-import { Response } from './response.js';
-import type { CustomError, AnyProto } from './types.js';
+import { Context } from './context.ts';
+import { Request } from './request.ts';
+import { Response } from './response.ts';
+import type { CustomError, AnyProto } from './types.ts';
 
 const debug = debuglog('@eggjs/koa/application');
 
