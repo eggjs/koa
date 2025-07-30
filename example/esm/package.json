@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node helloworld.mjs"
+    "start": "node helloworld.js"
   },
   "dependencies": {
     "@eggjs/koa": "alpha"
