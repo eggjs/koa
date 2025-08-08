@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 import Stream from 'node:stream';
 
 import Koa from '../../src/index.ts';
-import { request as Request } from '../test-helpers/context.ts';
+import { request as createRequest } from '../test-helpers/context.ts';
 
 describe('req.ip', () => {
   describe('with req.ips present', () => {
@@ -17,7 +17,7 @@ describe('req.ip', () => {
       req.headers['x-forwarded-for'] = '127.0.0.1';
       (req.socket as unknown as { remoteAddress: string }).remoteAddress =
         '127.0.0.2';
-      const request = Request(req, undefined, app);
+      const request = createRequest(req, undefined, app);
       assert.strictEqual(request.ip, '127.0.0.1');
     });
   });
@@ -27,7 +27,7 @@ describe('req.ip', () => {
       const req = { socket: new Stream.Duplex() };
       (req.socket as unknown as { remoteAddress: string }).remoteAddress =
         '127.0.0.2';
-      const request = Request(req);
+      const request = createRequest(req);
       assert.strictEqual(request.ip, '127.0.0.2');
     });
 
@@ -40,7 +40,7 @@ describe('req.ip', () => {
             // empty
           },
         });
-        assert.strictEqual(Request({ socket }).ip, '');
+        assert.strictEqual(createRequest({ socket }).ip, '');
       });
     });
   });
@@ -49,7 +49,7 @@ describe('req.ip', () => {
     const req = { socket: new Stream.Duplex() };
     (req.socket as unknown as { remoteAddress: string }).remoteAddress =
       '127.0.0.2';
-    const request = Request(req);
+    const request = createRequest(req);
     assert.strictEqual(request.ip, '127.0.0.2');
     (req.socket as unknown as { remoteAddress: string }).remoteAddress =
       '127.0.0.1';
@@ -60,7 +60,7 @@ describe('req.ip', () => {
     const req = { socket: new Stream.Duplex() };
     (req.socket as unknown as { remoteAddress: string }).remoteAddress =
       '127.0.0.2';
-    const request = Request(req);
+    const request = createRequest(req);
     assert.strictEqual(request.ip, '127.0.0.2');
     request.ip = '127.0.0.1';
     assert.strictEqual(request.ip, '127.0.0.1');

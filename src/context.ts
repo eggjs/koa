@@ -203,7 +203,7 @@ export class Context {
       return;
     }
 
-    const { res } = this;
+    const res = this.res;
 
     // first unset all headers
     for (const name of res.getHeaderNames()) {

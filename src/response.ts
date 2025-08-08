@@ -198,7 +198,7 @@ export class Response {
       return Number.parseInt(this.get('Content-Length')) || 0;
     }
 
-    const { body } = this;
+    const body = this.body;
     if (!body || body instanceof Stream) {
       return undefined;
     }

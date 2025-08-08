@@ -19,7 +19,7 @@ Koa is not bundled with any middleware.
 
 ## Installation
 
-@eggjs/koa@3 requires **node v22.17.1** or higher for Node.js LTS support.
+@eggjs/koa@3 requires **node v22.18.0** or higher for Node.js LTS support.
 
 ```bash
 npm install @eggjs/koa
