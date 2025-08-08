@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.0.1 (2025-08-08)</small>
+
+* fix: remove --experimental-strip-types (#25) ([0866329](https://github.com/eggjs/koa/commit/0866329)), closes [#25](https://github.com/eggjs/koa/issues/25)
+
 ## [3.0.0](https://github.com/eggjs/koa/compare/v2.22.2...v3.0.0) (2025-07-30)
 
 
