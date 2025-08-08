@@ -1,16 +1,16 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import Accept from 'accepts';
+import accepts from 'accepts';
 
-import context, { request as Request } from '../test-helpers/context.ts';
+import context, { request as createRequest } from '../test-helpers/context.ts';
 
 describe('ctx.accept', () => {
   it('should return an Accept instance', () => {
     const ctx = context();
     ctx.req.headers.accept =
       'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
-    assert.ok(ctx.accept instanceof Accept);
+    assert.ok(ctx.accept instanceof accepts);
   });
 });
 
@@ -20,10 +20,10 @@ describe('ctx.accept=', () => {
     ctx.req.headers.accept = 'text/plain';
     assert.deepStrictEqual(ctx.accepts(), ['text/plain']);
 
-    const request = Request();
+    const request = createRequest();
     request.req.headers.accept =
       'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
-    ctx.accept = Accept(request.req);
+    ctx.accept = accepts(request.req);
     assert.deepStrictEqual(ctx.accepts(), [
       'text/html',
       'text/plain',
